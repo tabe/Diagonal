@@ -1,0 +1,17 @@
+diagonal -- A multi-purpose profiling engine
+
+This software aims at providing a comprehensive profiling framework.
+
+           +----------------------+
+           |                      |
+   ------> |       diagonal       | ------->
+    input  |                      |  output
+           |          ^           |
+           +----------|-----------+
+                      |
+                   program
+                 (algorithm)
+
+Keywords:
+debug, diagnosis, dump, instrumentation, metrics, mock, monitor, probe,
+profile, statistics, trace
