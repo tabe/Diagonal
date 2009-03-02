@@ -10,6 +10,8 @@ main()
 	assert(0 == diag_levenshtein_chars("The metric", "The metric"));
 	assert(3 == diag_levenshtein_chars("foo", ""));
 	assert(3 == diag_levenshtein_chars("", "bar"));
+	assert(3 == diag_levenshtein_chars("foo", "foobar"));
+	assert(3 == diag_levenshtein_chars("foobar", "bar"));
 	assert(3 == diag_levenshtein_chars("Monday", "Friday"));
 	assert(5 == diag_levenshtein_chars("Wednesday", "Sunday"));
 	assert(3 == diag_levenshtein_chars("kitten", "sitting"));
