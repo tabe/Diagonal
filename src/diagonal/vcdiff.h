@@ -101,15 +101,6 @@ typedef struct diag_vcdiff_context_s {
 
 #define DIAG_VCDIFF_COMPATIBLEP(context) (context)->compatibility
 
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_fp(FILE *fp);
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_fd(int fd);
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size);
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_path(const char *path);
-
-extern void diag_vcdiff_context_destroy(diag_vcdiff_context_t *context);
-
-extern diag_vcdiff_t *diag_vcdiff_read(diag_vcdiff_context_t *context);
-
 typedef struct diag_vcdiff_vm_s {
 	uint32_t s_source;
 	uint8_t *source;
@@ -130,6 +121,17 @@ typedef struct diag_vcdiff_vm_s {
 	void (*error)(struct diag_vcdiff_vm_s *vm, const char *message, ...);
 } diag_vcdiff_vm_t;
 
+DIAG_C_DECL_BEGIN
+
+extern diag_vcdiff_context_t *diag_vcdiff_context_new_fp(FILE *fp);
+extern diag_vcdiff_context_t *diag_vcdiff_context_new_fd(int fd);
+extern diag_vcdiff_context_t *diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size);
+extern diag_vcdiff_context_t *diag_vcdiff_context_new_path(const char *path);
+
+extern void diag_vcdiff_context_destroy(diag_vcdiff_context_t *context);
+
+extern diag_vcdiff_t *diag_vcdiff_read(diag_vcdiff_context_t *context);
+
 extern diag_vcdiff_vm_t *diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source);
 extern diag_vcdiff_vm_t *diag_vcdiff_vm_new_path(const char *path);
 extern void diag_vcdiff_vm_destroy(diag_vcdiff_vm_t *vm);
@@ -137,5 +139,7 @@ extern void diag_vcdiff_vm_destroy(diag_vcdiff_vm_t *vm);
 extern uint8_t *diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff);
 
 extern void diag_vcdiff_destroy(diag_vcdiff_t *vcdiff);
+
+DIAG_C_DECL_END
 
 #endif

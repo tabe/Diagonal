@@ -29,6 +29,8 @@ enum diag_imf_option {
 	DIAG_IMF_LF = 1,
 };
 
+DIAG_C_DECL_BEGIN
+
 typedef diag_distance_t (*diag_metric_imf_t)(const diag_imf_t *x, const diag_imf_t *y);
 
 extern void diag_imf_raise_error(enum diag_imf_error e);
@@ -38,5 +40,7 @@ extern int diag_imf_parse(char *s, diag_imf_t **imf, unsigned int option);
 extern void diag_imf_destroy(diag_imf_t *imf);
 
 extern diag_distance_t diag_hamming_imf(const diag_imf_t *x, const diag_imf_t *y);
+
+DIAG_C_DECL_END
 
 #endif

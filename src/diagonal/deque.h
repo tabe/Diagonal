@@ -24,6 +24,8 @@ typedef struct {
 		}																\
 	} while (0)
 
+DIAG_C_DECL_BEGIN
+
 extern diag_deque_t *diag_deque_new(void);
 extern void diag_deque_destroy(diag_deque_t *deque);
 
@@ -32,5 +34,7 @@ extern diag_deque_elem_t *diag_deque_pop(diag_deque_t *deque);
 
 extern diag_deque_elem_t *diag_deque_shift(diag_deque_t *deque);
 extern diag_deque_elem_t *diag_deque_unshift(diag_deque_t *deque, void *attr);
+
+DIAG_C_DECL_END
 
 #endif

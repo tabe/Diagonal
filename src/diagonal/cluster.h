@@ -45,6 +45,8 @@ typedef struct {
 	diag_cluster_t *(*agglomerator)(diag_size_t num_data, diag_datum_t **data, diag_metric_t metric);
 } diag_gac_t;
 
+DIAG_C_DECL_BEGIN
+
 extern diag_cluster_t *diag_cluster_new(diag_size_t num_data);
 extern void diag_cluster_destroy(diag_cluster_t *cluster);
 
@@ -61,5 +63,7 @@ extern diag_code_t *diag_encode(diag_analysis_t *analysis);
 extern diag_datum_t **diag_decode(diag_analysis_t *analysis);
 
 extern diag_code_t *diag_delta_hamming_chars(diag_cluster_t *cluster, const char *x, const char *y);
+
+DIAG_C_DECL_END
 
 #endif

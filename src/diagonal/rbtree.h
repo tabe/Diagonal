@@ -24,6 +24,8 @@ typedef struct diag_rbtree_s {
 	diag_size_t num_nodes;
 } diag_rbtree_t;
 
+DIAG_C_DECL_BEGIN
+
 extern diag_rbtree_t *diag_rbtree_new(diag_rbtree_cmp_t cmp);
 
 extern void diag_rbtree_destroy(diag_rbtree_t *tree);
@@ -45,5 +47,7 @@ extern diag_rbtree_node_t *diag_rbtree_predecessor(const diag_rbtree_node_t *nod
 extern diag_rbtree_node_t *diag_rbtree_successor(const diag_rbtree_node_t *node);
 
 extern void diag_rbtree_for_each(const diag_rbtree_t *tree, diag_rbtree_callback_t callback);
+
+DIAG_C_DECL_END
 
 #endif
