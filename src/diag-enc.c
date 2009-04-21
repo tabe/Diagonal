@@ -59,7 +59,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 	fd = open(path, O_RDONLY);
 	if (fd < 0) diag_fatal("could not open file");
 	r = fstat(fd, &st);
-	if (r < 0) diag_fatal("counld not stat file");
+	if (r < 0) diag_fatal("could not stat file");
 	*plen = len = st.st_size;
 	p = q = (char *)mmap(NULL, len + 1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 	if (p == MAP_FAILED) diag_fatal("could not map file");
