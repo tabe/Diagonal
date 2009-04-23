@@ -473,12 +473,14 @@ diag_rbtree_search(diag_rbtree_t *tree, diag_rbtree_key_t key, diag_rbtree_node_
 diag_rbtree_node_t *
 diag_rbtree_minimum(const diag_rbtree_t *tree)
 {
+	assert(tree);
 	return (tree->root) ? leftmost(tree->root) : NULL;
 }
 
 diag_rbtree_node_t *
 diag_rbtree_maximum(const diag_rbtree_t *tree)
 {
+	assert(tree);
 	return (tree->root) ? rightmost(tree->root) : NULL;
 }
 
