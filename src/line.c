@@ -54,7 +54,7 @@ diag_line_read(diag_line_context_t *context, size_t *sizep, char **linep)
 	diag_port_t *port;
 	char *line = NULL;
 
-	assert(context && sizep && linep);
+	assert(context && linep);
 	port = context->port;
 	for (;;) {
 		if (context->head >= context->sentinel) {
@@ -69,7 +69,7 @@ diag_line_read(diag_line_context_t *context, size_t *sizep, char **linep)
 					if (line) {
 						line[size] = '\0';
 						*linep = line;
-						*sizep = size;
+						if (sizep) *sizep = size;
 					} else {
 						context->error = DIAG_LINE_ERROR_EOF;
 					}
@@ -91,7 +91,7 @@ diag_line_read(diag_line_context_t *context, size_t *sizep, char **linep)
 				memcpy(line+size, context->buf+context->head, s);
 				line[size+s] = '\0';
 				*linep = line;
-				*sizep = size+s;
+				if (sizep) *sizep = size+s;
 				context->head = h+1;
 				return context;
 			}
