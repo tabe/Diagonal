@@ -25,6 +25,7 @@
 #include "diagonal.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/metric.h"
+#include "diagonal/line.h"
 
 #define THRESHOLD 10
 
@@ -63,18 +64,36 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 		exit(0);
 	}
 	p = q = (char *)mmap(NULL, len + 1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-	if (p == MAP_FAILED) diag_fatal("could not map file");
-	close(fd);
-	*(p + len) = '\0';
-	while (q < p + len) {
-		diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (void *)q);
-		diag_rbtree_insert(tree, node);
-		do {
-			if (*q == '\n') {
-				*q++ = '\0';
-				break;
-			}
-		} while (++q < p + len);
+	if (p == MAP_FAILED) {
+		diag_port_t *port;
+		diag_line_context_t *context;
+		diag_rbtree_node_t *node;
+		size_t n = 0;
+
+		port = diag_port_new_fd(fd, DIAG_PORT_INPUT);
+		context = diag_line_context_new(port);
+		for (;;) {
+			context = diag_line_read(context, NULL, &q);
+			if (DIAG_LINE_HAS_ERROR(context)) break;
+			node = diag_rbtree_node_new((diag_rbtree_key_t)n++, (void *)q);
+			diag_rbtree_insert(tree, node);
+		}
+		diag_line_context_destroy(context);
+		diag_port_destroy(port);
+		close(fd);
+	} else {
+		close(fd);
+		*(p + len) = '\0';
+		while (q < p + len) {
+			diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (void *)q);
+			diag_rbtree_insert(tree, node);
+			do {
+				if (*q == '\n') {
+					*q++ = '\0';
+					break;
+				}
+			} while (++q < p + len);
+		}
 	}
 	return (void *)p;
 }
@@ -297,6 +316,10 @@ main(int argc, char *argv[])
 	diag_free(parent);
 	diag_free(occur);
 	diag_free(entries);
-	munmap(p, len + 1);
+	if (p == MAP_FAILED) {
+		
+	} else {
+		munmap(p, len + 1);
+	}
 	return 0;
 }
