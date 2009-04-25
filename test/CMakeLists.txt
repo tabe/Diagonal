@@ -5,6 +5,7 @@ set(subdirectories
     port
     hamming
     levenshtein
+    line
     vcdiff
     imf
 )

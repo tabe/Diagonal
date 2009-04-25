@@ -111,6 +111,19 @@ diag_calloc(size_t nmemb, size_t size)
 	return ptr;
 }
 
+void *
+diag_realloc(void *ptr, size_t size)
+{
+	void *new_ptr;
+
+	new_ptr = realloc(ptr, size);
+	if (!new_ptr) {
+		free(ptr);
+		diag_fatal("realloc failed");
+	}
+	return new_ptr;
+}
+
 void
 diag_free(void *ptr)
 {

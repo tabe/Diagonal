@@ -39,7 +39,7 @@
 		exit(1);														\
 	} while (0)
 
-#define ASSERT_EQ_(type, expected, expr)  do {							\
+#define ASSERT_EQ_(type, expected, expr) do {							\
 		type actual = (type)(expr);										\
 		if ((type)expected == actual) break;							\
 		printf("%s:%d: %d is expected, but %d\n", __FILE__, __LINE__, (type)expected, actual); \
@@ -48,4 +48,11 @@
 
 #define ASSERT_EQ_INT(expected, expr) ASSERT_EQ_(int, expected, expr)
 #define ASSERT_EQ_UINT8(expected, expr) ASSERT_EQ_(uint8_t, expected, expr)
-#define ASSERT_EQ_SIZE(expected, expr) ASSERT_EQ_(diag_size_t, expected, expr)
+#define ASSERT_EQ_SIZE(expected, expr) ASSERT_EQ_(size_t, expected, expr)
+
+#define ASSERT_EQ_STRING(expected, expr) do {							\
+		char *actual = (char *)(expr);									\
+		if (strcmp(expected, actual) == 0) break;						\
+		printf("%s:%d: %s is expected, but %s\n", __FILE__, __LINE__, expected, actual); \
+		exit(1);														\
+	} while (0)

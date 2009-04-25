@@ -65,6 +65,7 @@ extern void diag_info(const char *message, ...);
 
 extern void *diag_malloc(size_t size);
 extern void *diag_calloc(size_t nmemb, size_t size);
+extern void *diag_realloc(void *ptr, size_t size);
 extern void diag_free(void *ptr);
 
 extern diag_datum_t *diag_datum_new(void *value);

@@ -6,6 +6,7 @@ add_library(diagonal SHARED
             hamming.c
             imf.c
             levenshtein.c
+            line.c
             port.c
             rbtree.c
             vcdiff.c
