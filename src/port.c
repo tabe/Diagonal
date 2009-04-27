@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -29,6 +30,7 @@ read_byte_fd(diag_port_t *port, uint8_t *i)
 	assert(port && i);
 	r = (int)read(port->stream.fd, (void *)i, 1);
 	if (r > 0) port->i_pos += r;
+	if (r == -1) diag_error("read error: %s", strerror(errno));
 	return r;
 }
 
@@ -46,7 +48,7 @@ read_bytes_fd(diag_port_t *port, size_t size, uint8_t *buf)
 		port->i_pos += (size_t)s;
 		return 0;
 	} else {
-		diag_error("read error");
+		diag_error("read error: %s", strerror(errno));
 		return -1;
 	}
 }
@@ -59,6 +61,7 @@ write_byte_fd(diag_port_t *port, uint8_t i)
 	assert(port);
 	r = (int)write(port->stream.fd, (const void *)&i, 1);
 	if (r > 0) port->o_pos += r;
+	if (r == -1) diag_error("write error: %s", strerror(errno));
 	return r;
 }
 
@@ -76,7 +79,7 @@ write_bytes_fd(diag_port_t *port, size_t size, const uint8_t *buf)
 		port->o_pos += (size_t)s;
 		return 0;
 	} else {
-		diag_error("write error");
+		diag_error("write error: %s", strerror(errno));
 		return -1;
 	}
 }
