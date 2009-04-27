@@ -42,7 +42,7 @@ struct metric_option_s {
 static void
 usage(void)
 {
-	diag_info("diag-log [-m metric] [-t threshold] [-1] file");
+	diag_info("diag-log [-m metric] [-t threshold] [-1] [path]");
 }
 
 static void *
@@ -53,9 +53,13 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 	size_t len;
 	char *p, *q;
 
-	assert(path && tree);
-	fd = open(path, O_RDONLY);
-	if (fd < 0) diag_fatal("could not open file");
+	assert(tree);
+	if (path) {
+		fd = open(path, O_RDONLY);
+		if (fd < 0) diag_fatal("could not open file");
+	} else {
+		fd = STDIN_FILENO;
+	}
 	r = fstat(fd, &st);
 	if (r < 0) diag_fatal("could not stat file");
 	*plen = len = st.st_size;
@@ -173,11 +177,12 @@ static unsigned int *
 process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entries, int t, unsigned int **occur)
 {
 	diag_rbtree_node_t *node;
-	unsigned int *p, i = 0;
+	unsigned int *p;
 
 	if (num_entries == 0) return NULL;
 	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
 	if (occur) *occur = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	if (comb->num_nodes == 0) return p;
 	node = diag_rbtree_minimum(comb);
 	do {
 		unsigned int k = (unsigned int)node->key;
@@ -185,7 +190,6 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 		if ((int)k < t) {
 			unsigned int x, y;
 
-			i++;
 			x = ((unsigned int *)node->attr)[0];
 			y = ((unsigned int *)node->attr)[1];
 			if (occur) (*occur)[x] = (*occur)[y] = 1;
@@ -253,10 +257,6 @@ main(int argc, char *argv[])
 	char **entries;
 	unsigned int num_entries, *parent, *occur;
 
-	if (argc < 2) {
-		usage();
-		exit(1);
-	}
 	while ( (c = getopt(argc, argv, "Vhm:t:1")) >= 0) {
 		unsigned int i, found;
 		switch (c) {
@@ -295,15 +295,12 @@ main(int argc, char *argv[])
 			break;
 		}
 	}
-	if (!argv[optind]) {
-		usage();
-		exit(1);
-	}
 
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	p = map_file(argv[optind], tree, &len);
 	entries = serialize_entries(tree, &num_entries);
 	diag_rbtree_destroy(tree);
+	if (!entries) goto done;
 
 /* 	display_file(entries, num_entries); */
 	comb = aggregate_combinations(entries, num_entries, metric);
@@ -316,6 +313,7 @@ main(int argc, char *argv[])
 	diag_free(parent);
 	diag_free(occur);
 	diag_free(entries);
+ done:
 	if (p == MAP_FAILED) {
 		
 	} else {
