@@ -42,7 +42,7 @@ struct metric_option_s {
 static void
 usage(void)
 {
-	diag_info("diag-log [-m metric] [-t threshold] [-1] [path]");
+	diag_info("diag-log [-m metric] [-t threshold] [-1] [--] [path]");
 }
 
 static void *
@@ -291,11 +291,14 @@ main(int argc, char *argv[])
 		case '1':
 			one = 1;
 			break;
+		case '-':
+			goto begin;
 		default:
 			break;
 		}
 	}
 
+ begin:
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	p = map_file(argv[optind], tree, &len);
 	entries = serialize_entries(tree, &num_entries);
