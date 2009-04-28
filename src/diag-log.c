@@ -169,7 +169,7 @@ display_combinations(const diag_rbtree_t *comb)
 		n = diag_rbtree_minimum(comb);
 		do {
 			printf("%03d %03d: %03d\n", ((unsigned int *)n->attr)[0], ((unsigned int *)n->attr)[1], (unsigned int)n->key);
-		} while ( n = diag_rbtree_successor(n) );
+		} while ( (n = diag_rbtree_successor(n)) );
 	}
 }
 
