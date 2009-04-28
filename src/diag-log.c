@@ -255,7 +255,7 @@ main(int argc, char *argv[])
 	void *p;
 	diag_rbtree_t *tree, *comb;
 	char **entries;
-	unsigned int num_entries, *parent, *occur;
+	unsigned int num_entries, *parent, *occur = NULL;
 
 	while ( (c = getopt(argc, argv, "Vhm:t:1")) >= 0) {
 		unsigned int i, found;
