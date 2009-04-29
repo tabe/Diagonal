@@ -42,7 +42,7 @@ struct metric_option_s {
 static void
 usage(void)
 {
-	diag_info("diag-line [-m metric] [-t threshold] [-1] [--] [path]");
+	diag_info("diag-line [-m metric] [-t threshold] [-1] [path]");
 }
 
 static void *
@@ -124,16 +124,6 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 	return e;
 }
 
-static void
-display_file(char **entries, unsigned int num_entries)
-{
-	unsigned int i;
-
-	for (i = 0; i < num_entries; i++) {
-		printf("%s\n", entries[i]);
-	}
-}
-
 static diag_rbtree_t *
 aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_chars_t metric)
 {
@@ -160,7 +150,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_cha
 }
 
 static void
-display_combinations(const diag_rbtree_t *comb)
+display_combinations(const diag_rbtree_t *comb, int field_width)
 {
 	printf("%d\n", comb->num_nodes);
 	if (comb->num_nodes > 0) {
@@ -168,7 +158,10 @@ display_combinations(const diag_rbtree_t *comb)
 
 		n = diag_rbtree_minimum(comb);
 		do {
-			printf("%03d %03d: %03d\n", ((unsigned int *)n->attr)[0], ((unsigned int *)n->attr)[1], (unsigned int)n->key);
+			printf("%0*d-%0*d: %d\n",
+				   field_width, ((unsigned int *)n->attr)[0],
+				   field_width, ((unsigned int *)n->attr)[1],
+				   (unsigned int)n->key);
 		} while ( (n = diag_rbtree_successor(n)) );
 	}
 }
@@ -204,37 +197,37 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 }
 
 static void
-display_equivalence_relations(const unsigned int *parent, unsigned int n)
+display_equivalence_relations(const unsigned int *parent, unsigned int n, int field_width)
 {
 	unsigned int i;
 
 	for (i = 1; i <= n; i++) {
-		printf("%03d %03d\n", parent[i], i);
+		printf("%0*d -> %0*d\n", field_width, i, field_width, parent[i]);
 	}
 }
 
 static void
-display_group_members(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int i)
+display_group_members(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int i, int field_width)
 {
 	unsigned int j;
 
 	for (j = 1; j <= num_entries; j++) {
 		if (j != i && parent[j] == i) {
-			printf("%03d| %s\n", j, entries[j-1]);
-			display_group_members(entries, num_entries, parent, j);
+			printf("%*d %s\n", field_width, j, entries[j-1]);
+			display_group_members(entries, num_entries, parent, j, field_width);
 		}
 	}
 }
 
 static void
-display_groups(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int *occur)
+display_groups(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int *occur, int field_width)
 {
 	unsigned int i;
 
 	for (i = 1; i <= num_entries; i++) {
 		if ((!occur || occur[i]) && parent[i] == 0) {
-			printf("%03d| %s\n", i, entries[i-1]);
-			display_group_members(entries, num_entries, parent, i);
+			printf("%*d %s\n", field_width, i, entries[i-1]);
+			display_group_members(entries, num_entries, parent, i, field_width);
 			printf("\n");
 		}
 	}
@@ -250,6 +243,7 @@ int
 main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
+	int field_width;
 	diag_metric_chars_t metric = diag_hamming_chars;
 	size_t len;
 	void *p;
@@ -302,14 +296,18 @@ main(int argc, char *argv[])
 	diag_rbtree_destroy(tree);
 	if (!entries) goto done;
 
-/* 	display_file(entries, num_entries); */
+	field_width = snprintf(NULL, 0, "%d", num_entries);
 	comb = aggregate_combinations(entries, num_entries, metric);
-/* 	display_combinations(comb); */
+#if 0
+	display_combinations(comb, field_width);
+#endif
 	parent = process_equivalence_relations(comb, num_entries, t, (one) ? NULL : &occur);
 	diag_rbtree_for_each(comb, free_attr);
 	diag_rbtree_destroy(comb);
-/* 	display_equivalence_relations(parent, num_entries); */
-	if (parent) display_groups(entries, num_entries, parent, (one) ? NULL : occur);
+#if 0
+	display_equivalence_relations(parent, num_entries, field_width);
+#endif
+	if (parent) display_groups(entries, num_entries, parent, (one) ? NULL : occur, field_width);
 	diag_free(parent);
 	diag_free(occur);
 	diag_free(entries);
