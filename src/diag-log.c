@@ -250,7 +250,7 @@ int
 main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
-	diag_metric_chars_t metric = diag_levenshtein_chars;
+	diag_metric_chars_t metric = diag_hamming_chars;
 	size_t len;
 	void *p;
 	diag_rbtree_t *tree, *comb;
