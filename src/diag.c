@@ -21,7 +21,7 @@ static const char *commands[] = {
 	"dec",
 	"enc",
 	"imf",
-	"log",
+	"line",
 	NULL
 };
 

@@ -21,10 +21,10 @@ add_executable(diag-enc diag-enc.c)
 target_link_libraries(diag-enc diagonal)
 add_executable(diag-imf diag-imf.c)
 target_link_libraries(diag-imf diagonal)
-add_executable(diag-log diag-log.c)
-target_link_libraries(diag-log diagonal)
+add_executable(diag-line diag-line.c)
+target_link_libraries(diag-line diagonal)
 
-install(TARGETS diagonal diag diag-enc diag-imf diag-log
+install(TARGETS diagonal diag diag-enc diag-imf diag-line
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)

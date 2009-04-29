@@ -42,7 +42,7 @@ struct metric_option_s {
 static void
 usage(void)
 {
-	diag_info("diag-log [-m metric] [-t threshold] [-1] [--] [path]");
+	diag_info("diag-line [-m metric] [-t threshold] [-1] [--] [path]");
 }
 
 static void *
