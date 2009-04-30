@@ -107,7 +107,7 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 {
 	diag_rbtree_node_t *node;
 	char **e;
-	unsigned int i = 0;
+	register unsigned int i = 0;
 
 	if (tree->num_nodes == 0) {
 		*num_entries = 0;
@@ -125,10 +125,10 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 }
 
 static diag_rbtree_t *
-aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_chars_t metric)
+aggregate_combinations(char **entries, register unsigned int num_entries, diag_metric_chars_t metric)
 {
 	diag_rbtree_t *comb;
-	unsigned int i, j;
+	register unsigned int i, j;
 
 	if (num_entries == 0) return NULL;
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
@@ -150,7 +150,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_cha
 }
 
 static void
-display_combinations(const diag_rbtree_t *comb, int field_width)
+display_combinations(const diag_rbtree_t *comb, register int field_width)
 {
 	printf("%d\n", comb->num_nodes);
 	if (comb->num_nodes > 0) {
@@ -181,7 +181,7 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 		unsigned int k = (unsigned int)node->key;
 
 		if ((int)k < t) {
-			unsigned int x, y;
+			register unsigned int x, y;
 
 			x = ((unsigned int *)node->attr)[0];
 			y = ((unsigned int *)node->attr)[1];
@@ -197,9 +197,9 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 }
 
 static void
-display_equivalence_relations(const unsigned int *parent, unsigned int n, int field_width)
+display_equivalence_relations(const unsigned int *parent, register unsigned int n, register int field_width)
 {
-	unsigned int i;
+	register unsigned int i;
 
 	for (i = 1; i <= n; i++) {
 		printf("%0*d -> %0*d\n", field_width, i, field_width, parent[i]);
@@ -207,9 +207,9 @@ display_equivalence_relations(const unsigned int *parent, unsigned int n, int fi
 }
 
 static void
-display_group_members(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int i, int field_width)
+display_group_members(char **entries, register unsigned int num_entries, const unsigned int *parent, register unsigned int i, register int field_width)
 {
-	unsigned int j;
+	register unsigned int j;
 
 	for (j = 1; j <= num_entries; j++) {
 		if (j != i && parent[j] == i) {
@@ -220,9 +220,9 @@ display_group_members(char **entries, unsigned int num_entries, const unsigned i
 }
 
 static void
-display_groups(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int *occur, int field_width)
+display_groups(char **entries, register unsigned int num_entries, const unsigned int *parent, unsigned int *occur, register int field_width)
 {
-	unsigned int i;
+	register unsigned int i;
 
 	for (i = 1; i <= num_entries; i++) {
 		if ((!occur || occur[i]) && parent[i] == 0) {

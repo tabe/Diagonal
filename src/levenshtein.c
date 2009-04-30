@@ -16,7 +16,7 @@ diag_levenshtein_chars(const char *x, const char *y)
 {
 	register diag_distance_t d = 0;
 	register unsigned int i, j;
-	unsigned int lx, ly;
+	register unsigned int lx, ly;
 	diag_size_t *cur, *new, *tmp;
 
 	assert(x && y);
