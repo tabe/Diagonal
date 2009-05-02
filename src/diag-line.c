@@ -125,25 +125,26 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 }
 
 static diag_rbtree_t *
-aggregate_combinations(char **entries, register unsigned int num_entries, diag_metric_chars_t metric)
+aggregate_combinations(char **entries, register unsigned int num_entries, diag_metric_chars_t metric, int t)
 {
 	diag_rbtree_t *comb;
 	register unsigned int i, j;
+	diag_rbtree_node_t *node;
+	diag_rbtree_key_t k;
+	unsigned int *p;
 
 	if (num_entries == 0) return NULL;
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
-			diag_rbtree_node_t *node;
-			diag_rbtree_key_t k;
-			unsigned int *p;
-
-			p = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
-			p[0] = i + 1;
-			p[1] = j + 1;
 			k = (diag_rbtree_key_t)(*metric)((char *)entries[i], (char *)entries[j]);
-			node = diag_rbtree_node_new(k, (void *)p);
-			diag_rbtree_insert(comb, node);
+			if ((int)k < t) {
+				p = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
+				p[0] = i + 1;
+				p[1] = j + 1;
+				node = diag_rbtree_node_new(k, (void *)p);
+				diag_rbtree_insert(comb, node);
+			}
 		}
 	}
 	return comb;
@@ -167,10 +168,11 @@ display_combinations(const diag_rbtree_t *comb, register int field_width)
 }
 
 static unsigned int *
-process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entries, int t, unsigned int **occur)
+process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entries, unsigned int **occur)
 {
 	diag_rbtree_node_t *node;
 	unsigned int *p;
+	register unsigned int x, y;
 
 	if (num_entries == 0) return NULL;
 	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
@@ -178,20 +180,12 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 	if (comb->num_nodes == 0) return p;
 	node = diag_rbtree_minimum(comb);
 	do {
-		unsigned int k = (unsigned int)node->key;
-
-		if ((int)k < t) {
-			register unsigned int x, y;
-
-			x = ((unsigned int *)node->attr)[0];
-			y = ((unsigned int *)node->attr)[1];
-			if (occur) (*occur)[x] = (*occur)[y] = 1;
-			while (p[x] > 0) x = p[x];
-			while (p[y] > 0) y = p[y];
-			if (x != y) p[x] = y;
-		} else {
-			break;
-		}
+		x = ((unsigned int *)node->attr)[0];
+		y = ((unsigned int *)node->attr)[1];
+		if (occur) (*occur)[x] = (*occur)[y] = 1;
+		while (p[x] > 0) x = p[x];
+		while (p[y] > 0) y = p[y];
+		if (x != y) p[x] = y;
 	} while ( (node = diag_rbtree_successor(node)) );
 	return p;
 }
@@ -297,11 +291,11 @@ main(int argc, char *argv[])
 	if (!entries) goto done;
 
 	field_width = snprintf(NULL, 0, "%d", num_entries);
-	comb = aggregate_combinations(entries, num_entries, metric);
+	comb = aggregate_combinations(entries, num_entries, metric, t);
 #if 0
 	display_combinations(comb, field_width);
 #endif
-	parent = process_equivalence_relations(comb, num_entries, t, (one) ? NULL : &occur);
+	parent = process_equivalence_relations(comb, num_entries, (one) ? NULL : &occur);
 	diag_rbtree_for_each(comb, free_attr);
 	diag_rbtree_destroy(comb);
 #if 0
