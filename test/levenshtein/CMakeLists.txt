@@ -1,4 +1,5 @@
 set(tests
+    diag_elevenshtein_chars
     diag_levenshtein_chars
 )
 foreach(test ${tests})

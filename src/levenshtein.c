@@ -60,3 +60,20 @@ diag_levenshtein_chars(const char *x, const char *y)
 	diag_free(cur < new ? cur : new);
 	return d;
 }
+
+diag_sdistance_t
+diag_elevenshtein_chars(const char *x, const char *y, diag_distance_t e)
+{
+	size_t lx, ly, dxy;
+	register diag_distance_t d;
+
+	assert(x && y);
+	if (e == 0) return -1;
+	if (x == y) return 0;
+	lx = strlen(x);
+	ly = strlen(y);
+	dxy = (lx < ly) ? ly - lx : lx - ly;
+	if (dxy >= (size_t)e) return -1;
+	d = diag_levenshtein_chars(x, y);
+	return (d < e) ? (diag_sdistance_t)d : -1;
+}

@@ -1,4 +1,5 @@
 set(tests
+    diag_ehamming_chars
     diag_hamming_chars
 )
 foreach(test ${tests})

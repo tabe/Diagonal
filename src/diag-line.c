@@ -31,10 +31,10 @@
 
 struct metric_option_s {
 	char *name;
-	diag_metric_chars_t metric;
+	diag_emetric_chars_t metric;
 } METRICS[] = {
-	{"hamming",     diag_hamming_chars},
-	{"levenshtein", diag_levenshtein_chars},
+	{"hamming",     diag_ehamming_chars},
+	{"levenshtein", diag_elevenshtein_chars},
 };
 
 #define NUM_METRICS (sizeof(METRICS)/sizeof(struct metric_option_s))
@@ -125,24 +125,24 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 }
 
 static diag_rbtree_t *
-aggregate_combinations(char **entries, register unsigned int num_entries, diag_metric_chars_t metric, int t)
+aggregate_combinations(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t)
 {
 	diag_rbtree_t *comb;
 	register unsigned int i, j;
 	diag_rbtree_node_t *node;
-	diag_rbtree_key_t k;
+	diag_sdistance_t k;
 	unsigned int *p;
 
 	if (num_entries == 0) return NULL;
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
-			k = (diag_rbtree_key_t)(*metric)((char *)entries[i], (char *)entries[j]);
-			if ((int)k < t) {
+			k = (*metric)((char *)entries[i], (char *)entries[j], (diag_distance_t)t);
+			if (k >= 0) {
 				p = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
 				p[0] = i + 1;
 				p[1] = j + 1;
-				node = diag_rbtree_node_new(k, (void *)p);
+				node = diag_rbtree_node_new((diag_rbtree_key_t)k, (void *)p);
 				diag_rbtree_insert(comb, node);
 			}
 		}
@@ -238,7 +238,7 @@ main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	int field_width;
-	diag_metric_chars_t metric = diag_hamming_chars;
+	diag_emetric_chars_t metric = diag_ehamming_chars;
 	size_t len;
 	void *p;
 	diag_rbtree_t *tree, *comb;
