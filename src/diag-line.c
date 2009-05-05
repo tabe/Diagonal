@@ -124,6 +124,33 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 	return e;
 }
 
+static unsigned int *
+single_link(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t, unsigned int **occur)
+{
+	register unsigned int i, j, x, y, px, py;
+	unsigned int *p;
+	diag_sdistance_t k;
+
+	if (num_entries == 0) return NULL;
+	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	if (occur) *occur = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	for (i = 0; i < num_entries; i++) {
+		x = px = i + 1;
+		while (p[px] > 0) px = p[px];
+		for (j = i + 1; j < num_entries; j++) {
+			y = py = j + 1;
+			while (p[py] > 0) py = p[py];
+			if (px == py) continue; /* already connected */
+			k = (*metric)((char *)entries[i], (char *)entries[j], (diag_distance_t)t);
+			if (k < 0) continue; /* disconnected */
+			if (occur) (*occur)[x] = (*occur)[y] = 1;
+			p[px] = py;
+			px = py;
+		}
+	}
+	return p;
+}
+
 static diag_rbtree_t *
 aggregate_combinations(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t)
 {
@@ -193,10 +220,12 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 static void
 display_equivalence_relations(const unsigned int *parent, register unsigned int n, register int field_width)
 {
-	register unsigned int i;
+	register unsigned int i, x;
 
 	for (i = 1; i <= n; i++) {
-		printf("%0*d -> %0*d\n", field_width, i, field_width, parent[i]);
+		x = i;
+		while (parent[x] > 0) x = parent[x];
+		printf("%0*d -> %0*d\n", field_width, i, field_width, x);
 	}
 }
 
@@ -241,7 +270,11 @@ main(int argc, char *argv[])
 	diag_emetric_chars_t metric = diag_ehamming_chars;
 	size_t len;
 	void *p;
+#if 1
+	diag_rbtree_t *tree;
+#else
 	diag_rbtree_t *tree, *comb;
+#endif
 	char **entries;
 	unsigned int num_entries, *parent, *occur = NULL;
 
@@ -291,6 +324,9 @@ main(int argc, char *argv[])
 	if (!entries) goto done;
 
 	field_width = snprintf(NULL, 0, "%d", num_entries);
+#if 1
+	parent = single_link(entries, num_entries, metric, t, (one) ? NULL : &occur);
+#else
 	comb = aggregate_combinations(entries, num_entries, metric, t);
 #if 0
 	display_combinations(comb, field_width);
@@ -298,6 +334,7 @@ main(int argc, char *argv[])
 	parent = process_equivalence_relations(comb, num_entries, (one) ? NULL : &occur);
 	diag_rbtree_for_each(comb, free_attr);
 	diag_rbtree_destroy(comb);
+#endif
 #if 0
 	display_equivalence_relations(parent, num_entries, field_width);
 #endif
