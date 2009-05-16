@@ -35,7 +35,7 @@ typedef diag_distance_t (*diag_metric_imf_t)(const diag_imf_t *x, const diag_imf
 
 extern void diag_imf_raise_error(enum diag_imf_error e);
 
-extern int diag_imf_parse(char *s, diag_imf_t **imf, unsigned int option);
+extern int diag_imf_parse(char *s, diag_imf_t **imfp, unsigned int option);
 
 extern void diag_imf_destroy(diag_imf_t *imf);
 
