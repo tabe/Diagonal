@@ -95,15 +95,16 @@ read_header_field(char *s, diag_imf_header_field_t **header_field, char **r, uns
 }
 
 int
-diag_imf_parse(char *s, diag_imf_t **imf, unsigned int option)
+diag_imf_parse(char *s, diag_imf_t **imfp, unsigned int option)
 {
+	diag_imf_t *imf;
 	diag_imf_header_field_t *header_field, **header_fields;
 	diag_deque_t *deque;
 	diag_deque_elem_t *elem;
 	char *r;
 	int x;
 
-	assert(s && imf);
+	assert(s && imfp);
 	deque = diag_deque_new();
 	while ( (x = read_header_field(s, &header_field, &r, option)) > 0) {
 		diag_deque_push(deque, (void *)header_field);
@@ -113,14 +114,15 @@ diag_imf_parse(char *s, diag_imf_t **imf, unsigned int option)
 		diag_deque_destroy(deque);
 		return x;
 	}
-	*imf = (diag_imf_t *)diag_malloc(sizeof(diag_imf_t));
+	imf = (diag_imf_t *)diag_malloc(sizeof(diag_imf_t));
 	header_fields = (diag_imf_header_field_t **)diag_calloc((size_t)deque->length + 1, sizeof(diag_imf_header_field_t *));
-	(*imf)->header_fields = header_fields;
+	imf->header_fields = header_fields;
 	DIAG_DEQUE_FOR_EACH(deque, elem) {
 		*header_fields++ = (diag_imf_header_field_t *)elem->attr;
 	}
 	diag_deque_destroy(deque);
-	(*imf)->body = r;
+	imf->body = r;
+	*imfp = imf;
 	return 0;
 }
 
