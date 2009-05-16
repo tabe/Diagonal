@@ -17,6 +17,18 @@
 #include "diagonal/metric.h"
 #include "diagonal/imf.h"
 
+static diag_imf_header_field_t *
+diag_imf_header_field_new(char *name, char *body)
+{
+	diag_imf_header_field_t *header_field;
+
+	assert(name && body);
+	header_field = (diag_imf_header_field_t *)diag_malloc(sizeof(diag_imf_header_field_t));
+	header_field->name = name;
+	header_field->body = body;
+	return header_field;
+}
+
 static char *
 read_header_field_name(char *s, char **name)
 {
@@ -66,9 +78,7 @@ read_header_field(char *s, diag_imf_header_field_t **header_field, char **r, uns
 			if (*t++ == '\n') {
 				if (*t == ' ' || *t == '\t') continue; /* unfolding */
 				*(t-2) = '\0';
-				*header_field = (diag_imf_header_field_t *)diag_malloc(sizeof(diag_imf_header_field_t));
-				(*header_field)->name = name;
-				(*header_field)->body = (s[0] == ' ') ? s + 1 : s;
+				*header_field = diag_imf_header_field_new(name, (s[0] == ' ') ? s + 1 : s);
 				*r = t;
 				return 1;
 			}
@@ -78,9 +88,7 @@ read_header_field(char *s, diag_imf_header_field_t **header_field, char **r, uns
 			if (option & DIAG_IMF_LF) {
 				if (*t == ' ' || *t == '\t') continue; /* unfolding */
 				*(t-1) = '\0';
-				*header_field = (diag_imf_header_field_t *)diag_malloc(sizeof(diag_imf_header_field_t));
-				(*header_field)->name = name;
-				(*header_field)->body = (s[0] == ' ') ? s + 1 : s;
+				*header_field = diag_imf_header_field_new(name, (s[0] == ' ') ? s + 1 : s);
 				*r = t;
 				return 1;
 			}
