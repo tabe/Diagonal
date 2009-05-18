@@ -245,13 +245,17 @@ display_group_members(char **entries, register unsigned int num_entries, const u
 static void
 display_groups(char **entries, register unsigned int num_entries, const unsigned int *parent, unsigned int *occur, register int field_width)
 {
-	register unsigned int i;
+	register unsigned int i, f = 0;
 
 	for (i = 1; i <= num_entries; i++) {
 		if ((!occur || occur[i]) && parent[i] == 0) {
+			if (f) {
+				printf("\n");
+			} else {
+				f = 1;
+			}
 			printf("%*d %s\n", field_width, i, entries[i-1]);
 			display_group_members(entries, num_entries, parent, i, field_width);
-			printf("\n");
 		}
 	}
 }
