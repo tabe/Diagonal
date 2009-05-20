@@ -79,7 +79,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 		for (;;) {
 			context = diag_line_read(context, NULL, &q);
 			if (DIAG_LINE_HAS_ERROR(context)) break;
-			node = diag_rbtree_node_new((diag_rbtree_key_t)n++, (void *)q);
+			node = diag_rbtree_node_new((diag_rbtree_key_t)n++, (diag_rbtree_attr_t)q);
 			diag_rbtree_insert(tree, node);
 		}
 		diag_line_context_destroy(context);
@@ -89,7 +89,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 		close(fd);
 		*(p + len) = '\0';
 		while (q < p + len) {
-			diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (void *)q);
+			diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
 			diag_rbtree_insert(tree, node);
 			do {
 				if (*q == '\n') {
@@ -151,6 +151,7 @@ single_link(char **entries, register unsigned int num_entries, diag_emetric_char
 	return p;
 }
 
+#if 0
 static diag_rbtree_t *
 aggregate_combinations(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t)
 {
@@ -169,7 +170,7 @@ aggregate_combinations(char **entries, register unsigned int num_entries, diag_e
 				p = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
 				p[0] = i + 1;
 				p[1] = j + 1;
-				node = diag_rbtree_node_new((diag_rbtree_key_t)k, (void *)p);
+				node = diag_rbtree_node_new((diag_rbtree_key_t)k, (diag_rbtree_attr_t)p);
 				diag_rbtree_insert(comb, node);
 			}
 		}
@@ -228,6 +229,7 @@ display_equivalence_relations(const unsigned int *parent, register unsigned int 
 		printf("%0*d -> %0*d\n", field_width, i, field_width, x);
 	}
 }
+#endif
 
 static void
 display_group_members(char **entries, register unsigned int num_entries, const unsigned int *parent, register unsigned int i, register int field_width)
@@ -258,12 +260,6 @@ display_groups(char **entries, register unsigned int num_entries, const unsigned
 			display_group_members(entries, num_entries, parent, i, field_width);
 		}
 	}
-}
-
-static void
-free_attr(diag_rbtree_key_t key, void *attr)
-{
-	diag_free(attr);
 }
 
 int
@@ -336,7 +332,7 @@ main(int argc, char *argv[])
 	display_combinations(comb, field_width);
 #endif
 	parent = process_equivalence_relations(comb, num_entries, (one) ? NULL : &occur);
-	diag_rbtree_for_each(comb, free_attr);
+	diag_rbtree_for_each_attr(comb, diag_free);
 	diag_rbtree_destroy(comb);
 #endif
 #if 0

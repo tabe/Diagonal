@@ -1,17 +1,19 @@
 #ifndef DIAGONAL_RBTREE_H
 #define DIAGONAL_RBTREE_H
 
-typedef void *diag_rbtree_key_t;
+typedef uintptr_t diag_rbtree_key_t;
+typedef uintptr_t diag_rbtree_attr_t;
 
 typedef int (*diag_rbtree_cmp_t)(diag_rbtree_key_t x, diag_rbtree_key_t y);
 
-typedef void (*diag_rbtree_callback_t)(diag_rbtree_key_t key, void *attr);
+typedef void (*diag_rbtree_callback_t)(diag_rbtree_key_t key, diag_rbtree_attr_t attr);
+typedef void (*diag_rbtree_callback_attr_t)(diag_rbtree_attr_t attr);
 
 #define DIAG_RBTREE_IMMEDIATE ((diag_rbtree_cmp_t)NULL)
 
 typedef struct diag_rbtree_node_s {
 	diag_rbtree_key_t key;
-	void *attr;
+	diag_rbtree_attr_t attr;
 	char color;
 	struct diag_rbtree_node_s *parent;
 	struct diag_rbtree_node_s *left;
@@ -30,7 +32,7 @@ extern diag_rbtree_t *diag_rbtree_new(diag_rbtree_cmp_t cmp);
 
 extern void diag_rbtree_destroy(diag_rbtree_t *tree);
 
-extern diag_rbtree_node_t *diag_rbtree_node_new(diag_rbtree_key_t key, void *attr);
+extern diag_rbtree_node_t *diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr);
 
 extern void diag_rbtree_node_destroy(diag_rbtree_node_t *node);
 
@@ -47,6 +49,7 @@ extern diag_rbtree_node_t *diag_rbtree_predecessor(const diag_rbtree_node_t *nod
 extern diag_rbtree_node_t *diag_rbtree_successor(const diag_rbtree_node_t *node);
 
 extern void diag_rbtree_for_each(const diag_rbtree_t *tree, diag_rbtree_callback_t callback);
+extern void diag_rbtree_for_each_attr(const diag_rbtree_t *tree, diag_rbtree_callback_attr_t callback);
 
 DIAG_C_DECL_END
 

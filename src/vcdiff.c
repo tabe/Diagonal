@@ -554,7 +554,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 			diag_free(window);
 			goto clear;
 		}
-		diag_deque_push(deque, (void *)window);
+		diag_deque_push(deque, (uintptr_t)window);
 	}
 	if (r < 0) {
 		goto clear;
@@ -569,7 +569,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 		diag_deque_elem_t *elem;
 
 		DIAG_DEQUE_FOR_EACH(deque, elem) {
-			diag_free(elem->attr);
+			diag_free((void *)elem->attr);
 		}
 		diag_deque_destroy(deque);
 	}

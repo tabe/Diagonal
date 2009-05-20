@@ -363,7 +363,7 @@ diag_rbtree_destroy(diag_rbtree_t *tree)
 }
 
 diag_rbtree_node_t *
-diag_rbtree_node_new(diag_rbtree_key_t key, void *attr)
+diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr)
 {
 	diag_rbtree_node_t *node;
 	node = (diag_rbtree_node_t *)diag_malloc(sizeof(diag_rbtree_node_t));
@@ -505,5 +505,17 @@ diag_rbtree_for_each(const diag_rbtree_t *tree, diag_rbtree_callback_t callback)
 	if (!node) return;
 	do {
 		callback(node->key, node->attr);
+	} while ( (node = diag_rbtree_successor(node)) );
+}
+
+void
+diag_rbtree_for_each_attr(const diag_rbtree_t *tree, diag_rbtree_callback_attr_t callback)
+{
+	diag_rbtree_node_t *node;
+
+	node = diag_rbtree_minimum(tree);
+	if (!node) return;
+	do {
+		callback(node->attr);
 	} while ( (node = diag_rbtree_successor(node)) );
 }

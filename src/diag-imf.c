@@ -88,7 +88,7 @@ scan_directory(diag_rbtree_t *tree, int i, const char *path)
 				break;
 			default:
 				{
-					diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)i, (void *)name);
+					diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)i, (diag_rbtree_attr_t)name);
 					diag_rbtree_insert(tree, node);
 				}
 				break;
@@ -130,7 +130,7 @@ map_paths(char **paths)
 			if (scan_directory(tree, 1, path) == -1) FAIL(tree);
 		} else {
 			if ( (name = strdup(path)) == NULL) FAIL(tree);
-			node = diag_rbtree_node_new((diag_rbtree_key_t)0, (void *)name);
+			node = diag_rbtree_node_new((diag_rbtree_key_t)0, (diag_rbtree_attr_t)name);
 			diag_rbtree_insert(tree, node);
 			break;
 		}
@@ -216,7 +216,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 				}
 				munmap(py, ly);
 			}
-			node = diag_rbtree_node_new(k, (void *)pair);
+			node = diag_rbtree_node_new(k, (diag_rbtree_attr_t)pair);
 			diag_rbtree_insert(comb, node);
 		}
 		if (r >= 0) diag_imf_destroy(imfx);
@@ -315,12 +315,6 @@ display_groups(char **entries, unsigned int num_entries, const unsigned int *par
 	}
 }
 
-static void
-free_attr(diag_rbtree_key_t key, void *attr)
-{
-	diag_free(attr);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -386,7 +380,7 @@ main(int argc, char *argv[])
 	}
 	comb = aggregate_combinations(entries, num_entries, metric);
 	parent = process_equivalence_relations(comb, num_entries, t, (one) ? NULL : &occur);
-	diag_rbtree_for_each(comb, free_attr);
+	diag_rbtree_for_each_attr(comb, (diag_rbtree_callback_attr_t)diag_free);
 	diag_rbtree_destroy(comb);
 	if (parent) display_groups(entries, num_entries, parent, (one) ? NULL : occur);
 	diag_free(parent);

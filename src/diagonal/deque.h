@@ -2,7 +2,7 @@
 #define DIAGONAL_DEQUE_H
 
 typedef struct diag_deque_elem_s {
-	void *attr;
+	uintptr_t attr;
 	struct diag_deque_elem_s *prev;
 	struct diag_deque_elem_s *next;
 } diag_deque_elem_t;
@@ -29,11 +29,11 @@ DIAG_C_DECL_BEGIN
 extern diag_deque_t *diag_deque_new(void);
 extern void diag_deque_destroy(diag_deque_t *deque);
 
-extern diag_deque_elem_t *diag_deque_push(diag_deque_t *deque, void *attr);
+extern diag_deque_elem_t *diag_deque_push(diag_deque_t *deque, uintptr_t attr);
 extern diag_deque_elem_t *diag_deque_pop(diag_deque_t *deque);
 
 extern diag_deque_elem_t *diag_deque_shift(diag_deque_t *deque);
-extern diag_deque_elem_t *diag_deque_unshift(diag_deque_t *deque, void *attr);
+extern diag_deque_elem_t *diag_deque_unshift(diag_deque_t *deque, uintptr_t attr);
 
 DIAG_C_DECL_END
 

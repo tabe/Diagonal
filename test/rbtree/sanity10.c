@@ -13,7 +13,7 @@ main()
 
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; keys[i] > 0; i++) {
-		node = diag_rbtree_node_new((diag_rbtree_key_t)keys[i], NULL);
+		node = diag_rbtree_node_new((diag_rbtree_key_t)keys[i], (diag_rbtree_attr_t)NULL);
 		diag_rbtree_insert(tree, node);
 	}
 	for (i = 0; keys[i] > 0; i++) {

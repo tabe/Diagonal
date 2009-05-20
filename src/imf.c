@@ -126,7 +126,7 @@ diag_imf_parse(char *s, diag_imf_t **imfp, unsigned int option)
 	assert(s && imfp);
 	deque = diag_deque_new();
 	while ( (x = read_header_field(s, &header_field, &r, option)) > 0) {
-		diag_deque_push(deque, (void *)header_field);
+		diag_deque_push(deque, (uintptr_t)header_field);
 		s = r;
 	}
 	if (x < 0) {

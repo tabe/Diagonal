@@ -1,5 +1,6 @@
 set(title rbtree)
 set(tests
+    diag_rbtree_for_each_attr
     sanity02
     sanity10
 )

@@ -61,7 +61,7 @@ include_directories(BEFORE "${DIAGONAL_BINARY_DIR}")
 configure_file("${DIAGONAL_SOURCE_DIR}/config.h.cmake" "${DIAGONAL_BINARY_DIR}/config.h")
 include_directories("${DIAGONAL_SOURCE_DIR}/src")
 
-add_definitions("-Wall -W")
+add_definitions("-Wall -W -Werror")
 if(BUILD_TESTING)
   add_definitions("-g -pg")
 endif(BUILD_TESTING)

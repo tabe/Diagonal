@@ -16,11 +16,11 @@ main()
 	elem = diag_deque_pop(deque);
 	assert(!elem);
 	assert(deque->length == 0);
-	elem = diag_deque_push(deque, (void *)1);
+	elem = diag_deque_push(deque, (uintptr_t)1);
 	assert(elem);
 	assert(deque->last == elem);
 	assert(deque->length == 1);
-	elem = diag_deque_push(deque, (void *)2);
+	elem = diag_deque_push(deque, (uintptr_t)2);
 	assert(elem);
 	assert(deque->last == elem);
 	assert(deque->length == 2);

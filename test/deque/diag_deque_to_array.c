@@ -15,7 +15,7 @@ main()
 	deque = diag_deque_new();
 
 	for (i = 0; i < LENGTH; i++) {
-		diag_deque_push(deque, (void *)i);
+		diag_deque_push(deque, (uintptr_t)i);
 	}
 	assert(deque->length == LENGTH);
 	i = 0;

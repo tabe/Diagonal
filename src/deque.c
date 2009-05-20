@@ -89,7 +89,7 @@ diag_deque_shift(diag_deque_t *deque)
 }
 
 diag_deque_elem_t *
-diag_deque_unshift(diag_deque_t *deque, void *attr)
+diag_deque_unshift(diag_deque_t *deque, uintptr_t attr)
 {
 	diag_deque_elem_t *elem;
 
@@ -98,7 +98,7 @@ diag_deque_unshift(diag_deque_t *deque, void *attr)
 }
 
 diag_deque_elem_t *
-diag_deque_push(diag_deque_t *deque, void *attr)
+diag_deque_push(diag_deque_t *deque, uintptr_t attr)
 {
 	diag_deque_elem_t *elem;
 

@@ -66,7 +66,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 	close(fd);
 	*(p + len) = '\0';
 	while (q < p + len) {
-		diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (void *)q);
+		diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
 		diag_rbtree_insert(tree, node);
 		do {
 			if (*q == '\n') {
@@ -118,7 +118,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_cha
 			p[0] = i + 1;
 			p[1] = j + 1;
 			k = (diag_rbtree_key_t)(*metric)((char *)entries[i], (char *)entries[j]);
-			node = diag_rbtree_node_new(k, (void *)p);
+			node = diag_rbtree_node_new(k, (diag_rbtree_attr_t)p);
 			diag_rbtree_insert(comb, node);
 		}
 	}
@@ -155,6 +155,7 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 	return p;
 }
 
+#if 0
 static void
 display_clusters(diag_analysis_t *analysis, int one)
 {
@@ -178,6 +179,7 @@ display_clusters(diag_analysis_t *analysis, int one)
 		}
 	}
 }
+#endif
 
 static diag_distance_t
 metric_log(const diag_datum_t *d1, const diag_datum_t *d2)
@@ -202,7 +204,7 @@ process_cluster_data(diag_datum_t **data, unsigned int num_data, const unsigned 
 
 	for (j = 1; j <= num_data; j++) {
 		if (j != i && parent[j] == i) {
-			diag_deque_push(d, (void *)data[j-1]);
+			diag_deque_push(d, (uintptr_t)data[j-1]);
 			process_cluster_data(data, num_data, parent, j, d);
 		}
 	}
@@ -232,9 +234,9 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 			diag_deque_t *d;
 
 			d = diag_deque_new();
-			diag_deque_push(d, (void *)data[i-1]);
+			diag_deque_push(d, (uintptr_t)data[i-1]);
 			process_cluster_data(data, num_entries, parent, i, d);
-			diag_deque_push(deque, (void *)d);
+			diag_deque_push(deque, (uintptr_t)d);
 		}
 	}
 	analysis->num_clusters = deque->length;
@@ -304,12 +306,6 @@ display_codes(diag_analysis_t *analysis)
 	}
 }
 
-static void
-free_attr(diag_rbtree_key_t key, void *attr)
-{
-	diag_free(attr);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -375,13 +371,15 @@ main(int argc, char *argv[])
 
 	comb = aggregate_combinations(entries, num_entries, metric);
 	parent = process_equivalence_relations(comb, num_entries, t, (one) ? NULL : &occur);
-	diag_rbtree_for_each(comb, free_attr);
+	diag_rbtree_for_each_attr(comb, (diag_rbtree_callback_attr_t)diag_free);
 	diag_rbtree_destroy(comb);
 	if (parent) {
 		diag_analysis_t *analysis;
 
 		analysis = analyze(entries, num_entries, parent);
-/* 		display_clusters(analysis, one); */
+#if 0
+ 		display_clusters(analysis, one);
+#endif
 		diag_encode(analysis);
 		display_codes(analysis);
 		diag_analysis_destroy(analysis);

@@ -113,21 +113,21 @@ diag_delta_hamming_chars(diag_cluster_t *cluster, const char *x, const char *y)
 			if (*y != '\0') {
 				d = diag_delta_new(DIAG_DELTA_APPEND);
 				d->value = (void *)y;
-				diag_deque_push(deque, (void *)d);
+				diag_deque_push(deque, (uintptr_t)d);
 			}
 			break;
 		}
 		if (*y == '\0') {
 			d = diag_delta_new(DIAG_DELTA_TRIM);
 			d->index = i;
-			diag_deque_push(deque, (void *)d);
+			diag_deque_push(deque, (uintptr_t)d);
 			break;
 		}
 		if (*x != *y) {
 			d = diag_delta_new(DIAG_DELTA_REPLACE);
 			d->index = i;
 			d->value = (void *)y;
-			diag_deque_push(deque, (void *)d);
+			diag_deque_push(deque, (uintptr_t)d);
 		}
 	}
 	code = diag_code_new(cluster, deque->length);

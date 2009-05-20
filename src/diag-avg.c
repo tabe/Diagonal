@@ -65,7 +65,7 @@ skip_parameter(diag_port_t *port, diag_deque_t *head, double *vp, uint8_t *xp)
 	while (port->read_byte(port, xp)) {
 		x = *xp;
 		if (DECIMAL_P(x)) {
-			diag_deque_push(tail, (void *)x);
+			diag_deque_push(tail, (uintptr_t)x);
 			continue;
 		}
 		COUPLE_TO_VALUE();
@@ -101,13 +101,13 @@ run_files(char **paths, int n, int fd)
 	buf = (char *)diag_malloc(BUFFER_LENGTH);
 	while ( cont || port->read_byte(port, x) > 0 ) {
 		if (DECIMAL_P(*x)) {
-			diag_deque_push(head, (void *)*x);
+			diag_deque_push(head, (uintptr_t)*x);
 		} else {
 			while ( (e = diag_deque_shift(head)) ) {
 				diag_deque_push(q, e->attr);
 				diag_free(e);
 			}
-			diag_deque_push(q, (void *)*x);
+			diag_deque_push(q, (uintptr_t)*x);
 		}
 		d = 0;
 		for (i = 1; i < n; i++) {
@@ -137,7 +137,7 @@ run_files(char **paths, int n, int fd)
 			value /= n;
 			sprintf(buf, "%f", value);
 			for (i = 0; buf[i]; i++) {
-				diag_deque_push(q, (void *)buf[i]);
+				diag_deque_push(q, (uintptr_t)buf[i]);
 			}
 			while ( (e = diag_deque_shift(head)) ) diag_free(e);
 		} else {
