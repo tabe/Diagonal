@@ -18,6 +18,7 @@
 #define DIAG_EXECUTABLE_PATH_MAX 1024
 
 static const char *commands[] = {
+	"avg",
 	"dec",
 	"enc",
 	"imf",
