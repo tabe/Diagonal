@@ -7,7 +7,7 @@ typedef struct diag_deque_elem_s {
 	struct diag_deque_elem_s *next;
 } diag_deque_elem_t;
 
-typedef struct {
+typedef struct diag_deque_s {
 	diag_deque_elem_t *first;
 	diag_deque_elem_t *last;
 	unsigned int length;
