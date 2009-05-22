@@ -18,20 +18,20 @@ decode3(const char *source, const char *input, const char *output)
 	context = diag_vcdiff_context_new_path(input);
 	context->compatibility = 1;
 	vcdiff = diag_vcdiff_read(context);
-	if (!vcdiff) exit(3);
+	if (!vcdiff) exit(EXIT_FAILURE);
 	vm = diag_vcdiff_vm_new_path(source);
-	if (!vm) exit(2);
-	if (!diag_vcdiff_decode(vm, vcdiff)) exit(1);
+	if (!vm) exit(EXIT_FAILURE);
+	if (!diag_vcdiff_decode(vm, vcdiff)) exit(EXIT_FAILURE);
 	fd = open(output, O_RDONLY);
-	if (fd < 0) exit(1);
+	if (fd < 0) exit(EXIT_FAILURE);
 	r = fstat(fd, &st);
-	if (r < 0) exit(1);
-	if (vm->s_target != (uint32_t)st.st_size) exit(1);
+	if (r < 0) exit(EXIT_FAILURE);
+	if (vm->s_target != (uint32_t)st.st_size) exit(EXIT_FAILURE);
 	expected = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	close(fd);
-	if (!expected) exit(1);
+	if (!expected) exit(EXIT_FAILURE);
 	for (i = 0; i < vm->s_target; i++) {
-		if (vm->target[i] != expected[i]) exit(1);
+		if (vm->target[i] != expected[i]) exit(EXIT_FAILURE);
 	}
 	munmap(expected, st.st_size);
 	diag_vcdiff_vm_destroy(vm);
@@ -62,11 +62,11 @@ fail_to_decode(const char *input)
 	context = diag_vcdiff_context_new_path(input);
 	context->compatibility = 1;
 	vcdiff = diag_vcdiff_read(context);
-	if (!vcdiff) exit(3);
+	if (!vcdiff) exit(EXIT_FAILURE);
 	vm = diag_vcdiff_vm_new_path(NULL);
-	if (!vm) exit(2);
+	if (!vm) exit(EXIT_FAILURE);
 	vcdiff->windows[0] = NULL; /* damaged */
-	if (diag_vcdiff_decode(vm, vcdiff) != NULL) exit(1);
+	if (diag_vcdiff_decode(vm, vcdiff) != NULL) exit(EXIT_FAILURE);
 	diag_vcdiff_vm_destroy(vm);
 	diag_vcdiff_destroy(vcdiff);
 	diag_vcdiff_context_destroy(context);
@@ -82,5 +82,5 @@ main()
 	DECODE3(rfc3284.txt, rfc3284.txt.vcdiff.1, rfc3284.txt);
 	DECODE3(rfc3284.txt.head, rfc3284.txt.vcdiff.2, rfc3284.txt);
 	FAIL_TO_DECODE(hello.vcdiff);
-	return 0;
+	return EXIT_SUCCESS;
 }

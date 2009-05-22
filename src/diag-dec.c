@@ -42,11 +42,11 @@ main(int argc, char *argv[])
 		switch (c) {
 		case 'V':
 			diag_print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 's':
 			path_source = optarg;
@@ -100,5 +100,5 @@ main(int argc, char *argv[])
 	diag_vcdiff_vm_destroy(vm);
 	diag_vcdiff_destroy(vcdiff);
 	diag_vcdiff_context_destroy(context);
-	return 0;
+	return EXIT_SUCCESS;
 }

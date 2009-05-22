@@ -27,7 +27,7 @@ diag_fatal(const char *message, ...)
 	vfprintf(stderr, message, ap);
 	fprintf(stderr, "\n");
 	va_end(ap);
-	_Exit(1);
+	_Exit(EXIT_FAILURE);
 }
 
 void

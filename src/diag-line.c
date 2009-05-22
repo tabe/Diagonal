@@ -65,7 +65,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 	*plen = len = st.st_size;
 	if (S_ISREG(st.st_mode) && len == 0) {
 		diag_rbtree_destroy(tree);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	p = q = (char *)mmap(NULL, len + 1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 	if (p == MAP_FAILED) {
@@ -283,11 +283,11 @@ main(int argc, char *argv[])
 		switch (c) {
 		case 'V':
 			diag_print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'm':
 			found = 0;
@@ -303,7 +303,7 @@ main(int argc, char *argv[])
 				for (i = 0; i < NUM_METRICS; i++) {
 					printf(" %s\n", METRICS[i].name);
 				}
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
 			break;
 		case 't':
@@ -348,5 +348,5 @@ main(int argc, char *argv[])
 	} else {
 		munmap(p, len + 1);
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }

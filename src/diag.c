@@ -40,27 +40,27 @@ main(int argc, char *argv[])
 
 	if (argc < 2) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	while ( (c = getopt(argc, argv, "+Vh")) >= 0) {
 		switch (c) {
 		case 'V':
 			diag_print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		default:
 			usage();
-			exit(1);
+			exit(EXIT_FAILURE);
 			break;
 		}
 	}
 	if (!argv[optind]) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	cmd = argv[optind];
 	assert(argv[0]);

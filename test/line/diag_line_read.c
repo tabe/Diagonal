@@ -9,7 +9,7 @@
 		diag_line_context_destroy(context);					\
 		diag_port_destroy(port);							\
 		close(fd);											\
-		exit(1);											\
+		exit(EXIT_FAILURE);											\
 	}
 
 int
@@ -24,7 +24,7 @@ main()
 	fd = open(__FILE__, O_RDONLY);
 	if (fd < 0) {
 		perror(NULL);
-		return 1;
+		exit(EXIT_FAILURE);
 	}
 	port = diag_port_new_fd(fd, DIAG_PORT_INPUT);
 	ASSERT_NOT_NULL(port);
@@ -52,5 +52,5 @@ main()
 	diag_line_context_destroy(context);
 	diag_port_destroy(port);
 	close(fd);
-	return 0;
+	return EXIT_SUCCESS;
 }

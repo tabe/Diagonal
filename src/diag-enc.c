@@ -319,18 +319,18 @@ main(int argc, char *argv[])
 
 	if (argc < 2) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	while ( (c = getopt(argc, argv, "Vhm:t:1")) >= 0) {
 		unsigned int i, found;
 		switch (c) {
 		case 'V':
 			diag_print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'm':
 			found = 0;
@@ -346,7 +346,7 @@ main(int argc, char *argv[])
 				for (i = 0; i < NUM_METRICS; i++) {
 					printf(" %s\n", METRICS[i].name);
 				}
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
 			break;
 		case 't':
@@ -361,7 +361,7 @@ main(int argc, char *argv[])
 	}
 	if (!argv[optind]) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
@@ -388,5 +388,5 @@ main(int argc, char *argv[])
 	diag_free(occur);
 	diag_free(entries);
 	munmap(p, len + 1);
-	return 0;
+	return EXIT_SUCCESS;
 }

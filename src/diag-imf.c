@@ -326,18 +326,18 @@ main(int argc, char *argv[])
 
 	if (argc < 2) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	while ( (c = getopt(argc, argv, "Vhm:t:1")) >= 0) {
 		unsigned int found;
 		switch (c) {
 		case 'V':
 			diag_print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'm':
 			found = 0;
@@ -353,7 +353,7 @@ main(int argc, char *argv[])
 				for (i = 0; i < NUM_METRICS; i++) {
 					printf(" %s\n", METRICS[i].name);
 				}
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
 			break;
 		case 't':
@@ -366,17 +366,17 @@ main(int argc, char *argv[])
 	}
 	if (!argv[optind]) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	tree = map_paths(&argv[optind]);
 	if (!tree) {
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	entries = serialize_entries(tree, &num_entries);
 	diag_rbtree_destroy(tree);
 	if (!entries) {
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	comb = aggregate_combinations(entries, num_entries, metric);
 	parent = process_equivalence_relations(comb, num_entries, t, (one) ? NULL : &occur);
@@ -389,5 +389,5 @@ main(int argc, char *argv[])
 		diag_free(entries[i]);
 	}
 	diag_free(entries);
-	return 0;
+	return EXIT_SUCCESS;
 }
