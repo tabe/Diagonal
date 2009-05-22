@@ -22,6 +22,7 @@
 #include "diagonal.h"
 #include "diagonal/deque.h"
 #include "diagonal/port.h"
+#include "diagonal/rbtree.h"
 
 #define NUMBER_OF_TRIALS 5
 #define PATH_LENGTH 256
@@ -159,12 +160,29 @@ run_files(char **paths, int n, int fd)
 	diag_free(ports);
 }
 
+static void
+collect_children(diag_rbtree_t *ptree)
+{
+	diag_rbtree_node_t *pnode;
+	pid_t pid;
+
+	assert(ptree);
+	while ( (pnode = diag_rbtree_minimum(ptree)) ) {
+		pid = (pid_t)pnode->key;
+		waitpid(pid, NULL, 0);
+		diag_rbtree_delete(ptree, pnode);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
 	int c, i, n = NUMBER_OF_TRIALS;
 	int leave_output = 0;
-	pid_t pid, *pids;
+	pid_t pid;
+	diag_rbtree_t *ptree;
+	diag_rbtree_node_t *pnode;
+	int status, *stable;
 	char *dir = NULL;
 	char **opaths, **epaths;
 
@@ -185,18 +203,18 @@ main(int argc, char *argv[])
 		switch (c) {
 		case 'V':
 			diag_print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'h':
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		case 'n':
 			n = atoi(optarg);
 			if (n < 0) {
 				diag_fatal("non-negative integer expected, but %d", n);
 			} else if (n == 0) {
-				exit(0);
+				exit(EXIT_SUCCESS);
 			}
 			break;
 		case 'o':
@@ -210,7 +228,7 @@ main(int argc, char *argv[])
 	}
 
 	assert(n > 0);
-	pids = (pid_t *)diag_calloc(n, sizeof(pid_t));
+	ptree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	opaths = (char **)diag_calloc(n << 1, sizeof(char *));
 	epaths = opaths + n;
 	if (!dir) {
@@ -220,6 +238,17 @@ main(int argc, char *argv[])
 		dir = strdup((tmpdir) ? tmpdir : ".");
 		CHECK_DIR();
 	}
+
+#define FAIL() do {								\
+		collect_children(ptree);				\
+		while (i--) {							\
+			diag_free(opaths[i]);				\
+			diag_free(epaths[i]);				\
+		}										\
+		diag_free(opaths);						\
+		exit(EXIT_FAILURE);						\
+	} while (0)
+
 	for (i = 0; i < n; i++) {
 
 #define BUILD_PATHS() do {												\
@@ -229,43 +258,74 @@ main(int argc, char *argv[])
 			(void)sprintf(epaths[i], "%s/diagonal%d.err", dir, pid);	\
 		} while (0)
 
+#define FREE_PATHS() do {						\
+			for (i = 0; i < n; i++) {			\
+				if (!leave_output) {			\
+					unlink(opaths[i]);			\
+					unlink(epaths[i]);			\
+				}								\
+				diag_free(opaths[i]);			\
+				diag_free(epaths[i]);			\
+			}									\
+			diag_free(opaths);					\
+		} while (0)
+
 		pid = fork();
 		if (pid < 0) {
-			while (i--) {
-				diag_free(opaths[i]);
-				diag_free(epaths[i]);
-				waitpid(pids[i], NULL, 0);
-			}
-			diag_free(opaths);
-			diag_free(pids);
-			exit(1);
+			FAIL();
 		} else if (pid == 0) {
 			pid = getpid();
 			BUILD_PATHS();
+			diag_free(dir);
+			diag_rbtree_destroy(ptree);
 			(void)freopen(opaths[i], "wb", stdout);
 			(void)freopen(epaths[i], "wb", stderr);
-			execvp(argv[optind], argv+optind);
+			if (execvp(argv[optind], argv+optind) == -1) {
+				_Exit(EXIT_FAILURE);
+			}
 		} else {
-			pids[i] = pid;
+			pnode = diag_rbtree_node_new((diag_rbtree_key_t)pid, (diag_rbtree_attr_t)i);
+			diag_rbtree_insert(ptree, pnode);
 			BUILD_PATHS();
 		}
 	}
-	for (i = 0; i < n; i++) {
-		waitpid(pids[i], NULL, 0);
-	}
+	diag_free(dir);
+
+	stable = (int *)diag_calloc(n, sizeof(int));
+	do {
+		pid = waitpid((pid_t)-1, &status, WCONTINUED|WNOHANG|WUNTRACED);
+		if (pid == (pid_t)0) {
+			continue;
+		} else if (pid == (pid_t)-1) {
+			exit(EXIT_FAILURE);
+		}
+
+#define DETERMINE_STATUS() do {											\
+			if (diag_rbtree_search(ptree, (diag_rbtree_key_t)pid, &pnode)) { \
+				i = (int)pnode->attr;									\
+				diag_rbtree_delete(ptree, pnode);						\
+				stable[i] = status;										\
+			} else {													\
+				FAIL();													\
+			}															\
+		} while (0)
+
+		if (WIFEXITED(status)) {
+			DETERMINE_STATUS();
+		} else if (WIFSIGNALED(status)) {
+			DETERMINE_STATUS();
+		} else if (WIFSTOPPED(status)) {
+			
+		} else if (WIFCONTINUED(status)) {
+			
+		}
+	} while (diag_rbtree_minimum(ptree));
 
 	run_files(opaths, n, STDOUT_FILENO);
 	run_files(epaths, n, STDERR_FILENO);
 
-	for (i = 0; i < n; i++) {
-		if (!leave_output) {
-			unlink(opaths[i]);
-			unlink(epaths[i]);
-		}
-		diag_free(opaths[i]);
-		diag_free(epaths[i]);
-	}
-	diag_free(opaths);
-	diag_free(pids);
-	return 0;
+	diag_free(stable);
+	FREE_PATHS();
+	diag_rbtree_destroy(ptree);
+	return EXIT_SUCCESS;
 }
