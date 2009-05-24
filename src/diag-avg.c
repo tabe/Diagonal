@@ -36,46 +36,155 @@ usage(void)
 	diag_info("diag-avg [-n num_of_trials] [-o path] command [operand ...]");
 }
 
+enum diag_avg_param_type {
+	DIAG_AVG_PARAM_LONG   = 1,
+	DIAG_AVG_PARAM_DOUBLE = 1<<1,
+};
+
+typedef struct {
+	enum diag_avg_param_type type;
+	union {
+		long int l;
+		double d;
+	} value;
+	unsigned int field_width;
+	int precision;
+} diag_avg_param_t;
+
+static enum diag_avg_param_type
+couple_to_param(diag_deque_t *head, diag_deque_t *tail, diag_avg_param_t *param)
+{
+	char c, *s, *r;
+	diag_deque_elem_t *e;
+	unsigned int len;
+	int precision = -1;
+	int i = 0;
+	enum diag_avg_param_type type = DIAG_AVG_PARAM_LONG;
+
+	len = head->length + tail->length;
+	s = (char *)diag_malloc(len + 1);
+
+#define FILLUP(q) do {								\
+		DIAG_DEQUE_FOR_EACH(q, e) {					\
+			c = (char)e->attr;						\
+			switch (c) {							\
+			case '.':								\
+				type = DIAG_AVG_PARAM_DOUBLE;		\
+				precision = 0;						\
+				break;								\
+			default:								\
+				if (precision >= 0) precision++;	\
+				break;								\
+			}										\
+			s[i++] = c;								\
+		}											\
+	} while (0)
+
+	FILLUP(head);
+	FILLUP(tail);
+	s[len] = '\0';
+	param->type = type;
+	param->field_width = len;
+	param->precision = precision;
+	switch (type) {
+	case DIAG_AVG_PARAM_LONG:
+		param->value.l = atol(s);
+		break;
+	default:
+		param->value.d = strtod(s, &r);
+		break;
+	}
+	diag_free(s);
+	return type;
+}
+
 static int
-skip_parameter(diag_port_t *port, diag_deque_t *head, double *vp, uint8_t *xp)
+read_parameter(diag_port_t *port, diag_deque_t *head, diag_avg_param_t *param, uint8_t *xp)
 {
 	diag_deque_t *tail;
 	uint8_t x;
+	int r = 0;
 
-	assert(port && tail && vp && xp);
+	assert(port && tail && param && xp);
 	tail = diag_deque_new();
-
-#define COUPLE_TO_VALUE() do {					\
-		char *s, *r;							\
-		diag_deque_elem_t *e;					\
-		unsigned int len, i = 0;				\
-												\
-		len = head->length + tail->length;		\
-		s = (char *)diag_malloc(len + 1);		\
-		DIAG_DEQUE_FOR_EACH(head, e) {			\
-			s[i++] = (char)e->attr;				\
-		}										\
-		DIAG_DEQUE_FOR_EACH(tail, e) {			\
-			s[i++] = (char)e->attr;				\
-		}										\
-		s[len] = '\0';							\
-		*vp = strtod(s, &r);					\
-		diag_free(s);							\
-	} while (0)
-
-	while (port->read_byte(port, xp)) {
+	do {
 		x = *xp;
 		if (DECIMAL_P(x)) {
 			diag_deque_push(tail, (uintptr_t)x);
-			continue;
+		} else {
+			r = 1;
+			break;
 		}
-		COUPLE_TO_VALUE();
-		diag_deque_destroy(tail);
-		return 1;
-	}
-	COUPLE_TO_VALUE();
+	} while (port->read_byte(port, xp));
+	couple_to_param(head, tail, param);
 	diag_deque_destroy(tail);
-	return 0;
+	return r;
+}
+
+static long int
+average_long(int n, diag_avg_param_t *param, char *buf)
+{
+	diag_avg_param_t *p;
+	long int l = 0;
+	int i;
+
+	assert(n > 0 && param);
+	for (i = 0; i < n; i++) {
+		p = param+i;
+		assert(p->type == DIAG_AVG_PARAM_LONG);
+		l += p->value.l;
+	}
+	l /= n;
+	sprintf(buf, "%ld", l);
+	return l;
+}
+
+static double
+average_double(int n, diag_avg_param_t *param, char *buf)
+{
+	diag_avg_param_t *p;
+	double d = 0;
+	unsigned int field_width = 0;
+	int precision = 0;
+	int i;
+
+	assert(n > 0 && param);
+	for (i = 0; i < n; i++) {
+		p = param+i;
+		switch (p->type) {
+		case DIAG_AVG_PARAM_LONG:
+			d += (double)p->value.l;
+			break;
+		default:
+			d += p->value.d;
+			if (field_width < p->field_width) field_width = p->field_width;
+			if (precision < p->precision) precision = p->precision;
+			break;
+		}
+	}
+	d /= n;
+	sprintf(buf, "%0*.*f", field_width, precision, d);
+	return d;
+}
+
+static void
+average_parameters(int n, diag_deque_t *q, diag_avg_param_t *param, char *buf)
+{
+	int i;
+	unsigned int t = 0;
+
+	assert(n > 0 && q && param && buf);
+	for (i = 0; i < n; i++) {
+		t |= (unsigned int)(param+i)->type;
+	}
+	if (t & DIAG_AVG_PARAM_DOUBLE) {
+		average_double(n, param, buf);
+	} else {
+		average_long(n, param, buf);
+	}
+	for (i = 0; buf[i]; i++) {
+		diag_deque_push(q, (uintptr_t)buf[i]);
+	}
 }
 
 static void
@@ -86,7 +195,7 @@ run_files(char **paths, int n, int fd)
 	int d, cont;
 	diag_deque_t *q, *head;
 	diag_deque_elem_t *e;
-	double value, *values;
+	diag_avg_param_t *param;
 	char *buf;
 
 	ports = (diag_port_t **)diag_calloc(n, sizeof(diag_port_t *));
@@ -98,7 +207,7 @@ run_files(char **paths, int n, int fd)
 	q = diag_deque_new();
 	head = diag_deque_new();
 	cont = 0;
-	values = (double *)diag_calloc(n, sizeof(double));
+	param = (diag_avg_param_t *)diag_calloc(n, sizeof(diag_avg_param_t));
 	buf = (char *)diag_malloc(BUFFER_LENGTH);
 	while ( cont || port->read_byte(port, x) > 0 ) {
 		if (DECIMAL_P(*x)) {
@@ -125,21 +234,15 @@ run_files(char **paths, int n, int fd)
 			}
 		}
 		if (d) {
-			cont = skip_parameter(port, head, values, x);
+			assert(head->length > 0);
+			(void)diag_deque_pop(head);
+			cont = read_parameter(port, head, param, x);
 			for (i = 1; i < n; i++) {
-				if (cont != skip_parameter(ports[i], head, values+i, x+i)) {
+				if (cont != read_parameter(ports[i], head, param+i, x+i)) {
 					diag_fatal("unexpected eof");
 				}
 			}
-			value = 0;
-			for (i = 0; i < n; i++) {
-				value += values[i];
-			}
-			value /= n;
-			sprintf(buf, "%f", value);
-			for (i = 0; buf[i]; i++) {
-				diag_deque_push(q, (uintptr_t)buf[i]);
-			}
+			average_parameters(n, q, param, buf);
 			while ( (e = diag_deque_shift(head)) ) diag_free(e);
 		} else {
 			cont = 0;
@@ -150,7 +253,7 @@ run_files(char **paths, int n, int fd)
 		diag_free(e);
 	}
 	diag_free(buf);
-	diag_free(values);
+	diag_free(param);
 	diag_deque_destroy(head);
 	diag_deque_destroy(q);
 	diag_free(x);
@@ -199,7 +302,7 @@ main(int argc, char *argv[])
 		}												\
 	} while (0)
 
-	while ( (c = getopt(argc, argv, "Vhn:o:")) >= 0) {
+	while ( (c = getopt(argc, argv, "+Vhn:o:")) >= 0) {
 		switch (c) {
 		case 'V':
 			diag_print_version();

@@ -1,6 +1,7 @@
 set(tests
     diag-avg-true
     diag-avg-cat
+    diag-avg-pid
 )
 get_target_property(diag-avg-path diag-avg LOCATION)
 set(DIAG_AVG ${diag-avg-path})
@@ -10,3 +11,4 @@ foreach(test ${tests})
                  @ONLY)
   add_test(${test} sh "${test}.sh")
 endforeach(test ${tests})
+add_executable(diag-avg-pid diag-avg-pid.c)

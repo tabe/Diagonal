@@ -1,0 +1,10 @@
+#!/bin/sh
+
+rm *.out *.err
+a=`@DIAG_AVG@ -o . @DIAGONAL_BINARY_DIR@/test/diag-avg/diag-avg-pid`
+s=0
+for o in *.out; do
+    x=`cat $o`
+    s=`echo $(($s + $x))`
+done
+test "$a" = "$(($s / 5))"
