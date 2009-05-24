@@ -19,5 +19,5 @@ main()
 	assert(-1 == diag_ehamming_chars("Wednesday", "Sunday", 9));
 	assert(3 == diag_ehamming_chars("kitten", "sitting", 19));
 	assert(-1 == diag_ehamming_chars("kitten", "sitting", 1));
-	return 0;
+	return EXIT_SUCCESS;
 }

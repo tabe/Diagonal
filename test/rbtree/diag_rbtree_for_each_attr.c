@@ -26,5 +26,5 @@ main()
 	}
 	diag_rbtree_for_each_attr(tree, count);
 	diag_rbtree_destroy(tree);
-	return 0;
+	return EXIT_SUCCESS;
 }

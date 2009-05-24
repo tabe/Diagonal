@@ -41,5 +41,5 @@ main()
 	ASSERT_EQ_INT(1, port->write_bytes(port, 3, (const uint8_t *)"oo\n"));
 	ASSERT_EQ_SIZE(4, port->o_pos);
 	diag_port_destroy(port);
-	return 0;
+	return EXIT_SUCCESS;
 }

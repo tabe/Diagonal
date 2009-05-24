@@ -13,5 +13,5 @@ main()
 	assert(3 == diag_hamming_chars("Monday", "Friday"));
 	assert(9 == diag_hamming_chars("Wednesday", "Sunday"));
 	assert(3 == diag_hamming_chars("kitten", "sitting"));
-	return 0;
+	return EXIT_SUCCESS;
 }

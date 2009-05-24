@@ -38,5 +38,5 @@ main()
 
 	diag_deque_destroy(deque);
 
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -36,5 +36,5 @@ main()
 	diag_imf_destroy(imf);
 	free(s);
 
-	return 0;
+	return EXIT_SUCCESS;
 }

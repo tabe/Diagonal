@@ -51,5 +51,5 @@ main()
 	assert(strcmp("hello, world.\n", (const char *)target) == 0);
 	diag_vcdiff_vm_destroy(vm);
 	diag_vcdiff_context_destroy(context);
-	return 0;
+	return EXIT_SUCCESS;
 }

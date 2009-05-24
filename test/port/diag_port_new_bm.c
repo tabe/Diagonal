@@ -33,5 +33,5 @@ main()
 	ASSERT_EQ_SIZE(4, port->i_pos);
 
 	diag_port_destroy(port);
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -24,5 +24,5 @@ main()
 	ASSERT_EQ_UINT8(110, buf[1]);
 	ASSERT_EQ_SIZE(3, port->i_pos);
 	diag_port_destroy(port);
-	return 0;
+	return EXIT_SUCCESS;
 }

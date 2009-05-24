@@ -45,5 +45,5 @@ main()
 
 	while (tree->root) diag_rbtree_delete(tree, tree->root);
 	diag_rbtree_destroy(tree);
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -23,5 +23,5 @@ main()
 	assert(-1 == diag_elevenshtein_chars("Wednesday", "Sunday", 5));
 	assert(3 == diag_elevenshtein_chars("kitten", "sitting", 20));
 	assert(-1 == diag_elevenshtein_chars("kitten", "sitting", 1));
-	return 0;
+	return EXIT_SUCCESS;
 }

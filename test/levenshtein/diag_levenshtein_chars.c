@@ -15,5 +15,5 @@ main()
 	assert(3 == diag_levenshtein_chars("Monday", "Friday"));
 	assert(5 == diag_levenshtein_chars("Wednesday", "Sunday"));
 	assert(3 == diag_levenshtein_chars("kitten", "sitting"));
-	return 0;
+	return EXIT_SUCCESS;
 }
