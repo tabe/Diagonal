@@ -47,7 +47,9 @@
 	} while (0)
 
 #define ASSERT_EQ_INT(expected, expr) ASSERT_EQ_(int, expected, expr)
+#define ASSERT_EQ_UINT(expected, expr) ASSERT_EQ_(unsigned int, expected, expr)
 #define ASSERT_EQ_UINT8(expected, expr) ASSERT_EQ_(uint8_t, expected, expr)
+#define ASSERT_EQ_UINTPTR(expected, expr) ASSERT_EQ_(uintptr_t, expected, expr)
 #define ASSERT_EQ_SIZE(expected, expr) ASSERT_EQ_(size_t, expected, expr)
 
 #define ASSERT_EQ_STRING(expected, expr) do {							\

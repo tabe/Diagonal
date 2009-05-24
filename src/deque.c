@@ -114,3 +114,31 @@ diag_deque_pop(diag_deque_t *deque)
 	DIAG_DEQUE_REMOVE(last, first, next, prev);
 	return elem;
 }
+
+unsigned int
+diag_deque_append(diag_deque_t *head, diag_deque_t *tail)
+{
+	unsigned int len;
+	diag_deque_elem_t *x, *y;
+
+	assert(head && tail);
+	if (tail->length == 0) return head->length;
+	if (head->length == 0) {
+		head->first  = tail->first;
+		head->last   = tail->last;
+		head->length = tail->length;
+	} else {
+		len = head->length + tail->length;
+		x = head->last;
+		y = tail->first;
+		assert(x && y);
+		x->next = y;
+		y->prev = x;
+		head->length = len;
+		head->last = tail->last;
+	}
+	tail->first = NULL;
+	tail->last = NULL;
+	tail->length = 0;
+	return head->length;
+}

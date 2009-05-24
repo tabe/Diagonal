@@ -1,6 +1,7 @@
 set(tests
     diag_deque_push_and_pop
     diag_deque_to_array
+    diag_deque_append
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")

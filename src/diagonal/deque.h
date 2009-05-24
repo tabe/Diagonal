@@ -35,6 +35,8 @@ extern diag_deque_elem_t *diag_deque_pop(diag_deque_t *deque);
 extern diag_deque_elem_t *diag_deque_shift(diag_deque_t *deque);
 extern diag_deque_elem_t *diag_deque_unshift(diag_deque_t *deque, uintptr_t attr);
 
+extern unsigned int diag_deque_append(diag_deque_t *head, diag_deque_t *tail);
+
 DIAG_C_DECL_END
 
 #endif

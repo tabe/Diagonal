@@ -213,10 +213,7 @@ run_files(char **paths, int n, int fd)
 		if (DECIMAL_P(*x)) {
 			diag_deque_push(head, (uintptr_t)*x);
 		} else {
-			while ( (e = diag_deque_shift(head)) ) {
-				diag_deque_push(q, e->attr);
-				diag_free(e);
-			}
+			diag_deque_append(q, head);
 			diag_deque_push(q, (uintptr_t)*x);
 		}
 		d = 0;
