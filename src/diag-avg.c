@@ -378,8 +378,12 @@ main(int argc, char *argv[])
 			BUILD_PATHS();
 			diag_free(dir);
 			diag_rbtree_destroy(ptree);
-			(void)freopen(opaths[i], "wb", stdout);
-			(void)freopen(epaths[i], "wb", stderr);
+			if (!freopen(opaths[i], "wb", stdout)) {
+				_Exit(EXIT_FAILURE);
+			}
+			if (!freopen(epaths[i], "wb", stderr)) {
+				_Exit(EXIT_FAILURE);
+			}
 			if (execvp(argv[optind], argv+optind) == -1) {
 				_Exit(EXIT_FAILURE);
 			}
