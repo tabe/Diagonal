@@ -25,7 +25,7 @@
 #include "diagonal/rbtree.h"
 
 #define NUMBER_OF_TRIALS 5
-#define PATH_LENGTH 256
+#define PATH_LENGTH 1024
 #define BUFFER_LENGTH 256
 
 #define DECIMAL_P(x) ( ('0' <= (x) && (x) <= '9') || (x) == '.')
@@ -274,6 +274,21 @@ collect_children(diag_rbtree_t *ptree)
 	}
 }
 
+static void
+build_path(char **paths, int i, const char *format, char *dir, pid_t pid)
+{
+	int len;
+
+	assert(paths && format);
+	paths[i] = (char *)diag_malloc(PATH_LENGTH);
+	len = sprintf(paths[i], format, dir, pid);
+	if (len < 0) {
+		diag_fatal("fail to build path");
+	} else if (PATH_LENGTH <= len) {
+		diag_fatal("exceed PATH_LENGTH");
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -352,10 +367,8 @@ main(int argc, char *argv[])
 	for (i = 0; i < n; i++) {
 
 #define BUILD_PATHS() do {												\
-			opaths[i] = (char *)diag_calloc(PATH_LENGTH, 1);			\
-			(void)sprintf(opaths[i], "%s/diagonal%d.out", dir, pid);	\
-			epaths[i] = (char *)diag_calloc(PATH_LENGTH, 1);			\
-			(void)sprintf(epaths[i], "%s/diagonal%d.err", dir, pid);	\
+			build_path(opaths, i, "%s/diagonal%d.out", dir, pid);		\
+			build_path(epaths, i, "%s/diagonal%d.err", dir, pid);		\
 		} while (0)
 
 #define FREE_PATHS() do {						\
