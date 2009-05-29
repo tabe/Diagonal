@@ -65,24 +65,31 @@ main(int argc, char *argv[])
 	cmd = argv[optind];
 	assert(argv[0]);
 	path = strdup(argv[0]);
-	dir = dirname(path);
+	if (!path) {
+		diag_fatal("could not duplicate path");
+	}
 	for (i = 0; commands[i]; i++) {
 		if (strcmp(cmd, commands[i]) == 0) {
 			char *e;
 			int elen;
+
+			dir = dirname(path);
 			e = (char *)diag_malloc(DIAG_EXECUTABLE_PATH_MAX + 1);
 			if (strcmp(".", dir) == 0) {
 				elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "diag-%s", commands[i]);
 			} else {
 				elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "%s/diag-%s", dir, commands[i]);
 			}
-			if (DIAG_EXECUTABLE_PATH_MAX <= elen) {
+			if (elen < 0) {
+				diag_fatal("fail to construct command path");
+			} else if (DIAG_EXECUTABLE_PATH_MAX <= elen) {
 				diag_fatal("exceed DIAG_EXECUTABLE_PATH_MAX");
 			}
 			free(path);
 			execvp(e, &argv[optind]);
 		}
 	}
+	free(path);
 	usage();
-	return 1;
+	return EXIT_FAILURE;
 }
