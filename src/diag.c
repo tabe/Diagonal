@@ -21,6 +21,7 @@ static const char *commands[] = {
 	"avg",
 	"dec",
 	"enc",
+	"fix",
 	"imf",
 	"line",
 	NULL
