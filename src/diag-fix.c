@@ -1,17 +1,27 @@
 #include "config.h"
 
 #include <assert.h>
+#ifdef HAVE_FCNTL_H
 #include <fcntl.h>
+#endif
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "diagonal.h"
+
+#define BUFFER_LENGTH 1024
 
 static void
 usage(void)
@@ -94,13 +104,13 @@ main(int argc, char *argv[])
 	} else { /* parent */
 		close(ofd1[1]);
 		close(ifd1[0]);
-		s1 = 1024;
+		s1 = BUFFER_LENGTH;
 		m1 = (char *)diag_malloc(s1);
 		s = 0;
 		while (read(STDIN_FILENO, (void *)m1+s, 1) > 0) {
 			write(ifd1[1], (void *)m1+s, 1);
 			if (++s == s1) {
-				s1 += 1024;
+				s1 += BUFFER_LENGTH;
 				m1 = diag_realloc(m1, s1);
 			}
 		}
@@ -139,7 +149,7 @@ main(int argc, char *argv[])
 		} else { /* parent */											\
 			close(ofd##x[1]);											\
 			close(ifd##x[0]);											\
-			s##x = 1024;												\
+			s##x = BUFFER_LENGTH;										\
 			m##x = (char *)diag_malloc(s##x);							\
 			s = 0;														\
 			while (read(ofd##y[0], (void *)m##x+s, 1) > 0) {			\
@@ -147,7 +157,7 @@ main(int argc, char *argv[])
 					exit(EXIT_FAILURE);									\
 				}														\
 				if (++s == s##x) {										\
-					s##x += 1024;										\
+					s##x += BUFFER_LENGTH;								\
 					m##x = (char *)diag_realloc((void *)m##x, s##x);	\
 				}														\
 			}															\
