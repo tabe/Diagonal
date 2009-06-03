@@ -17,6 +17,15 @@
 
 #define DIAG_EXECUTABLE_PATH_MAX 1024
 
+enum diag_command_index_e {
+	DIAG_COMMAND_AVG,
+	DIAG_COMMAND_DEC,
+	DIAG_COMMAND_ENC,
+	DIAG_COMMAND_FIX,
+	DIAG_COMMAND_IMF,
+	DIAG_COMMAND_LINE,
+};
+
 static const char *commands[] = {
 	"avg",
 	"dec",
@@ -24,8 +33,34 @@ static const char *commands[] = {
 	"fix",
 	"imf",
 	"line",
-	NULL
 };
+
+#define NUM_OF_COMMANDS (sizeof(commands)/sizeof(commands[0]))
+
+struct diag_command_variation_s {
+	unsigned int i;
+	char *name;
+} command_variations[] = {
+	{DIAG_COMMAND_AVG, "average"},
+	{DIAG_COMMAND_AVG, "avg"},
+	{DIAG_COMMAND_DEC, "dec"},
+	{DIAG_COMMAND_DEC, "decode"},
+	{DIAG_COMMAND_ENC, "enc"},
+	{DIAG_COMMAND_ENC, "encode"},
+	{DIAG_COMMAND_FIX, "fix"},
+	{DIAG_COMMAND_IMF, "imf"},
+	{DIAG_COMMAND_LINE, "line"},
+};
+
+#define NUM_OF_COMMAND_VARIATIONS (sizeof(command_variations)/sizeof(command_variations[0]))
+
+static int
+cmpcmd(const void *x, const void *y)
+{
+	struct diag_command_variation_s *cx = (struct diag_command_variation_s *)x;
+	struct diag_command_variation_s *cy = (struct diag_command_variation_s *)y;
+	return strcmp(cx->name, cy->name);
+}
 
 static void
 usage(void)
@@ -36,8 +71,10 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-	char c, *path, *dir, *cmd;
-	unsigned int i;
+	char c, *e, *path, *dir;
+	const char *cmd;
+	struct diag_command_variation_s cv, *found;
+	int elen;
 
 	if (argc < 2) {
 		usage();
@@ -63,34 +100,35 @@ main(int argc, char *argv[])
 		usage();
 		exit(EXIT_FAILURE);
 	}
-	cmd = argv[optind];
+	cv.name = argv[optind];
 	assert(argv[0]);
 	path = strdup(argv[0]);
 	if (!path) {
 		diag_fatal("could not duplicate path");
 	}
-	for (i = 0; commands[i]; i++) {
-		if (strcmp(cmd, commands[i]) == 0) {
-			char *e;
-			int elen;
-
-			dir = dirname(path);
-			e = (char *)diag_malloc(DIAG_EXECUTABLE_PATH_MAX + 1);
-			if (strcmp(".", dir) == 0) {
-				elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "diag-%s", commands[i]);
-			} else {
-				elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "%s/diag-%s", dir, commands[i]);
-			}
-			if (elen < 0) {
-				diag_fatal("fail to construct command path");
-			} else if (DIAG_EXECUTABLE_PATH_MAX <= elen) {
-				diag_fatal("exceed DIAG_EXECUTABLE_PATH_MAX");
-			}
-			free(path);
-			execvp(e, &argv[optind]);
-		}
+	found = (struct diag_command_variation_s *)bsearch(&cv, (const void *)command_variations, NUM_OF_COMMAND_VARIATIONS, sizeof(struct diag_command_variation_s), cmpcmd);
+	if (!found) {
+		usage();
+		exit(EXIT_FAILURE);
+	}
+	assert(found->i < NUM_OF_COMMANDS);
+	cmd = commands[found->i];
+	dir = dirname(path);
+	e = (char *)diag_malloc(DIAG_EXECUTABLE_PATH_MAX + 1);
+	if (strcmp(dir, path) == 0) {
+		elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "diag-%s", cmd);
+	} else {
+		elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "%s/diag-%s", dir, cmd);
+	}
+	if (elen < 0) {
+		diag_fatal("failed to construct command path");
+	} else if (DIAG_EXECUTABLE_PATH_MAX <= elen) {
+		diag_fatal("exceed DIAG_EXECUTABLE_PATH_MAX");
 	}
 	free(path);
-	usage();
-	return EXIT_FAILURE;
+	if (execvp(e, &argv[optind]) == -1) {
+		diag_free(e);
+		diag_fatal("failed to exec");
+	}
+	return EXIT_SUCCESS;
 }
