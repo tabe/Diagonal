@@ -1,14 +1,15 @@
 #include "config.h"
 
 #include <assert.h>
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
