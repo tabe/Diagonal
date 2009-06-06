@@ -10,6 +10,7 @@ set(subdirectories
     imf
     diag-avg
     diag-fix
+    diag
 )
 set(DIAGONAL_TEST_DIR "${DIAGONAL_SOURCE_DIR}/test")
 include_directories(BEFORE "${DIAGONAL_BINARY_DIR}/test")

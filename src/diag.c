@@ -71,7 +71,8 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-	char c, *e, *path, *dir;
+	char c, *e;
+	char *path1, *path2, *dir, *base;
 	const char *cmd;
 	struct diag_command_variation_s cv, *found;
 	int elen;
@@ -96,16 +97,12 @@ main(int argc, char *argv[])
 			break;
 		}
 	}
+
 	if (!argv[optind]) {
 		usage();
 		exit(EXIT_FAILURE);
 	}
 	cv.name = argv[optind];
-	assert(argv[0]);
-	path = strdup(argv[0]);
-	if (!path) {
-		diag_fatal("could not duplicate path");
-	}
 	found = (struct diag_command_variation_s *)bsearch(&cv, (const void *)command_variations, NUM_OF_COMMAND_VARIATIONS, sizeof(struct diag_command_variation_s), cmpcmd);
 	if (!found) {
 		usage();
@@ -113,9 +110,20 @@ main(int argc, char *argv[])
 	}
 	assert(found->i < NUM_OF_COMMANDS);
 	cmd = commands[found->i];
-	dir = dirname(path);
+
+	assert(argv[0]);
+	path1 = strdup(argv[0]);
+	if (!path1) {
+		diag_fatal("could not duplicate path");
+	}
+	path2 = strdup(argv[0]);
+	if (!path2) {
+		diag_fatal("could not duplicate path");
+	}
+	dir = dirname(path1);
+	base = basename(path2);
 	e = (char *)diag_malloc(DIAG_EXECUTABLE_PATH_MAX + 1);
-	if (strcmp(dir, path) == 0) {
+	if (strcmp(base, argv[0]) == 0) {
 		elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "diag-%s", cmd);
 	} else {
 		elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "%s/diag-%s", dir, cmd);
@@ -125,7 +133,8 @@ main(int argc, char *argv[])
 	} else if (DIAG_EXECUTABLE_PATH_MAX <= elen) {
 		diag_fatal("exceed DIAG_EXECUTABLE_PATH_MAX");
 	}
-	free(path);
+	free(path1);
+	free(path2);
 	if (execvp(e, &argv[optind]) == -1) {
 		diag_free(e);
 		diag_fatal("failed to exec");

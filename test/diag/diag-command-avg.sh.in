@@ -1,0 +1,3 @@
+#!/bin/sh
+
+@DIAG_COMMAND@ avg time uptime
