@@ -1,5 +1,3 @@
 #!/bin/sh
 
-FILE=@DIAGONAL_BINARY_DIR@/test/diag/diag-command-avg.sh
-
 @DIAG_COMMAND@ avg time uptime
