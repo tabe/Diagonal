@@ -59,9 +59,13 @@ write_byte_fd(diag_port_t *port, uint8_t i)
 	int r;
 
 	assert(port);
+ retry:
 	r = (int)write(port->stream.fd, (const void *)&i, 1);
 	if (r > 0) port->o_pos += r;
-	if (r == -1) diag_error("write error: %s", strerror(errno));
+	if (r == -1) {
+		if (errno == EINTR) goto retry;
+		diag_error("write error: %s", strerror(errno));
+	}
 	return r;
 }
 
@@ -72,6 +76,7 @@ write_bytes_fd(diag_port_t *port, size_t size, const uint8_t *buf)
 
 	assert(port && buf);
 	if (size == 0) return 1; /* nothing to do */
+ retry:
 	if ( (size_t)(s = write(port->stream.fd, (const void *)buf, size)) == size) {
 		port->o_pos += size;
 		return 1;
@@ -79,6 +84,7 @@ write_bytes_fd(diag_port_t *port, size_t size, const uint8_t *buf)
 		port->o_pos += (size_t)s;
 		return 0;
 	} else {
+		if (errno == EINTR) goto retry;
 		diag_error("write error: %s", strerror(errno));
 		return -1;
 	}

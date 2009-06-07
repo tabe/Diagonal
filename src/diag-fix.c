@@ -21,6 +21,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/port.h"
 
 #define BUFFER_LENGTH 1024
 
@@ -103,21 +104,25 @@ main(int argc, char *argv[])
 	} else if (pid1 == 0) { /* child */
 		execute_program(argv+optind, ifd1, ofd1);
 	} else { /* parent */
+		diag_port_t *port;
+
 		close(ofd1[1]);
 		close(ifd1[0]);
 		s1 = BUFFER_LENGTH;
 		m1 = (char *)diag_malloc(s1);
 		s = 0;
+		port = diag_port_new_fd(ifd1[1], DIAG_PORT_OUTPUT);
 		while (read(STDIN_FILENO, (void *)m1+s, 1) > 0) {
-			write(ifd1[1], (void *)m1+s, 1);
+			port->write_byte(port, (uint8_t)m1[s]);
 			if (++s == s1) {
 				s1 += BUFFER_LENGTH;
 				m1 = diag_realloc(m1, s1);
 			}
 		}
+		diag_port_destroy(port);
+		close(ifd1[1]);
 		s1 = s;
 		m1 = (char *)diag_realloc((void *)m1, s1);
-		close(ifd1[1]);
 	}
 
 #define RUN(x, y) do {													\
@@ -148,13 +153,16 @@ main(int argc, char *argv[])
 		} else if (pid##x == 0) { /* child */							\
 			execute_program(argv+optind, ifd##x, ofd##x);				\
 		} else { /* parent */											\
+			diag_port_t *port;											\
+																		\
 			close(ofd##x[1]);											\
 			close(ifd##x[0]);											\
 			s##x = BUFFER_LENGTH;										\
 			m##x = (char *)diag_malloc(s##x);							\
 			s = 0;														\
+			port = diag_port_new_fd(ifd##x[1], DIAG_PORT_OUTPUT);		\
 			while (read(ofd##y[0], (void *)m##x+s, 1) > 0) {			\
-				if (write(ifd##x[1], (void *)m##x+s, 1) < 1) {			\
+				if (port->write_byte(port, m##x[s]) < 1) {				\
 					exit(EXIT_FAILURE);									\
 				}														\
 				if (++s == s##x) {										\
@@ -162,6 +170,7 @@ main(int argc, char *argv[])
 					m##x = (char *)diag_realloc((void *)m##x, s##x);	\
 				}														\
 			}															\
+			diag_port_destroy(port);									\
 			close(ifd##x[1]);											\
 			s##x = s;													\
 			m##x = (char *)diag_realloc((void *)m##x, s##x);			\
@@ -175,9 +184,13 @@ main(int argc, char *argv[])
 					}													\
 				}														\
 				if (!d) {												\
+					diag_port_t *port;									\
+																		\
 					kill(pid##x, SIGINT);								\
 					waitpid(pid##x, NULL, 0);							\
-					ss = write(STDOUT_FILENO, (void *)m##x, s##x);		\
+					port = diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT); \
+					ss = port->write_bytes(port, s##x, (uint8_t *)m##x); \
+					diag_port_destroy(port);							\
 					if (ss < 0 || (size_t)ss < s##x) {					\
 						exit(EXIT_FAILURE);								\
 					}													\

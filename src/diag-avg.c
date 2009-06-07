@@ -190,7 +190,7 @@ average_parameters(int n, diag_deque_t *q, diag_avg_param_t *param, char *buf)
 static void
 run_files(char **paths, int n, int fd)
 {
-	diag_port_t **ports, *port;
+	diag_port_t **ports, *port, *fdport;
 	uint8_t i, *x;
 	int d, cont;
 	diag_deque_t *q, *head;
@@ -245,10 +245,12 @@ run_files(char **paths, int n, int fd)
 			cont = 0;
 		}
 	}
+	fdport = diag_port_new_fd(fd, DIAG_PORT_OUTPUT);
 	while ( (e = diag_deque_shift(q)) ) {
-		write(fd, &e->attr, 1);
+		fdport->write_byte(fdport, (uint8_t)e->attr);
 		diag_free(e);
 	}
+	diag_port_destroy(fdport);
 	diag_free(buf);
 	diag_free(param);
 	diag_deque_destroy(head);

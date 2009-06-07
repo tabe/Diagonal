@@ -77,6 +77,7 @@ main(int argc, char *argv[])
 	}
 	if (diag_vcdiff_decode(vm, vcdiff)) {
 		int fd;
+		diag_port_t *port;
 		ssize_t s;
 
 		if (path_target) {
@@ -88,12 +89,13 @@ main(int argc, char *argv[])
 		} else {
 			fd = STDOUT_FILENO;
 		}
-		s = write(fd, vm->target, vm->s_target);
-		if (s < 0) {
-			perror(strerror(errno));
-			return 1;
-		}
+		port = diag_port_new_fd(fd, DIAG_PORT_OUTPUT);
+		s = port->write_bytes(port, vm->s_target, vm->target);
+		diag_port_destroy(port);
 		close(fd);
+		if (s < 0) {
+			exit(EXIT_FAILURE);
+		}
 	} else {
 		diag_fatal("could not decode vcdiff");
 	}
