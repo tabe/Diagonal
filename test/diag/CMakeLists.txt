@@ -1,4 +1,5 @@
 set(tests
+    diag-option-l
     diag-command-average
     diag-command-avg
     diag-command-fix

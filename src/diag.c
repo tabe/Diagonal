@@ -65,7 +65,25 @@ cmpcmd(const void *x, const void *y)
 static void
 usage(void)
 {
-	diag_info("diag <command> ...");
+	diag_info("diag [-l] <command> ...");
+}
+
+static void
+print_commands(void)
+{
+	unsigned int i, j, k = 0;
+
+	diag_printf("available commands are:");
+	for (i = 0; i < NUM_OF_COMMANDS; i++) {
+		for (j = k; k < NUM_OF_COMMAND_VARIATIONS && command_variations[k].i == i; k++) ;
+		if (k - j == 1) {
+			diag_printf("  %s", commands[i]);
+		} else if (strcmp(commands[i], command_variations[j].name) == 0) {
+			diag_printf("  %-8s(%s)", command_variations[j+1].name, commands[i]);
+		} else {
+			diag_printf("  %-8s(%s)", command_variations[j].name, commands[i]);
+		}
+	}
 }
 
 int
@@ -81,7 +99,7 @@ main(int argc, char *argv[])
 		usage();
 		exit(EXIT_FAILURE);
 	}
-	while ( (c = getopt(argc, argv, "+Vh")) >= 0) {
+	while ( (c = getopt(argc, argv, "+Vhl")) >= 0) {
 		switch (c) {
 		case 'V':
 			diag_print_version();
@@ -89,6 +107,10 @@ main(int argc, char *argv[])
 			break;
 		case 'h':
 			usage();
+			exit(EXIT_SUCCESS);
+			break;
+		case 'l':
+			print_commands();
 			exit(EXIT_SUCCESS);
 			break;
 		default:
