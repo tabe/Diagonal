@@ -87,6 +87,25 @@ diag_info(const char *message, ...)
 	va_end(ap);
 }
 
+void
+diag_vprintf(const char *message, va_list ap)
+{
+	assert(message);
+	vfprintf(stdout, message, ap);
+	fprintf(stdout, "\n");
+}
+
+void
+diag_printf(const char *message, ...)
+{
+	va_list ap;
+
+	assert(message);
+	va_start(ap, message);
+	diag_vprintf(message, ap);
+	va_end(ap);
+}
+
 void *
 diag_malloc(size_t size)
 {

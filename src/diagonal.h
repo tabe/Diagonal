@@ -62,6 +62,8 @@ extern void diag_vwarn(const char *message, va_list ap);
 extern void diag_warn(const char *message, ...);
 extern void diag_vinfo(const char *message, va_list ap);
 extern void diag_info(const char *message, ...);
+extern void diag_vprintf(const char *message, va_list ap);
+extern void diag_printf(const char *message, ...);
 
 extern void *diag_malloc(size_t size);
 extern void *diag_calloc(size_t nmemb, size_t size);
