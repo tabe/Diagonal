@@ -44,7 +44,7 @@ struct metric_option_s {
 static void
 usage(void)
 {
-	diag_info("diag-enc [-m metric] [-t threshold] [-1] file");
+	diag_printf("diag-enc [-m metric] [-t threshold] [-1] file");
 }
 
 static void *

@@ -65,7 +65,7 @@ cmpcmd(const void *x, const void *y)
 static void
 usage(void)
 {
-	diag_info("diag [-l] <command> ...");
+	diag_printf("diag [-l] <command> ...");
 }
 
 static void

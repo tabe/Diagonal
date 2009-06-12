@@ -28,7 +28,7 @@
 static void
 usage(void)
 {
-	diag_info("diag-fix command [operand ...]");
+	diag_printf("diag-fix command [operand ...]");
 }
 
 static void

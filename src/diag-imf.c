@@ -45,7 +45,7 @@ struct metric_option_s {
 static void
 usage(void)
 {
-	diag_info("diag-imf [-m metric] [-t threshold] [-1] path ...");
+	diag_printf("diag-imf [-m metric] [-t threshold] [-1] path ...");
 }
 
 static int
