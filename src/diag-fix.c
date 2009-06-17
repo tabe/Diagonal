@@ -66,7 +66,6 @@ main(int argc, char *argv[])
 	int ofd1[2], ofd2[2];
 	char *m1, *m2;
 	size_t s, s1, s2;
-	ssize_t ss;
 
 	while ( (c = getopt(argc, argv, "+Vh")) >=0) {
 		switch (c) {
@@ -189,9 +188,9 @@ main(int argc, char *argv[])
 					kill(pid##x, SIGINT);								\
 					waitpid(pid##x, NULL, 0);							\
 					port = diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT); \
-					ss = port->write_bytes(port, s##x, (uint8_t *)m##x); \
+					r = port->write_bytes(port, s##x, (uint8_t *)m##x); \
 					diag_port_destroy(port);							\
-					if (ss < 0 || (size_t)ss < s##x) {					\
+					if (r <= 0) {										\
 						exit(EXIT_FAILURE);								\
 					}													\
 					exit(EXIT_SUCCESS);									\

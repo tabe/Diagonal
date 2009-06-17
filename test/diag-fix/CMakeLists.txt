@@ -1,5 +1,6 @@
 set(tests
     diag-fix-cat
+    diag-fix-add2
 )
 get_target_property(diag-fix-path diag-fix LOCATION)
 set(DIAG_FIX ${diag-fix-path})
