@@ -21,6 +21,7 @@ DIAG_C_DECL_BEGIN
 #define DIAG_FAILURE 0
 
 typedef uint32_t diag_size_t;
+typedef int32_t diag_ssize_t;
 
 typedef uint64_t diag_tag_t;
 
