@@ -4,12 +4,15 @@ add_library(diagonal SHARED
             deque.c
             diagonal.c
             hamming.c
+            hashtable.c
             imf.c
             levenshtein.c
             line.c
             port.c
             rbtree.c
+            trie.c
             vcdiff.c
+            vector.c
             )
 add_subdirectory(modules)
 

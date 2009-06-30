@@ -2,6 +2,9 @@ set(subdirectories
     datum
     deque
     rbtree
+    vector
+    trie
+    hashtable
     port
     hamming
     levenshtein
