@@ -7,7 +7,7 @@ typedef struct diag_trie_bc_s {
 } diag_trie_bc_t;
 
 typedef struct diag_trie_s {
-	diag_size_t size;
+	diag_ssize_t size;
 	diag_trie_bc_t bc[];
 } diag_trie_t;
 
@@ -17,7 +17,7 @@ extern diag_trie_t *diag_trie_new(void);
 
 extern void diag_trie_destroy(diag_trie_t *trie);
 
-extern int diag_trie_traverse(diag_trie_t *trie, diag_size_t length, const uint8_t *seq, int insert);
+extern int diag_trie_traverse(diag_trie_t *trie, diag_ssize_t length, const uint8_t *seq, diag_trie_t **insert);
 
 DIAG_C_DECL_END
 
