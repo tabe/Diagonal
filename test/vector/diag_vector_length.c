@@ -1,6 +1,7 @@
 #include "test.h"
 
 #include "diagonal.h"
+#include "diagonal/object.h"
 #include "diagonal/vector.h"
 
 int

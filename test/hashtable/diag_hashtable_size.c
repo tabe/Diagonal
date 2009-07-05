@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "diagonal.h"
+#include "diagonal/object.h"
 #include "diagonal/vector.h"
 #include "diagonal/trie.h"
 #include "diagonal/hashtable.h"
