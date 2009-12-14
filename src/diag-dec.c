@@ -84,7 +84,7 @@ main(int argc, char *argv[])
 			fd = open(path_target, O_CREAT|O_WRONLY|O_TRUNC, S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
 			if (fd < 0) {
 				perror(strerror(errno));
-				return 1;
+				exit(EXIT_FAILURE);
 			}
 		} else {
 			fd = STDOUT_FILENO;
