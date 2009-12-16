@@ -4,6 +4,7 @@ add_library(diagonal SHARED
             deque.c
             diagonal.c
             hamming.c
+            hash.c
             hashtable.c
             imf.c
             levenshtein.c

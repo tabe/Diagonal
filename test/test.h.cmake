@@ -39,18 +39,20 @@
 		exit(EXIT_FAILURE);														\
 	} while (0)
 
-#define ASSERT_EQ_(type, expected, expr) do {							\
+#define ASSERT_EQ_(type, slot, expected, expr) do {						\
 		type actual = (type)(expr);										\
 		if ((type)expected == actual) break;							\
-		printf("%s:%d: %d is expected, but %d\n", __FILE__, __LINE__, (type)expected, actual); \
+		printf("%s:%d: " slot " is expected, but " slot "\n", __FILE__, __LINE__, (type)expected, actual); \
 		exit(EXIT_FAILURE);														\
 	} while (0)
 
-#define ASSERT_EQ_INT(expected, expr) ASSERT_EQ_(int, expected, expr)
-#define ASSERT_EQ_UINT(expected, expr) ASSERT_EQ_(unsigned int, expected, expr)
-#define ASSERT_EQ_UINT8(expected, expr) ASSERT_EQ_(uint8_t, expected, expr)
-#define ASSERT_EQ_UINTPTR(expected, expr) ASSERT_EQ_(uintptr_t, expected, expr)
-#define ASSERT_EQ_SIZE(expected, expr) ASSERT_EQ_(size_t, expected, expr)
+#define ASSERT_EQ_INT(expected, expr)     ASSERT_EQ_(int, "%d", expected, expr)
+#define ASSERT_EQ_UINT(expected, expr)    ASSERT_EQ_(unsigned int, "%u", expected, expr)
+#define ASSERT_EQ_UINT8(expected, expr)   ASSERT_EQ_(uint8_t, "%u", expected, expr)
+#define ASSERT_EQ_UINT32(expected, expr)  ASSERT_EQ_(uint32_t, "%u", expected, expr)
+#define ASSERT_EQ_UINT64(expected, expr)  ASSERT_EQ_(uint64_t, "%llu", expected, expr)
+#define ASSERT_EQ_UINTPTR(expected, expr) ASSERT_EQ_(uintptr_t, "%u", expected, expr)
+#define ASSERT_EQ_SIZE(expected, expr)    ASSERT_EQ_(size_t, "%u", expected, expr)
 
 #define ASSERT_EQ_STRING(expected, expr) do {							\
 		char *actual = (char *)(expr);									\

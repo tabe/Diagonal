@@ -4,6 +4,7 @@ set(subdirectories
     rbtree
     vector
     trie
+    hash
     hashtable
     port
     hamming
