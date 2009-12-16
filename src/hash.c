@@ -82,6 +82,7 @@ diag_rolling_hash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_win
 	assert(data);
 	assert(size > 0);
 	assert(s_window > 0);
+	assert(size >= s_window);
 	rh = (diag_rolling_hash32_t *)diag_malloc(sizeof(*rh));
 	rh->value = 0;
 	rh->data = rh->head = data;
@@ -128,7 +129,7 @@ diag_rolling_hash32_collect(diag_rolling_hash32_t *rh, diag_size_t *length)
 	assert(length);
 	assert(rh->size >= rh->s_window);
 	*length = len = rh->size - rh->s_window + 1;
-	if (len == 0) return NULL;
+	assert(len > 0);
 	arr = (uint32_t *)diag_calloc((size_t)len, sizeof(uint32_t));
 	arr[0] = rh->init(rh);
 	for (i = 1; i < len; i++) {

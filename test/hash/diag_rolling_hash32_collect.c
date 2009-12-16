@@ -15,6 +15,13 @@ main()
 	diag_size_t length, i;
 	diag_rolling_hash32_t *rh;
 
+	rh = diag_rolling_hash32_new_rabin_karp(arr, 1, 1, 107);
+	result = diag_rolling_hash32_collect(rh, &length);
+	ASSERT_EQ_UINT32(1, length);
+	ASSERT_EQ_UINT32(diag_hash32_rabin_karp(arr, 1, 107), result[0]);
+	diag_free(result);
+	diag_rolling_hash32_destroy(rh);
+
 	rh = diag_rolling_hash32_new_rabin_karp(arr, 84, 3, 101);
 	result = diag_rolling_hash32_collect(rh, &length);
 	ASSERT_EQ_UINT32(82, length);
@@ -25,5 +32,6 @@ main()
 	}
 	diag_free(result);
 	diag_rolling_hash32_destroy(rh);
+
 	return EXIT_SUCCESS;
 }
