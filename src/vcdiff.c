@@ -870,3 +870,52 @@ diag_vcdiff_destroy(diag_vcdiff_t *vcdiff)
 	if (!vcdiff) return;
 	diag_free(vcdiff);
 }
+
+uint8_t *
+diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size)
+{
+	register diag_size_t i, n = 0, p, s;
+	diag_vcdiff_pcode_t *pcode;
+	const uint8_t *source;
+	uint8_t *result;
+
+	assert(script);
+	assert(size);
+	s = 0;
+	for (p = 0; p < script->s_pcodes; p++) {
+		s += script->pcodes[p].size;
+		if (s < script->pcodes[p].size) {
+			return NULL;
+		}
+	}
+	*size = s;
+	result = (uint8_t *)diag_calloc(s, sizeof(uint8_t));
+	source = (script->source) ? script->source : result;
+	for (p = 0; p < script->s_pcodes; p++) {
+		pcode = script->pcodes + p;
+		switch (pcode->inst) {
+		case DIAG_VCD_NOOP:
+			/* nothing to do */
+			break;
+		case DIAG_VCD_ADD:
+			(void)memcpy(result + n, pcode->attr.data, pcode->size);
+			n += pcode->size;
+			break;
+		case DIAG_VCD_RUN:
+			for (i = 0; i < pcode->size; i++) {
+				result[n++] = pcode->attr.byte;
+			}
+			break;
+		case DIAG_VCD_COPY:
+			/* memmove() is inadequate for sequential copy. */
+			for (i = 0; i < pcode->size; i++) {
+				result[n++] = source[pcode->attr.addr + i];
+			}
+			break;
+		default:
+			diag_error("unknown instruction: %d", pcode->inst);
+			break;
+		}
+	}
+	return result;
+}

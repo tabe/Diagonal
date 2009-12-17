@@ -121,6 +121,22 @@ typedef struct diag_vcdiff_vm_s {
 	void (*error)(struct diag_vcdiff_vm_s *vm, const char *message, ...);
 } diag_vcdiff_vm_t;
 
+typedef struct diag_vcdiff_pcode_s {
+	int inst;
+	diag_size_t size;
+	union {
+		diag_size_t addr;
+		uint8_t *data;
+		uint8_t byte;
+	} attr;
+} diag_vcdiff_pcode_t;
+
+typedef struct diag_vcdiff_script_s {
+	const uint8_t *source;
+	diag_size_t s_pcodes;
+	diag_vcdiff_pcode_t *pcodes;
+} diag_vcdiff_script_t;
+
 DIAG_C_DECL_BEGIN
 
 extern diag_vcdiff_context_t *diag_vcdiff_context_new_fp(FILE *fp);
@@ -139,6 +155,8 @@ extern void diag_vcdiff_vm_destroy(diag_vcdiff_vm_t *vm);
 extern uint8_t *diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff);
 
 extern void diag_vcdiff_destroy(diag_vcdiff_t *vcdiff);
+
+extern uint8_t *diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size);
 
 DIAG_C_DECL_END
 
