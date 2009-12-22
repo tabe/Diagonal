@@ -20,6 +20,7 @@
 
 #include "diagonal.h"
 #include "diagonal/port.h"
+#include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
 
 static void

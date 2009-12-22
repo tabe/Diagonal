@@ -3,6 +3,7 @@ set(tests
     diag_vcdiff_read
     diag_vcdiff_decode
     diag_vcdiff_expand
+    diag_vcdiff_contract
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")

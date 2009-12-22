@@ -156,7 +156,10 @@ extern uint8_t *diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff);
 
 extern void diag_vcdiff_destroy(diag_vcdiff_t *vcdiff);
 
+extern void diag_vcdiff_script_destroy(diag_vcdiff_script_t *script);
+
 extern uint8_t *diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size);
+extern diag_vcdiff_script_t *diag_vcdiff_contract(diag_rolling_hash32_t *rh);
 
 DIAG_C_DECL_END
 

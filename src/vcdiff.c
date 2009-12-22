@@ -22,8 +22,12 @@
 
 #include "diagonal.h"
 #include "diagonal/deque.h"
+#include "diagonal/rbtree.h"
 #include "diagonal/port.h"
+#include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
+
+#define MIN(x, y) ((x) < (y)) ? (x) : (y)
 
 static int
 integer_read(diag_vcdiff_context_t *context, uint32_t *i)
@@ -871,6 +875,23 @@ diag_vcdiff_destroy(diag_vcdiff_t *vcdiff)
 	diag_free(vcdiff);
 }
 
+void
+diag_vcdiff_script_destroy(diag_vcdiff_script_t *script)
+{
+	register diag_size_t i;
+
+	if (!script) return;
+	for (i = 0; i < script->s_pcodes; i++) {
+		switch (script->pcodes[i].inst) {
+		case DIAG_VCD_ADD:
+			diag_free(script->pcodes[i].attr.data);
+			break;
+		}
+	}
+	diag_free(script->pcodes);
+	diag_free(script);
+}
+
 uint8_t *
 diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size)
 {
@@ -918,4 +939,147 @@ diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size)
 		}
 	}
 	return result;
+}
+
+static diag_vcdiff_pcode_t *
+pcode_copy_new(diag_size_t size, diag_size_t addr)
+{
+	diag_vcdiff_pcode_t *pcode;
+
+	assert(size > 0);
+	pcode = (diag_vcdiff_pcode_t *)diag_malloc(sizeof(diag_vcdiff_pcode_t));
+	pcode->inst = DIAG_VCD_COPY;
+	pcode->size = size;
+	pcode->attr.addr = addr;
+	return pcode;
+}
+
+static diag_vcdiff_pcode_t *
+pcode_add_new(diag_size_t size, const uint8_t *data)
+{
+	diag_vcdiff_pcode_t *pcode;
+	uint8_t *d;
+
+	assert(size > 0);
+	pcode = (diag_vcdiff_pcode_t *)diag_malloc(sizeof(diag_vcdiff_pcode_t));
+	pcode->inst = DIAG_VCD_ADD;
+	pcode->size = size;
+	d = diag_calloc(size + 1, sizeof(uint8_t));
+	(void)memcpy(d, data, size);
+	d[size] = '\0';
+	pcode->attr.data = d;
+	return pcode;
+}
+
+static diag_size_t
+lookback(diag_rolling_hash32_t *rh, uint32_t *arr, diag_size_t i, uint32_t h, diag_rbtree_t *tree)
+{
+	register diag_size_t k, n;
+	diag_size_t m, head, tail, sentinel;
+	diag_vcdiff_pcode_t *p;
+	diag_rbtree_node_t *node;
+
+	/* check whether some hash value match */
+	for (k = 0; k < i / rh->s_window; k++) {
+		if (h == arr[k]) {
+			int matched = 1;
+			/* check whether its substring actually match */
+			for (n = 0; n < rh->s_window; n++) {
+				if (rh->data[i + n] != rh->data[k * rh->s_window + n]) {
+					matched = 0;
+					break;
+				}
+			}
+			if (matched) {
+				assert(i > k * rh->s_window);
+				m = i - k * rh->s_window;
+
+				head = i;
+				while (--head >= m) {
+					if (rh->data[head - m] != rh->data[head]) break;
+				}
+
+				tail = i + rh->s_window - 1;
+				while (++tail < rh->size) {
+					if (rh->data[tail - m] != rh->data[tail]) break;
+				}
+
+				p = pcode_copy_new(tail - head - 1, head - m + 1);
+				node = diag_rbtree_node_new((diag_rbtree_key_t)head + 1, (diag_rbtree_attr_t)p);
+				diag_rbtree_insert(tree, node);
+
+				sentinel = MIN(tail, rh->size - rh->s_window + 1);
+				for (; i < sentinel; i++) {
+					h = rh->roll(rh);
+					if (i % rh->s_window == 0) {
+						arr[i / rh->s_window] = h;
+					}
+				}
+				return tail - 1;
+			}
+		}
+	}
+	return i;
+}
+
+diag_vcdiff_script_t *
+diag_vcdiff_contract(diag_rolling_hash32_t *rh)
+{
+	diag_vcdiff_script_t *script;
+	diag_rbtree_t *tree;
+	diag_rbtree_node_t *node, *n;
+	register diag_size_t s, i, a;
+	uint32_t *arr, h;
+	diag_vcdiff_pcode_t *p;
+
+	assert(rh);
+	assert(rh->size >= rh->s_window);
+	s = rh->size / rh->s_window;
+	if (s == 0) {
+		return NULL;
+	}
+
+	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	arr = (uint32_t *)diag_calloc((size_t)s, sizeof(uint32_t));
+	arr[0] = rh->init(rh);
+	for (i = 1; i < rh->size - rh->s_window + 1; i++) {
+		h = rh->roll(rh);
+		if (i % rh->s_window == 0) {
+			arr[i / rh->s_window] = h;
+		}
+		i = lookback(rh, arr, i, h, tree);
+	}
+	diag_free(arr);
+
+	a = 0;
+	node = diag_rbtree_minimum(tree);
+	while (node) {
+		diag_size_t b = (diag_size_t)node->key;
+
+		if (a < b) {
+			p = pcode_add_new(b - a, rh->data + a);
+			n = diag_rbtree_node_new((diag_rbtree_key_t)a, (diag_rbtree_attr_t)p);
+			diag_rbtree_insert(tree, n);
+		}
+		p = (diag_vcdiff_pcode_t *)node->attr;
+		a = b + p->size;
+		node = diag_rbtree_successor(node);
+	}
+	if (a < rh->size) {
+		p = pcode_add_new(rh->size - a, rh->data + a);
+		n = diag_rbtree_node_new((diag_rbtree_key_t)a, (diag_rbtree_attr_t)p);
+		diag_rbtree_insert(tree, n);
+	}
+
+	script = (diag_vcdiff_script_t *)diag_malloc(sizeof(diag_vcdiff_script_t));
+	script->source = NULL;
+	script->s_pcodes = (diag_size_t)tree->num_nodes;
+	script->pcodes = (diag_vcdiff_pcode_t *)diag_calloc(script->s_pcodes, sizeof(diag_vcdiff_pcode_t));
+	node = diag_rbtree_minimum(tree);
+	i = 0;
+	do {
+		script->pcodes[i++] = (*(diag_vcdiff_pcode_t *)node->attr);
+	} while ( (node = diag_rbtree_successor(node)) );
+	diag_rbtree_destroy(tree);
+	return script;
 }
