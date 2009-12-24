@@ -979,11 +979,11 @@ lookback(diag_rolling_hash32_t *rh, uint32_t *arr, diag_size_t i, uint32_t h, di
 	diag_vcdiff_pcode_t *p;
 	diag_rbtree_node_t *node;
 
-	/* check whether some hash value match */
+	/* check whether some hash value matches */
 	for (k = 0; k < i / rh->s_window; k++) {
 		if (h == arr[k]) {
 			int matched = 1;
-			/* check whether its substring actually match */
+			/* check whether its substring actually matches */
 			for (n = 0; n < rh->s_window; n++) {
 				if (rh->data[i + n] != rh->data[k * rh->s_window + n]) {
 					matched = 0;
