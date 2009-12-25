@@ -1,4 +1,5 @@
 set(subdirectories
+    bytevector
     datum
     deque
     rbtree

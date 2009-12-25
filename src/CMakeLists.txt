@@ -1,4 +1,5 @@
 add_library(diagonal SHARED
+            bytevector.c
             cluster.c
             code.c
             deque.c
