@@ -15,6 +15,7 @@ main(void)
 	ASSERT_EQ_UINT(bv->size, strlen(s));
 	s[8] = '\0';
 	ASSERT_EQ_STRING("#include", s);
+	diag_free(s);
 	diag_bytevector_destroy(bv);
 	return EXIT_SUCCESS;
 }
