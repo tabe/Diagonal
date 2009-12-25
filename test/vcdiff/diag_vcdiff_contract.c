@@ -78,6 +78,9 @@ main(void)
 	contract_and_expand("aacdaacde", 2, 109, 3);
 	contract_and_expand("aacdaacde", 1, 113, 5);
 	contract_and_expand("aacdaacde", 1, 113, 5);
+	contract_and_expand("aaceaacdde", 1, 127, 7);
+	contract_and_expand("aaceaacdde", 3, 131, 3);
+	contract_and_expand("aacdaacde", 2, 137, 3);
 
 	return EXIT_SUCCESS;
 }

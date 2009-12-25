@@ -27,8 +27,6 @@
 #include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
 
-#define MIN(x, y) ((x) < (y)) ? (x) : (y)
-
 static int
 integer_read(diag_vcdiff_context_t *context, uint32_t *i)
 {
@@ -975,7 +973,7 @@ static diag_size_t
 lookback(diag_rolling_hash32_t *rh, uint32_t *arr, diag_size_t i, uint32_t h, diag_rbtree_t *tree)
 {
 	register diag_size_t k, n;
-	diag_size_t m, head, tail, sentinel;
+	diag_size_t m, head, tail;
 	diag_vcdiff_pcode_t *p;
 	diag_rbtree_node_t *node;
 
@@ -1008,18 +1006,17 @@ lookback(diag_rolling_hash32_t *rh, uint32_t *arr, diag_size_t i, uint32_t h, di
 				node = diag_rbtree_node_new((diag_rbtree_key_t)head + 1, (diag_rbtree_attr_t)p);
 				diag_rbtree_insert(tree, node);
 
-				sentinel = MIN(tail, rh->size - rh->s_window + 1);
-				for (; i < sentinel; i++) {
+				while (++i < tail - rh->s_window + 1) {
 					h = rh->roll(rh);
 					if (i % rh->s_window == 0) {
 						arr[i / rh->s_window] = h;
 					}
 				}
-				return tail - 1;
+				return i;
 			}
 		}
 	}
-	return i;
+	return i + 1;
 }
 
 diag_vcdiff_script_t *
@@ -1042,12 +1039,11 @@ diag_vcdiff_contract(diag_rolling_hash32_t *rh)
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	arr = (uint32_t *)diag_calloc((size_t)s, sizeof(uint32_t));
 	arr[0] = rh->init(rh);
-	for (i = 1; i < rh->size - rh->s_window + 1; i++) {
+	for (i = 1; i < rh->size - rh->s_window + 1; i = lookback(rh, arr, i, h, tree)) {
 		h = rh->roll(rh);
 		if (i % rh->s_window == 0) {
 			arr[i / rh->s_window] = h;
 		}
-		i = lookback(rh, arr, i, h, tree);
 	}
 	diag_free(arr);
 
