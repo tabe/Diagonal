@@ -11,6 +11,7 @@ typedef void (*diag_bytevector_finalizer_t)(diag_bytevector_t *);
 
 DIAG_C_DECL_BEGIN
 
+extern diag_bytevector_t *diag_bytevector_new_heap(diag_size_t size, uint8_t *data);
 extern diag_bytevector_t *diag_bytevector_new_path(const char *path);
 
 extern char *diag_bytevector_to_asciz(const diag_bytevector_t *bv);

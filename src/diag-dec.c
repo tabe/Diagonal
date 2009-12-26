@@ -19,6 +19,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/bytevector.h"
 #include "diagonal/port.h"
 #include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"

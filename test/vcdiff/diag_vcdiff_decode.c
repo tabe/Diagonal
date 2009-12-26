@@ -1,6 +1,7 @@
 #include "test.h"
 
 #include "diagonal.h"
+#include "diagonal/bytevector.h"
 #include "diagonal/port.h"
 #include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
@@ -64,7 +65,7 @@ fail_to_decode(const char *input)
 	context->compatibility = 1;
 	vcdiff = diag_vcdiff_read(context);
 	if (!vcdiff) exit(EXIT_FAILURE);
-	vm = diag_vcdiff_vm_new_path(NULL);
+	vm = diag_vcdiff_vm_new(0, NULL);
 	if (!vm) exit(EXIT_FAILURE);
 	vcdiff->windows[0] = NULL; /* damaged */
 	if (diag_vcdiff_decode(vm, vcdiff) != NULL) exit(EXIT_FAILURE);

@@ -21,6 +21,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/bytevector.h"
 #include "diagonal/deque.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/port.h"
@@ -316,11 +317,13 @@ static diag_vcdiff_code_table_t default_code_table = {
 };
 
 static diag_vcdiff_code_t *
-code_table_entries_from_string(diag_vcdiff_code_t *entries, const uint8_t *str)
+code_table_entries_from_string(const uint8_t *str)
 {
+	diag_vcdiff_code_t *entries;
 	int i, j = 0;
 
-	assert(entries && str);
+	assert(str);
+	entries = (diag_vcdiff_code_t *)diag_calloc(256, sizeof(diag_vcdiff_code_t));
 	for (i = 0; i < 256; i++) {
 		entries[i].inst1 = str[j++];
 	}
@@ -342,12 +345,16 @@ code_table_entries_from_string(diag_vcdiff_code_t *entries, const uint8_t *str)
 	return entries;
 }
 
+#define CODE_TABLE_LENGTH 1536
+
 static uint8_t *
-code_table_entries_to_string(const diag_vcdiff_code_t *entries, uint8_t *str)
+code_table_entries_to_string(const diag_vcdiff_code_t *entries)
 {
+	uint8_t *str;
 	int i, j = 0;
 
-	assert(entries && str);
+	assert(entries);
+	str = (uint8_t *)diag_malloc(CODE_TABLE_LENGTH);
 	for (i = 0; i < 256; i++) {
 		str[j++] = entries[i].inst1;
 	}
@@ -378,12 +385,10 @@ code_table_destroy(diag_vcdiff_code_table_t *code_table)
 	diag_free(code_table);
 }
 
-#define CODE_TABLE_LENGTH 1536
-
 static int
 code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 {
-	uint8_t source[CODE_TABLE_LENGTH];
+	uint8_t *source;
 	diag_vcdiff_code_table_t *code_table;
 	diag_vcdiff_code_t *entries;
 	diag_vcdiff_context_t *c;
@@ -407,7 +412,7 @@ code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 		diag_vcdiff_context_destroy(c);
 		return 0;
 	}
-	(void)code_table_entries_to_string(default_code_table_entries, source);
+	source = code_table_entries_to_string(default_code_table_entries);
 	w = diag_vcdiff_vm_new(CODE_TABLE_LENGTH, source);
 	if (!diag_vcdiff_decode(w, v)) {
 		vm->error(vm, "could not decode code table");
@@ -423,8 +428,7 @@ code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 		diag_vcdiff_context_destroy(c);
 		return 0;
 	}
-	entries = (diag_vcdiff_code_t *)diag_calloc(256, sizeof(diag_vcdiff_code_t));
-	(void)code_table_entries_from_string(entries, w->target);
+	entries = code_table_entries_from_string(w->target);
 	diag_vcdiff_vm_destroy(w);
 	diag_vcdiff_destroy(v);
 	diag_vcdiff_context_destroy(c);
@@ -593,8 +597,8 @@ vm_error(diag_vcdiff_vm_t *vm, const char *message, ...)
 	longjmp(vm->env, 1);
 }
 
-diag_vcdiff_vm_t *
-diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source)
+static diag_vcdiff_vm_t *
+vm_new(diag_bytevector_t *source)
 {
 	diag_vcdiff_vm_t *vm;
 	diag_vcdiff_cache_t *cache;
@@ -602,7 +606,6 @@ diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source)
 	cache = (diag_vcdiff_cache_t *)diag_malloc(sizeof(diag_vcdiff_cache_t));
 	cache->near = cache->same = NULL;
 	vm = (diag_vcdiff_vm_t *)diag_malloc(sizeof(diag_vcdiff_vm_t));
-	vm->s_source = s_source;
 	vm->source = source;
 	vm->s_target = 0;
 	vm->target = NULL;
@@ -612,36 +615,27 @@ diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source)
 	return vm;
 }
 
-static void
-vm_munmap(diag_vcdiff_vm_t *vm)
+diag_vcdiff_vm_t *
+diag_vcdiff_vm_new(diag_size_t size, uint8_t *data)
 {
-	assert(vm);
-	munmap(vm->source, (size_t)vm->s_source);
+	diag_bytevector_t *source;
+
+	source = diag_bytevector_new_heap(size, data);
+	return vm_new(source);
 }
 
 diag_vcdiff_vm_t *
 diag_vcdiff_vm_new_path(const char *path)
 {
-	diag_vcdiff_vm_t *vm;
-	uint8_t *source = NULL;
-	uint32_t s_source = 0;
+	diag_bytevector_t *source;
 
 	if (path) {
-		int fd, r;
-		struct stat st;
-
-		fd = open(path, O_RDONLY);
-		if (fd < 0) return NULL;
-		r = fstat(fd, &st);
-		if (r < 0) return NULL;
-		s_source = (uint32_t)st.st_size;
-		source = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-		close(fd);
-		if (source == MAP_FAILED) return NULL;
+		source = diag_bytevector_new_path(path);
+		return vm_new(source);
+	} else {
+		source = diag_bytevector_new_heap(0, NULL);
+		return vm_new(source);
 	}
-	vm = diag_vcdiff_vm_new(s_source, source);
-	vm->close = vm_munmap;
-	return vm;
 }
 
 void
@@ -651,7 +645,7 @@ diag_vcdiff_vm_destroy(diag_vcdiff_vm_t *vm)
 	code_table_destroy(vm->code_table);
 	cache_destroy(vm->cache);
 	if (vm->target) diag_free(vm->target);
-	if (vm->close) vm->close(vm);
+	diag_bytevector_destroy(vm->source);
 	diag_free(vm);
 }
 
@@ -807,10 +801,10 @@ diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 		delta = window->delta;
 		if (DIAG_VCDIFF_SOURCEP(window)) {
 			uint32_t end = window->position_source_segment + window->length_source_segment;
-			if (end > vm->s_source) {
-				vm->error(vm, "exceed source data segment: %d > %d", end, vm->s_source);
+			if (end > vm->source->size) {
+				vm->error(vm, "exceed source data segment: %d > %d", end, vm->source->size);
 			}
-			vm->src = vm->source + window->position_source_segment;
+			vm->src = vm->source->data + window->position_source_segment;
 			vm->src_s = vm->src + window->length_source_segment;
 		} else if (DIAG_VCDIFF_TARGETP(window)) {
 			uint32_t end = window->position_source_segment + window->length_source_segment;

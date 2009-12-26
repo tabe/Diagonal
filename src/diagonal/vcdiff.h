@@ -102,8 +102,7 @@ typedef struct diag_vcdiff_context_s {
 #define DIAG_VCDIFF_COMPATIBLEP(context) (context)->compatibility
 
 typedef struct diag_vcdiff_vm_s {
-	uint32_t s_source;
-	uint8_t *source;
+	diag_bytevector_t *source;
 	uint32_t s_target;
 	uint8_t *target;
 	diag_vcdiff_cache_t *cache;

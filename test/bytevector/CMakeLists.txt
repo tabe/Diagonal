@@ -1,4 +1,5 @@
 set(tests
+    diag_bytevector_new_heap
     diag_bytevector_new_path
     diag_bytevector_to_asciz
 )

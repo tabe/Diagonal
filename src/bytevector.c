@@ -23,6 +23,25 @@
 #include "diagonal/bytevector.h"
 
 static void
+bytevector_free(diag_bytevector_t *bv)
+{
+	assert(bv);
+	diag_free(bv->data);
+}
+
+diag_bytevector_t *
+diag_bytevector_new_heap(diag_size_t size, uint8_t *data)
+{
+	diag_bytevector_t *bv;
+
+	bv = (diag_bytevector_t *)diag_malloc(sizeof(diag_bytevector_t));
+	bv->size = size;
+	bv->data = data;
+	bv->finalize = bytevector_free;
+	return bv;
+}
+
+static void
 bytevector_munmap(diag_bytevector_t *bv)
 {
 	assert(bv);
