@@ -105,7 +105,7 @@ read_parameter(diag_port_t *port, diag_deque_t *head, diag_avg_param_t *param, u
 	uint8_t x;
 	int r = 0;
 
-	assert(port && tail && param && xp);
+	assert(port && head && param && xp);
 	tail = diag_deque_new();
 	do {
 		x = *xp;
