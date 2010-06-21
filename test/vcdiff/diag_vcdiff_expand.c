@@ -14,14 +14,14 @@ main()
 	uint8_t *result;
 	diag_size_t size, i;
 
-	pcodes = (diag_vcdiff_pcode_t *)diag_calloc(2, sizeof(diag_vcdiff_pcode_t));
+	pcodes = diag_calloc(2, sizeof(diag_vcdiff_pcode_t));
 	pcodes[0].inst = DIAG_VCD_RUN;
 	pcodes[0].size = 1;
 	pcodes[0].attr.byte = 'a';
 	pcodes[1].inst = DIAG_VCD_COPY;
 	pcodes[1].size = 20;
 	pcodes[1].attr.addr = 0;
-	script = (diag_vcdiff_script_t *)diag_malloc(sizeof(diag_vcdiff_script_t));
+	script = diag_malloc(sizeof(diag_vcdiff_script_t));
 	script->source = NULL;
 	script->s_pcodes = 2;
 	script->pcodes = pcodes;

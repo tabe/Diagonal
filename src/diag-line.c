@@ -113,7 +113,7 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 		*num_entries = 0;
 		return NULL;
 	}
-	e = (char **)diag_calloc(tree->num_nodes, sizeof(char *));
+	e = diag_calloc(tree->num_nodes, sizeof(char *));
 	node = diag_rbtree_minimum(tree);
 	assert(node);
 	do {
@@ -132,8 +132,8 @@ single_link(char **entries, register unsigned int num_entries, diag_emetric_char
 	diag_sdistance_t k;
 
 	if (num_entries == 0) return NULL;
-	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
 	for (i = 0; i < num_entries; i++) {
 		x = px = i + 1;
 		while (p[px] > 0) px = p[px];
@@ -167,7 +167,7 @@ aggregate_combinations(char **entries, register unsigned int num_entries, diag_e
 		for (j = i + 1; j < num_entries; j++) {
 			k = (*metric)((char *)entries[i], (char *)entries[j], (diag_distance_t)t);
 			if (k >= 0) {
-				p = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
+				p = diag_calloc(2, sizeof(unsigned int));
 				p[0] = i + 1;
 				p[1] = j + 1;
 				node = diag_rbtree_node_new((diag_rbtree_key_t)k, (diag_rbtree_attr_t)p);
@@ -203,8 +203,8 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 	register unsigned int x, y;
 
 	if (num_entries == 0) return NULL;
-	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
 	if (comb->num_nodes == 0) return p;
 	node = diag_rbtree_minimum(comb);
 	do {

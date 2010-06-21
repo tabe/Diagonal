@@ -21,7 +21,7 @@ diag_vector_new(diag_size_t length)
 
 	s = sizeof(diag_vector_t) + sizeof(diag_object_t) * (size_t)length;
 	/* TODO: check the overflow */
-	v = (diag_vector_t *)diag_malloc(s);
+	v = diag_malloc(s);
 	v->length = length;
 	return v;
 }

@@ -154,7 +154,7 @@ diag_datum_new(void *value)
 {
 	diag_datum_t *datum;
 
-	datum = (diag_datum_t *)diag_malloc(sizeof(diag_datum_t));
+	datum = diag_malloc(sizeof(diag_datum_t));
 	datum->value = value;
 	datum->id.number = 0;
 	return datum;

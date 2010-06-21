@@ -222,7 +222,7 @@ diag_port_new_fd(int fd, uint8_t flags)
 {
 	diag_port_t *port;
 
-	port = (diag_port_t *)diag_malloc(sizeof(diag_port_t));
+	port = diag_malloc(sizeof(diag_port_t));
 	port->tag = DIAG_PORT_FD|flags;
 	port->stream.fd = fd;
 	if (DIAG_PORT_INPUT_P(port)) {
@@ -244,7 +244,7 @@ diag_port_new_fp(FILE *fp, uint8_t flags)
 {
 	diag_port_t *port;
 
-	port = (diag_port_t *)diag_malloc(sizeof(diag_port_t));
+	port = diag_malloc(sizeof(diag_port_t));
 	port->tag = DIAG_PORT_FP|flags;
 	port->stream.fp = fp;
 	if (DIAG_PORT_INPUT_P(port)) {
@@ -267,7 +267,7 @@ diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags)
 	diag_port_t *port;
 
 	assert(head);
-	port = (diag_port_t *)diag_malloc(sizeof(diag_port_t));
+	port = diag_malloc(sizeof(diag_port_t));
 	port->tag = DIAG_PORT_BM|flags;
 	port->stream.bm.head = head;
 	port->stream.bm.size = size;

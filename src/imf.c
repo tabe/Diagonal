@@ -49,7 +49,7 @@ diag_imf_header_field_new(char *name, char *body)
 	diag_imf_header_field_t *header_field;
 
 	assert(name && body);
-	header_field = (diag_imf_header_field_t *)diag_malloc(sizeof(diag_imf_header_field_t));
+	header_field = diag_malloc(sizeof(diag_imf_header_field_t));
 	header_field->name = name;
 	header_field->body = body;
 	return header_field;
@@ -108,7 +108,7 @@ diag_imf_new(diag_imf_header_field_t **header_fields, char *body)
 	diag_imf_t *imf;
 
 	assert(header_fields && body);
-	imf = (diag_imf_t *)diag_malloc(sizeof(diag_imf_t));
+	imf = diag_malloc(sizeof(diag_imf_t));
 	imf->header_fields = header_fields;
 	imf->body = body;
 	return imf;
@@ -133,7 +133,7 @@ diag_imf_parse(char *s, diag_imf_t **imfp, unsigned int option)
 		diag_deque_destroy(deque);
 		return x;
 	}
-	header_fields = (diag_imf_header_field_t **)diag_calloc((size_t)deque->length + 1, sizeof(diag_imf_header_field_t *));
+	header_fields = diag_calloc((size_t)deque->length + 1, sizeof(diag_imf_header_field_t *));
 	*imfp = diag_imf_new(header_fields, r);
 	DIAG_DEQUE_FOR_EACH(deque, elem) {
 		*header_fields++ = (diag_imf_header_field_t *)elem->attr;

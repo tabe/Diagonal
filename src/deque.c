@@ -15,7 +15,7 @@ diag_deque_new(void)
 {
 	diag_deque_t *deque;
 
-	deque = (diag_deque_t *)diag_malloc(sizeof(diag_deque_t));
+	deque = diag_malloc(sizeof(diag_deque_t));
 	deque->first = NULL;
 	deque->last = NULL;
 	deque->length = 0;
@@ -41,7 +41,7 @@ diag_deque_destroy(diag_deque_t *deque)
 																		\
 		assert(deque);													\
 		tmp = deque->end1;												\
-		elem = (diag_deque_elem_t *)diag_malloc(sizeof(diag_deque_elem_t));	\
+		elem = diag_malloc(sizeof(diag_deque_elem_t));					\
 		elem->attr = attr;												\
 		elem->link1 = NULL;												\
 		elem->link2 = tmp;												\

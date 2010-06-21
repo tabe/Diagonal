@@ -21,7 +21,7 @@ diag_hashtable_new_eq(diag_size_t size)
 {
 	diag_hashtable_t *ht;
 
-	ht = (diag_hashtable_t *)diag_malloc(sizeof(diag_hashtable_t));
+	ht = diag_malloc(sizeof(diag_hashtable_t));
 	ht->size = size;
 	ht->mutable = 1;
 	return ht;
@@ -72,7 +72,7 @@ diag_hashtable_copy(diag_hashtable_t *ht, int mutable)
 	diag_hashtable_t *copy;
 
 	assert(ht);
-	copy = (diag_hashtable_t *)diag_malloc(sizeof(diag_hashtable_t));
+	copy = diag_malloc(sizeof(diag_hashtable_t));
 	memcpy(copy, ht, sizeof(diag_hashtable_t));
 	copy->mutable = mutable;
 	return copy;

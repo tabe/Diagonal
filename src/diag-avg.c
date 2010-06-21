@@ -62,7 +62,7 @@ couple_to_param(diag_deque_t *head, diag_deque_t *tail, diag_avg_param_t *param)
 	enum diag_avg_param_type type = DIAG_AVG_PARAM_LONG;
 
 	len = head->length + tail->length;
-	s = (char *)diag_malloc(len + 1);
+	s = diag_malloc(len + 1);
 
 #define FILLUP(q) do {								\
 		DIAG_DEQUE_FOR_EACH(q, e) {					\
@@ -198,17 +198,17 @@ run_files(char **paths, int n, int fd)
 	diag_avg_param_t *param;
 	char *buf;
 
-	ports = (diag_port_t **)diag_calloc(n, sizeof(diag_port_t *));
+	ports = diag_calloc(n, sizeof(diag_port_t *));
 	for (i = 0; i < n; i++) {
 		ports[i] = diag_port_new_path(paths[i], "rb");
 	}
 	port = ports[0];
-	x = (uint8_t *)diag_malloc(n);
+	x = diag_malloc(n);
 	q = diag_deque_new();
 	head = diag_deque_new();
 	cont = 0;
-	param = (diag_avg_param_t *)diag_calloc(n, sizeof(diag_avg_param_t));
-	buf = (char *)diag_malloc(BUFFER_LENGTH);
+	param = diag_calloc(n, sizeof(diag_avg_param_t));
+	buf = diag_malloc(BUFFER_LENGTH);
 	while ( cont || port->read_byte(port, x) > 0 ) {
 		if (DECIMAL_P(*x)) {
 			diag_deque_push(head, (uintptr_t)*x);
@@ -282,7 +282,7 @@ build_path(char **paths, int i, const char *format, char *dir, pid_t pid)
 	int len;
 
 	assert(paths && format);
-	paths[i] = (char *)diag_malloc(PATH_LENGTH);
+	paths[i] = diag_malloc(PATH_LENGTH);
 	len = sprintf(paths[i], format, dir, pid);
 	if (len < 0) {
 		diag_fatal("fail to build path");
@@ -346,7 +346,7 @@ main(int argc, char *argv[])
 
 	assert(n > 0);
 	ptree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
-	opaths = (char **)diag_calloc(n << 1, sizeof(char *));
+	opaths = diag_calloc(n << 1, sizeof(char *));
 	epaths = opaths + n;
 	if (!dir) {
 		char *tmpdir;
@@ -410,7 +410,7 @@ main(int argc, char *argv[])
 	}
 	diag_free(dir);
 
-	stable = (int *)diag_calloc(n, sizeof(int));
+	stable = diag_calloc(n, sizeof(int));
 	do {
 		pid = waitpid((pid_t)-1, &status, WCONTINUED|WNOHANG|WUNTRACED);
 		if (pid == (pid_t)0) {

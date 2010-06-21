@@ -19,7 +19,7 @@ diag_cluster_new(diag_size_t num_data)
 	size_t size;
 
 	size = (size_t)(sizeof(diag_cluster_t)+num_data*sizeof(diag_datum_t *));
-	cluster = (diag_cluster_t *)diag_malloc(size);
+	cluster = diag_malloc(size);
 	cluster->num_data = num_data;
 	return cluster;
 }
@@ -39,7 +39,7 @@ diag_analysis_new(diag_size_t num_data, diag_datum_t **data)
 	size_t size;
 
 	size = (size_t)(sizeof(diag_analysis_t)+num_data*sizeof(diag_code_t *));
-	analysis = (diag_analysis_t *)diag_malloc(size);
+	analysis = diag_malloc(size);
 	analysis->num_data = num_data;
 	analysis->data = data;
 	analysis->metric = NULL;
@@ -64,7 +64,7 @@ diag_code_new(diag_cluster_t *cluster, diag_size_t num_deltas)
 	size_t size;
 
 	size = (size_t)(sizeof(diag_code_t)+num_deltas*sizeof(diag_delta_t *));
-	code = (diag_code_t *)diag_malloc(size);
+	code = diag_malloc(size);
 	code->cluster = cluster;
 	code->num_deltas = num_deltas;
 	return code;
@@ -83,7 +83,7 @@ diag_delta_new(enum diag_delta_type type)
 {
 	diag_delta_t *delta;
 
-	delta = (diag_delta_t *)diag_malloc(sizeof(diag_delta_t));
+	delta = diag_malloc(sizeof(diag_delta_t));
 	delta->type = type;
 	return delta;
 }

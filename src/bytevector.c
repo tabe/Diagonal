@@ -33,7 +33,7 @@ diag_bytevector_new_heap(diag_size_t size, uint8_t *data)
 {
 	diag_bytevector_t *bv;
 
-	bv = (diag_bytevector_t *)diag_malloc(sizeof(diag_bytevector_t));
+	bv = diag_malloc(sizeof(diag_bytevector_t));
 	bv->size = size;
 	bv->data = data;
 	bv->finalize = bytevector_free;
@@ -65,7 +65,7 @@ diag_bytevector_new_path(const char *path)
 	data = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	close(fd);
 	if (data == MAP_FAILED) return NULL;
-	bv = (diag_bytevector_t *)diag_malloc(sizeof(diag_bytevector_t));
+	bv = diag_malloc(sizeof(diag_bytevector_t));
 	bv->size = size;
 	bv->data = data;
 	bv->finalize = bytevector_munmap;
@@ -78,7 +78,7 @@ diag_bytevector_to_asciz(const diag_bytevector_t *bv)
 	char *s;
 
 	assert(bv);
-	s = (char *)diag_malloc((size_t)bv->size + 1);
+	s = diag_malloc((size_t)bv->size + 1);
 	(void)memcpy(s, bv->data, (size_t)bv->size);
 	s[bv->size] = '\0';
 	return s;

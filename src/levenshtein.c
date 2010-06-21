@@ -37,7 +37,7 @@ diag_levenshtein_chars(const char *x, const char *y)
 	/* trim the common final sequence */
 	while ( ly > 0 && x[lx-1] == y[ly-1] ) lx--, ly--;
 	if (ly == 0) return lx;
-	cur = (diag_size_t *)diag_calloc((ly + 1)*2, sizeof(diag_size_t));
+	cur = diag_calloc((ly + 1)*2, sizeof(diag_size_t));
 	new = cur + ly + 1;
 	for (j = 1; j <= ly; j++) cur[j] = j;
 	for (i = 0; i < lx; i++) {

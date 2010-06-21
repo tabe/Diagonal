@@ -108,7 +108,7 @@ main(int argc, char *argv[])
 		close(ofd1[1]);
 		close(ifd1[0]);
 		s1 = BUFFER_LENGTH;
-		m1 = (char *)diag_malloc(s1);
+		m1 = diag_malloc(s1);
 		s = 0;
 		port = diag_port_new_fd(ifd1[1], DIAG_PORT_OUTPUT);
 		while (read(STDIN_FILENO, (void *)m1+s, 1) > 0) {
@@ -157,7 +157,7 @@ main(int argc, char *argv[])
 			close(ofd##x[1]);											\
 			close(ifd##x[0]);											\
 			s##x = BUFFER_LENGTH;										\
-			m##x = (char *)diag_malloc(s##x);							\
+			m##x = diag_malloc(s##x);									\
 			s = 0;														\
 			port = diag_port_new_fd(ifd##x[1], DIAG_PORT_OUTPUT);		\
 			while (read(ofd##y[0], (void *)m##x+s, 1) > 0) {			\

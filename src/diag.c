@@ -144,7 +144,7 @@ main(int argc, char *argv[])
 	}
 	dir = dirname(path1);
 	base = basename(path2);
-	e = (char *)diag_malloc(DIAG_EXECUTABLE_PATH_MAX + 1);
+	e = diag_malloc(DIAG_EXECUTABLE_PATH_MAX + 1);
 	if (strcmp(base, argv[0]) == 0) {
 		elen = snprintf(e, DIAG_EXECUTABLE_PATH_MAX, "diag-%s", cmd);
 	} else {

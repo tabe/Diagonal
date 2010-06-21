@@ -62,7 +62,7 @@ code_table_data_read(diag_vcdiff_context_t *context, diag_vcdiff_t *vcdiff)
 	if ( (r = integer_read(context, &length)) <= 0) {
 		return r;
 	}
-	data = (uint8_t *)diag_calloc((size_t)length, sizeof(uint8_t));
+	data = diag_calloc((size_t)length, sizeof(uint8_t));
 	port = context->port;
 	if ( (r = port->read_bytes(port, (size_t)length, data)) <= 0) {
 		diag_free(data);
@@ -83,7 +83,7 @@ delta_read(diag_vcdiff_context_t *context, diag_vcdiff_window_t *window)
 	int r;
 
 	assert(context && window);
-	delta = (diag_vcdiff_delta_t *)diag_malloc(sizeof(diag_vcdiff_delta_t));
+	delta = diag_malloc(sizeof(diag_vcdiff_delta_t));
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
 	delta->length = i;
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
@@ -97,9 +97,9 @@ delta_read(diag_vcdiff_context_t *context, diag_vcdiff_window_t *window)
 	delta->length_inst = i;
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
 	delta->length_addr = i;
-	data = (uint8_t *)diag_calloc((size_t)(delta->length_data), sizeof(uint8_t));
-	inst = (uint8_t *)diag_calloc((size_t)(delta->length_inst), sizeof(uint8_t));
-	addr = (uint8_t *)diag_calloc((size_t)(delta->length_addr), sizeof(uint8_t));
+	data = diag_calloc((size_t)(delta->length_data), sizeof(uint8_t));
+	inst = diag_calloc((size_t)(delta->length_inst), sizeof(uint8_t));
+	addr = diag_calloc((size_t)(delta->length_addr), sizeof(uint8_t));
 	if ( (r = port->read_bytes(port, (size_t)(delta->length_data), data)) <= 0) goto clear;
 	if ( (r = port->read_bytes(port, (size_t)(delta->length_inst), inst)) <= 0) goto clear;
 	if ( (r = port->read_bytes(port, (size_t)(delta->length_addr), addr)) <= 0) goto clear;
@@ -126,12 +126,12 @@ cache_init(diag_vcdiff_cache_t *cache, uint8_t s_near, uint8_t s_same)
 	assert(cache);
 	cache->next_slot = 0;
 	cache->s_near = s_near;
-	cache->near = (uint32_t *)diag_calloc(s_near, sizeof(uint32_t));
+	cache->near = diag_calloc(s_near, sizeof(uint32_t));
 	for (i = 0; i < s_near; i++) {
 		cache->near[i] = 0;
 	}
 	cache->s_same = s_same;
-	cache->same = (uint32_t *)diag_calloc(s_same * 256, sizeof(uint32_t));
+	cache->same = diag_calloc(s_same * 256, sizeof(uint32_t));
 	for (i = 0; i < (uint32_t)s_same * 256; i++) {
 		cache->same[i] = 0;
 	}
@@ -323,7 +323,7 @@ code_table_entries_from_string(const uint8_t *str)
 	int i, j = 0;
 
 	assert(str);
-	entries = (diag_vcdiff_code_t *)diag_calloc(256, sizeof(diag_vcdiff_code_t));
+	entries = diag_calloc(256, sizeof(diag_vcdiff_code_t));
 	for (i = 0; i < 256; i++) {
 		entries[i].inst1 = str[j++];
 	}
@@ -354,7 +354,7 @@ code_table_entries_to_string(const diag_vcdiff_code_t *entries)
 	int i, j = 0;
 
 	assert(entries);
-	str = (uint8_t *)diag_malloc(CODE_TABLE_LENGTH);
+	str = diag_malloc(CODE_TABLE_LENGTH);
 	for (i = 0; i < 256; i++) {
 		str[j++] = entries[i].inst1;
 	}
@@ -432,7 +432,7 @@ code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 	diag_vcdiff_vm_destroy(w);
 	diag_vcdiff_destroy(v);
 	diag_vcdiff_context_destroy(c);
-	code_table = (diag_vcdiff_code_table_t *)diag_malloc(sizeof(diag_vcdiff_code_table_t));
+	code_table = diag_malloc(sizeof(diag_vcdiff_code_table_t));
 	code_table->s_near = vcdiff->code_table_data[0];
 	code_table->s_same = vcdiff->code_table_data[1];
 	code_table->entries = entries;
@@ -447,7 +447,7 @@ diag_vcdiff_context_new_fp(FILE *fp)
 {
 	diag_vcdiff_context_t *context;
 
-	context = (diag_vcdiff_context_t *)diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(diag_vcdiff_context_t));
 	context->port = diag_port_new_fp(fp, DIAG_PORT_INPUT);
 	return context;
 }
@@ -457,7 +457,7 @@ diag_vcdiff_context_new_fd(int fd)
 {
 	diag_vcdiff_context_t *context;
 
-	context = (diag_vcdiff_context_t *)diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(diag_vcdiff_context_t));
 	context->port = diag_port_new_fd(fd, DIAG_PORT_INPUT);
 	return context;
 }
@@ -468,7 +468,7 @@ diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size)
 	diag_vcdiff_context_t *context;
 
 	assert(head);
-	context = (diag_vcdiff_context_t *)diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(diag_vcdiff_context_t));
 	context->port = diag_port_new_bm(head, size, DIAG_PORT_INPUT);
 	return context;
 }
@@ -482,7 +482,7 @@ diag_vcdiff_context_new_path(const char *path)
 	assert(path);
 	port = diag_port_new_path(path, "rb");
 	if (!port) return NULL;
-	context = (diag_vcdiff_context_t *)diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(diag_vcdiff_context_t));
 	context->port = port;
 	return context;
 }
@@ -511,7 +511,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 		 port->read_byte(port, &b) <= 0 || b != (uint8_t)0xC4 ) {
 		return NULL;
 	}
-	vcdiff = (diag_vcdiff_t *)diag_malloc(sizeof(diag_vcdiff_t));
+	vcdiff = diag_malloc(sizeof(diag_vcdiff_t));
 	if ( port->read_byte(port, &b) <= 0 ||
 		 (DIAG_VCDIFF_COMPATIBLEP(context) && b != (uint8_t)0x0) ) {
 		goto bail;
@@ -542,7 +542,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 				goto clear;
 			}
 		}
-		window = (diag_vcdiff_window_t *)diag_malloc(sizeof(diag_vcdiff_window_t));
+		window = diag_malloc(sizeof(diag_vcdiff_window_t));
 		window->indicator = b;
 		if ( DIAG_VCDIFF_SOURCEP(window) ||
 			 DIAG_VCDIFF_TARGETP(window) ) {
@@ -603,9 +603,9 @@ vm_new(diag_bytevector_t *source)
 	diag_vcdiff_vm_t *vm;
 	diag_vcdiff_cache_t *cache;
 
-	cache = (diag_vcdiff_cache_t *)diag_malloc(sizeof(diag_vcdiff_cache_t));
+	cache = diag_malloc(sizeof(diag_vcdiff_cache_t));
 	cache->near = cache->same = NULL;
-	vm = (diag_vcdiff_vm_t *)diag_malloc(sizeof(diag_vcdiff_vm_t));
+	vm = diag_malloc(sizeof(diag_vcdiff_vm_t));
 	vm->source = source;
 	vm->s_target = 0;
 	vm->target = NULL;
@@ -789,7 +789,7 @@ diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 		}
 	}
 	vm->s_target = s_target;
-	vm->target = (uint8_t *)diag_calloc(s_target, sizeof(uint8_t));
+	vm->target = diag_calloc(s_target, sizeof(uint8_t));
 	status = setjmp(vm->env);
 	if (status != 0) goto bail;
 	for (i = 0; i < vcdiff->num_windows; i++) {
@@ -902,7 +902,7 @@ diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size)
 		}
 	}
 	*size = s;
-	result = (uint8_t *)diag_calloc(s, sizeof(uint8_t));
+	result = diag_calloc(s, sizeof(uint8_t));
 	source = (script->source) ? script->source : result;
 	for (p = 0; p < script->s_pcodes; p++) {
 		pcode = script->pcodes + p;
@@ -939,7 +939,7 @@ pcode_copy_new(diag_size_t size, diag_size_t addr)
 	diag_vcdiff_pcode_t *pcode;
 
 	assert(size > 0);
-	pcode = (diag_vcdiff_pcode_t *)diag_malloc(sizeof(diag_vcdiff_pcode_t));
+	pcode = diag_malloc(sizeof(diag_vcdiff_pcode_t));
 	pcode->inst = DIAG_VCD_COPY;
 	pcode->size = size;
 	pcode->attr.addr = addr;
@@ -953,7 +953,7 @@ pcode_add_new(diag_size_t size, const uint8_t *data)
 	uint8_t *d;
 
 	assert(size > 0);
-	pcode = (diag_vcdiff_pcode_t *)diag_malloc(sizeof(diag_vcdiff_pcode_t));
+	pcode = diag_malloc(sizeof(diag_vcdiff_pcode_t));
 	pcode->inst = DIAG_VCD_ADD;
 	pcode->size = size;
 	d = diag_calloc(size + 1, sizeof(uint8_t));
@@ -1031,7 +1031,7 @@ diag_vcdiff_contract(diag_rolling_hash32_t *rh)
 	}
 
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
-	arr = (uint32_t *)diag_calloc((size_t)s, sizeof(uint32_t));
+	arr = diag_calloc((size_t)s, sizeof(uint32_t));
 	arr[0] = rh->init(rh);
 	for (i = 1; i < rh->size - rh->s_window + 1; i = lookback(rh, arr, i, h, tree)) {
 		h = rh->roll(rh);
@@ -1061,10 +1061,10 @@ diag_vcdiff_contract(diag_rolling_hash32_t *rh)
 		diag_rbtree_insert(tree, n);
 	}
 
-	script = (diag_vcdiff_script_t *)diag_malloc(sizeof(diag_vcdiff_script_t));
+	script = diag_malloc(sizeof(diag_vcdiff_script_t));
 	script->source = NULL;
 	script->s_pcodes = (diag_size_t)tree->num_nodes;
-	script->pcodes = (diag_vcdiff_pcode_t *)diag_calloc(script->s_pcodes, sizeof(diag_vcdiff_pcode_t));
+	script->pcodes = diag_calloc(script->s_pcodes, sizeof(diag_vcdiff_pcode_t));
 	node = diag_rbtree_minimum(tree);
 	i = 0;
 	do {

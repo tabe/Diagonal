@@ -71,7 +71,7 @@ scan_directory(diag_rbtree_t *tree, int i, const char *path)
 #else
 			len = strlen(path) + MAXNAMLEN + 2;
 #endif
-			name = (char *)diag_calloc(len, sizeof(char));
+			name = diag_calloc(len, sizeof(char));
 			slen = snprintf(name, len, "%s/%s", path, ent->d_name);
 			if (slen < 0 || (int)len <= slen)  {
 				diag_free(name);
@@ -151,7 +151,7 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 		*num_entries = 0;
 		return NULL;
 	}
-	e = (char **)diag_calloc(tree->num_nodes, sizeof(char *));
+	e = diag_calloc(tree->num_nodes, sizeof(char *));
 	node = diag_rbtree_minimum(tree);
 	assert(node);
 	do {
@@ -201,7 +201,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 			size_t ly;
 			diag_imf_t *imfy;
 
-			pair = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
+			pair = diag_calloc(2, sizeof(unsigned int));
 			pair[0] = i + 1;
 			pair[1] = j + 1;
 			if (r < 0) {
@@ -232,8 +232,8 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 	unsigned int *p, i = 0;
 
 	if (num_entries == 0) return NULL;
-	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
 	node = diag_rbtree_minimum(comb);
 	do {
 		unsigned int k = (unsigned int)node->key;

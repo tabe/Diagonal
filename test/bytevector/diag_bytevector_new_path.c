@@ -12,7 +12,7 @@ main(void)
 	bv = diag_bytevector_new_path(__FILE__);
 	ASSERT_NOT_NULL(bv);
 	ASSERT_TRUE(8 < bv->size);
-	s = (char *)diag_malloc(9);
+	s = diag_malloc(9);
 	(void)memcpy(s, bv->data, 8);
 	s[8] = '\0';
 	ASSERT_EQ_STRING("#include", s);

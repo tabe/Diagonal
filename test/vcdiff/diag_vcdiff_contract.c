@@ -58,7 +58,7 @@ contract_and_expand(const char *data, diag_size_t s_window, uint32_t base, diag_
 	ASSERT_EQ_UINT(s_pcodes, script->s_pcodes);
 	result = diag_vcdiff_expand(script, &s);
 	ASSERT_EQ_UINT(size, s);
-	result0 = (char *)diag_malloc(s + 1);
+	result0 = diag_malloc(s + 1);
 	(void)memcpy(result0, result, s);
 	result0[s] = '\0';
 	ASSERT_EQ_STRING(data, result0);

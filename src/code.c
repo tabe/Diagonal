@@ -35,7 +35,7 @@ diag_decode(diag_analysis_t *analysis)
 	diag_size_t i;
 
 	assert(analysis && analysis->codes && analysis->num_data > 0 && !analysis->data);
-	data = (diag_datum_t **)diag_calloc((size_t)analysis->num_data, sizeof(diag_datum_t *));
+	data = diag_calloc((size_t)analysis->num_data, sizeof(diag_datum_t *));
 	for (i = 0; i < analysis->num_data; i++) {
 		data[i] = analysis->decoder(analysis->codes[i]);
 	}

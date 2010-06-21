@@ -89,7 +89,7 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 		*num_entries = 0;
 		return NULL;
 	}
-	e = (char **)diag_calloc(tree->num_nodes, sizeof(char *));
+	e = diag_calloc(tree->num_nodes, sizeof(char *));
 	node = diag_rbtree_minimum(tree);
 	assert(node);
 	do {
@@ -114,7 +114,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_cha
 			diag_rbtree_key_t k;
 			unsigned int *p;
 
-			p = (unsigned int *)diag_calloc(2, sizeof(unsigned int));
+			p = diag_calloc(2, sizeof(unsigned int));
 			p[0] = i + 1;
 			p[1] = j + 1;
 			k = (diag_rbtree_key_t)(*metric)((char *)entries[i], (char *)entries[j]);
@@ -132,8 +132,8 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 	unsigned int *p, i = 0;
 
 	if (num_entries == 0) return NULL;
-	p = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = (unsigned int *)diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
 	node = diag_rbtree_minimum(comb);
 	do {
 		unsigned int k = (unsigned int)node->key;
@@ -219,7 +219,7 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 	diag_deque_elem_t *elem;
 	diag_size_t i;
 
-	data = (diag_datum_t **)diag_calloc((size_t)num_entries, sizeof(diag_datum_t *));
+	data = diag_calloc((size_t)num_entries, sizeof(diag_datum_t *));
 	for (i = 0; i < num_entries; i++) {
 		data[i] = diag_datum_new((void *)entries[i]);
 		data[i]->id.number = i;
@@ -240,7 +240,7 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 		}
 	}
 	analysis->num_clusters = deque->length;
-	analysis->clusters = (diag_cluster_t **)diag_calloc((size_t)deque->length, sizeof(diag_cluster_t *));
+	analysis->clusters = diag_calloc((size_t)deque->length, sizeof(diag_cluster_t *));
 	i = 0;
 	DIAG_DEQUE_FOR_EACH(deque, elem) {
 		diag_cluster_t *c;

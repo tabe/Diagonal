@@ -22,7 +22,7 @@ diag_line_context_new(diag_port_t *port)
 	diag_line_context_t *context;
 
 	assert(port);
-	context = (diag_line_context_t *)diag_malloc(sizeof(diag_line_context_t));
+	context = diag_malloc(sizeof(diag_line_context_t));
 	context->port = port;
 	context->bufsize = DIAG_LINE_BUFSIZE;
 	if (DIAG_PORT_FD_P(port)) {
@@ -31,7 +31,7 @@ diag_line_context_new(diag_port_t *port)
 			context->bufsize = (size_t)st.st_blksize;
 		}
 	}
-	context->buf = (char *)diag_malloc(context->bufsize);
+	context->buf = diag_malloc(context->bufsize);
 	context->head = context->sentinel = 0;
 	context->error = 0;
 	return context;

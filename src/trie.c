@@ -87,12 +87,12 @@ transitions(diag_trie_t *trie, diag_ssize_t s)
 	struct diag_trie_child_s *child;
 
 	assert(trie && s < trie->size);
-	children = (struct diag_trie_children_s *)diag_malloc(sizeof(struct diag_trie_children_s));
+	children = diag_malloc(sizeof(struct diag_trie_children_s));
 	children->deque = diag_deque_new();
 	children->base = GET_BASE(trie, s);
 	for (c = CODE_EOF; c <= CODE_MAX && ( (t = children->base + c) < trie->size); c++) {
 		if (GET_CHECK(trie, t) == s) {
-			child = (struct diag_trie_child_s *)diag_malloc(sizeof(struct diag_trie_child_s));
+			child = diag_malloc(sizeof(struct diag_trie_child_s));
 			child->dst  = t;
 			child->code = c;
 			child->children = NULL;
@@ -164,7 +164,7 @@ diag_trie_new(void)
 {
 	diag_trie_t *trie;
 
-	trie = (diag_trie_t *)diag_malloc(sizeof(diag_trie_t) + sizeof(diag_trie_bc_t));
+	trie = diag_malloc(sizeof(diag_trie_t) + sizeof(diag_trie_bc_t));
 	trie->size = 1;
 	SET_BASE(trie, 0, CODE_NONE);
 	SET_CHECK(trie, 0, CODE_NONE);

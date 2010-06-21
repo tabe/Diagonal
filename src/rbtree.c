@@ -345,7 +345,7 @@ diag_rbtree_t *
 diag_rbtree_new(diag_rbtree_cmp_t cmp)
 {
 	diag_rbtree_t *tree;
-	tree = (diag_rbtree_t *)diag_malloc(sizeof(diag_rbtree_t));
+	tree = diag_malloc(sizeof(diag_rbtree_t));
 	tree->root = NULL;
 	tree->num_nodes = 0;
 	tree->cmp = (cmp) ? cmp : compare;
@@ -366,7 +366,7 @@ diag_rbtree_node_t *
 diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr)
 {
 	diag_rbtree_node_t *node;
-	node = (diag_rbtree_node_t *)diag_malloc(sizeof(diag_rbtree_node_t));
+	node = diag_malloc(sizeof(diag_rbtree_node_t));
 	node->key = key;
 	node->color = '\0';
 	node->parent = node->left = node->right = NULL;
