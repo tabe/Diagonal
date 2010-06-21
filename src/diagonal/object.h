@@ -6,17 +6,17 @@ typedef intptr_t diag_object_t;
 #define DIAG_OBJECT(obj) ((diag_object_t)(obj))
 
 /*
- * location:
- *  pppppppp pppppppp pppppppp pppppp00
- *
- * immediate:
- *  nnnnnnnn nnnnnnnn nnnnnnnn nnnnnnn1 [fixnum]
- *  cccccccc cccccccc cccccccc ccccc010 [character]
- *  00000000 00000000 00000000 00000110 [boolean false]
- *  00000000 00000000 00000000 00001110 [boolean true]
- *  00000000 00000000 00000000 00010110 [empty list]
- *  00000000 00000000 00000000 00011110 [eof]
- */
+  location:
+   pppppppp pppppppp pppppppp pppppp00
+
+  immediate:
+   nnnnnnnn nnnnnnnn nnnnnnnn nnnnnnn1 [fixnum]
+   cccccccc cccccccc cccccccc ccccc010 [character]
+   00000000 00000000 00000000 00000110 [boolean false]
+   00000000 00000000 00000000 00001110 [boolean true]
+   00000000 00000000 00000000 00010110 [empty list]
+   00000000 00000000 00000000 00011110 [eof]
+*/
 
 #define DIAG_LOCATION_P(obj) ((DIAG_OBJECT(obj) & 3) == 0)
 
@@ -26,6 +26,8 @@ typedef intptr_t diag_object_t;
 
 #define DIAG_CHARACTER_P(obj) ((DIAG_OBJECT(obj) & 7) == 2)
 
+#define DIAG_MAKE_FIXNUM(x) (((x)<<1)|1)
+
 #define DIAG_MAKE_IMMEDIATE(x) DIAG_OBJECT(6|(x<<3))
 
 #define DIAG_FALSE DIAG_MAKE_IMMEDIATE(0)
@@ -34,14 +36,15 @@ typedef intptr_t diag_object_t;
 #define DIAG_EOF   DIAG_MAKE_IMMEDIATE(3)
 
 /*
- * tag:
- *  pppppppp pppppppp pppppppp pppppp00 [pair]
- *  pppppppp pppppppp pppppppp pppppp01 [symbol]
- *  pppppppp pppppppp pppppppp pppppp10 [string]
- *  ssssssss ssssssss ssssssss ssssi011 [vector] i: immediate
- *  -------- -------- -------- ----0111 [procedure]
- *  -------- -------- -------- ---01111 [hashtable]
- */
+  tag:
+   pppppppp pppppppp pppppppp pppppp00 [pair]
+   pppppppp pppppppp pppppppp pppppp01 [symbol]
+   pppppppp pppppppp pppppppp pppppp10 [string]
+   ssssssss ssssssss ssssssss ssssi011 [vector] i: immediate
+   nnnnnnnn nnnnnnnn nnnnnnss 00000111 [bignum] n: num of places, ss: sign (00: positive, 01: negative)
+   -------- -------- -------- ---01111 [procedure]
+   -------- -------- -------- --011111 [hashtable]
+*/
 
 #define DIAG_OBJECT_STUB uintptr_t tag
 
