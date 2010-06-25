@@ -36,7 +36,7 @@ extern diag_rbtree_node_t *diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtr
 
 extern void diag_rbtree_node_destroy(diag_rbtree_node_t *node);
 
-extern void diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node);
+extern diag_size_t diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node);
 
 extern void diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node);
 

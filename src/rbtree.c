@@ -383,7 +383,7 @@ diag_rbtree_node_destroy(diag_rbtree_node_t *node)
 	}
 }
 
-void
+diag_size_t
 diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 {
 	diag_rbtree_node_t *n;
@@ -395,7 +395,7 @@ diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 		node->parent = NULL;
 		tree->root = node;
 		tree->num_nodes = 1;
-		return;
+		return tree->num_nodes;
 	}
 
 	for (;;) {
@@ -422,6 +422,7 @@ diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 	node->parent = n;
 	insert1(tree, node);
 	tree->num_nodes++;
+	return tree->num_nodes;
 }
 
 void
