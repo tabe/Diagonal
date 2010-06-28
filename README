@@ -14,4 +14,4 @@ This software aims at providing a comprehensive profiling framework.
 
 Keywords:
 debug, diagnosis, dump, instrumentation, metrics, mock, monitor, probe,
-profile, statistics, trace
+profile, statistics, trace, benchmark, reverse engineering
