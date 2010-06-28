@@ -16,7 +16,6 @@ add_library(diagonal SHARED
             vcdiff.c
             vector.c
             )
-add_subdirectory(modules)
 
 add_executable(diag diag.c)
 target_link_libraries(diag diagonal)
