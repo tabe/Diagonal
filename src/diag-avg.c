@@ -223,11 +223,11 @@ run_files(char **paths, int n, int fd)
 					if (DECIMAL_P(*x) && DECIMAL_P(x[i])) {
 						d = 1;
 					} else {
-						diag_fatal("unexpected mismatch: %c: %c", *x, x[i]);
+						diag_fatal("unexpected mismatch: '%c'[0] vs '%c'[%d]", *x, x[i], i);
 					}
 				}
 			} else {
-				diag_fatal("unexpected eof");
+				diag_fatal("unexpected eof: %d", i);
 			}
 		}
 		if (d) {
@@ -236,7 +236,7 @@ run_files(char **paths, int n, int fd)
 			cont = read_parameter(port, head, param, x);
 			for (i = 1; i < n; i++) {
 				if (cont != read_parameter(ports[i], head, param+i, x+i)) {
-					diag_fatal("unexpected eof");
+					diag_fatal("unexpected eof: %d", i);
 				}
 			}
 			average_parameters(n, q, param, buf);
