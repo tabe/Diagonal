@@ -3,6 +3,7 @@ set(tests
     diag_rbtree_for_each_attr
     sanity02
     sanity10
+    random
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")

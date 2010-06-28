@@ -14,8 +14,8 @@
 #define BLACKP(n) ((n)->color == 'b')
 
 #define TURN_RED(n) ((n)->color = 'r')
-#define TURN_BLACK(n) ((n)->color = 'b')
-#define COPY_COLOR(src, dst) ((src)->color = (dst)->color)
+#define TURN_BLACK(n) do {if (n) ((n)->color = 'b');} while (0)
+#define COPY_COLOR(src, dst) ((src)->color = (dst) ? (dst)->color : 'b')
 
 #define LEFTP(n) (n == n->parent->left)
 #define RIGHTP(n) (n == n->parent->right)
@@ -237,7 +237,7 @@ static void delete6(diag_rbtree_t *t, diag_rbtree_node_t *n);
 static void
 delete1(diag_rbtree_t *t, diag_rbtree_node_t *n)
 {
-	assert(t && n);
+	assert(t && n && BLACKP(n));
 	if (n->parent) delete2(t, n);
 }
 
@@ -246,9 +246,9 @@ delete2(diag_rbtree_t *t, diag_rbtree_node_t *n)
 {
 	diag_rbtree_node_t *s;
 
-	assert(t && n && n->parent);
+	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
-	if (REDP(s)) {
+	if (s && REDP(s)) {
 		TURN_RED(n->parent);
 		TURN_BLACK(s);
 		if (LEFTP(n)) {
@@ -265,12 +265,12 @@ delete3(diag_rbtree_t *t, diag_rbtree_node_t *n)
 {
 	diag_rbtree_node_t *s;
 
-	assert(t && n && n->parent);
+	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
 	if ( BLACKP(n->parent) &&
-		 BLACKP(s) &&
-		 BLACKP(s->left) &&
-		 BLACKP(s->right) ) {
+		 s && BLACKP(s) &&
+		 (!s->left  || BLACKP(s->left)) &&
+		 (!s->right || BLACKP(s->right)) ) {
 		TURN_RED(s);
 		delete1(t, n->parent);
 	} else {
@@ -283,12 +283,12 @@ delete4(diag_rbtree_t *t, diag_rbtree_node_t *n)
 {
 	diag_rbtree_node_t *s;
 
-	assert(t && n && n->parent);
+	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
 	if ( REDP(n->parent) &&
-		 BLACKP(s) &&
-		 BLACKP(s->left) &&
-		 BLACKP(s->right) ) {
+		 s && BLACKP(s) &&
+		 (!s->left  || BLACKP(s->left)) &&
+		 (!s->right || BLACKP(s->right)) ) {
 		TURN_RED(s);
 		TURN_BLACK(n->parent);
 	} else {
@@ -301,18 +301,18 @@ delete5(diag_rbtree_t *t, diag_rbtree_node_t *n)
 {
 	diag_rbtree_node_t *s;
 
-	assert(t && n && n->parent);
+	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
-	if  (BLACKP(s)) {
+	if (s && BLACKP(s)) {
 		if ( LEFTP(n) &&
-			 BLACKP(s->right) &&
-			 REDP(s->left) ) {
+			 (!s->right || BLACKP(s->right)) &&
+			 (s->left && REDP(s->left)) ) {
 			TURN_RED(s);
 			TURN_BLACK(s->left);
 			rotate_right(t, s);
 		} else if ( RIGHTP(n) &&
-					BLACKP(s->left) &&
-					REDP(s->right) ) {
+					(!s->left || BLACKP(s->left)) &&
+					(s->right && REDP(s->right)) ) {
 			TURN_RED(s);
 			TURN_BLACK(s->right);
 			rotate_left(t, s);
@@ -326,16 +326,20 @@ delete6(diag_rbtree_t *t, diag_rbtree_node_t *n)
 {
 	diag_rbtree_node_t *s;
 
-	assert(t && n && n->parent);
+	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
 	COPY_COLOR(n->parent, s);
 	TURN_BLACK(n->parent);
  	if (LEFTP(n)) {
-		TURN_BLACK(s->right);
-		rotate_left(t, n->parent);
+		if (s) {
+			TURN_BLACK(s->right);
+			rotate_left(t, n->parent);
+		}
 	} else {
-		TURN_BLACK(s->left);
-		rotate_right(t, n->parent);
+		if (s) {
+			TURN_BLACK(s->left);
+			rotate_right(t, n->parent);
+		}
 	}
 }
 
@@ -431,25 +435,26 @@ diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 	diag_rbtree_node_t *n, *c;
 
 	assert(tree && node);
-	if (node->left && node->right) {
+	while (node->left && node->right) {
 		n = inorder_predecessor(node);
+		assert(n);
 		node->key = n->key;
 		node->attr = n->attr;
-	} else {
-		n = node;
+		node = n;
 	}
-	c = n->left ? n->left : n->right;
-	replace(tree, n, c);
-	if (!n || BLACKP(n)) {
+	c = node->left ? node->left : node->right; /* c may be NULL */
+	replace(tree, node, c);
+	if (BLACKP(node)) {
 		if (c) {
 			if (REDP(c)) {
 				TURN_BLACK(c);
 			} else {
+				assert(BLACKP(c));
 				delete1(tree, c);
 			}
 		}
 	}
-	diag_rbtree_node_destroy(n);
+	diag_rbtree_node_destroy(node);
 	tree->num_nodes--;
 }
 
