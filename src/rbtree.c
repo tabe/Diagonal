@@ -429,7 +429,7 @@ diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 	return tree->num_nodes;
 }
 
-void
+diag_size_t
 diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 {
 	diag_rbtree_node_t *n, *c;
@@ -456,6 +456,7 @@ diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 	}
 	diag_rbtree_node_destroy(node);
 	tree->num_nodes--;
+	return tree->num_nodes;
 }
 
 int
