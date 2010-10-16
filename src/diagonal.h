@@ -23,8 +23,6 @@ DIAG_C_DECL_BEGIN
 typedef uint32_t diag_size_t;
 typedef int32_t diag_ssize_t;
 
-typedef uint64_t diag_tag_t;
-
 enum {
 	DIAG_TAG_CHARS = 1,
 	DIAG_TAG_IMF,
@@ -36,7 +34,7 @@ enum {
 };
 
 struct diag_datum {
-	diag_tag_t tag;
+	uint64_t tag;
 	void *value;
 	union {
 		diag_size_t number;
@@ -51,7 +49,7 @@ struct diag_datum {
 #define DIAG_DATUM_ASCIZ_P(datum) \
 	(DIAG_DATUM_CHARS_P(datum) && !DIAG_DATUM_SIZE_P(datum))
 #define DIAG_DATUM_SIZE(datum) ((diag_size_t)((datum)->tag>>(sizeof(diag_size_t)*8)))
-#define DIAG_DATUM_SET_IMMEDIATE(datum, x) ((datum)->tag = (diag_tag_t)(x)<<(sizeof(diag_size_t)*8))
+#define DIAG_DATUM_SET_IMMEDIATE(datum, x) ((datum)->tag = (uint64_t)(x)<<(sizeof(diag_size_t)*8))
 #define DIAG_DATUM_GET_IMMEDIATE(datum) DIAG_DATUM_SIZE(datum)
 
 extern void diag_print_version(void);
