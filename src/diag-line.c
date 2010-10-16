@@ -46,7 +46,7 @@ usage(void)
 }
 
 static void *
-map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
+map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 {
 	int fd, r;
 	struct stat st;
@@ -69,9 +69,9 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 	}
 	p = q = (char *)mmap(NULL, len + 1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 	if (p == MAP_FAILED) {
-		diag_port_t *port;
-		diag_line_context_t *context;
-		diag_rbtree_node_t *node;
+		struct diag_port *port;
+		struct diag_line_context *context;
+		struct diag_rbtree_node *node;
 		size_t n = 0;
 
 		port = diag_port_new_fd(fd, DIAG_PORT_INPUT);
@@ -89,7 +89,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 		close(fd);
 		*(p + len) = '\0';
 		while (q < p + len) {
-			diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
+			struct diag_rbtree_node *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
 			diag_rbtree_insert(tree, node);
 			do {
 				if (*q == '\n') {
@@ -103,9 +103,9 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 }
 
 static char **
-serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
+serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	char **e;
 	register unsigned int i = 0;
 
@@ -152,12 +152,12 @@ single_link(char **entries, register unsigned int num_entries, diag_emetric_char
 }
 
 #if 0
-static diag_rbtree_t *
+static struct diag_rbtree *
 aggregate_combinations(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t)
 {
-	diag_rbtree_t *comb;
+	struct diag_rbtree *comb;
 	register unsigned int i, j;
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	diag_sdistance_t k;
 	unsigned int *p;
 
@@ -179,11 +179,11 @@ aggregate_combinations(char **entries, register unsigned int num_entries, diag_e
 }
 
 static void
-display_combinations(const diag_rbtree_t *comb, register int field_width)
+display_combinations(const struct diag_rbtree *comb, register int field_width)
 {
 	printf("%d\n", comb->num_nodes);
 	if (comb->num_nodes > 0) {
-		diag_rbtree_node_t *n;
+		struct diag_rbtree_node *n;
 
 		n = diag_rbtree_minimum(comb);
 		do {
@@ -196,9 +196,9 @@ display_combinations(const diag_rbtree_t *comb, register int field_width)
 }
 
 static unsigned int *
-process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entries, unsigned int **occur)
+process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_entries, unsigned int **occur)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	unsigned int *p;
 	register unsigned int x, y;
 
@@ -271,9 +271,9 @@ main(int argc, char *argv[])
 	size_t len;
 	void *p;
 #if 1
-	diag_rbtree_t *tree;
+	struct diag_rbtree *tree;
 #else
-	diag_rbtree_t *tree, *comb;
+	struct diag_rbtree *tree, *comb;
 #endif
 	char **entries;
 	unsigned int num_entries, *parent, *occur = NULL;

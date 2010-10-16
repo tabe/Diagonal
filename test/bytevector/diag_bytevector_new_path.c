@@ -6,7 +6,7 @@
 int
 main(void)
 {
-	diag_bytevector_t *bv;
+	struct diag_bytevector *bv;
 	char *s;
 
 	bv = diag_bytevector_new_path(__FILE__);

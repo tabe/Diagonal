@@ -18,7 +18,7 @@ enum {
 #define DIAG_PORT_FP_P(port) (DIAG_PORT_TYPE(port) == DIAG_PORT_FP)
 #define DIAG_PORT_BM_P(port) (DIAG_PORT_TYPE(port) == DIAG_PORT_BM)
 
-typedef struct diag_port_s {
+struct diag_port {
 	uint8_t tag;
 	union {
 		int fd;
@@ -30,21 +30,21 @@ typedef struct diag_port_s {
 	} stream;
 	size_t i_pos;
 	size_t o_pos;
-	int (*read_byte)(struct diag_port_s *port, uint8_t *i);
-	int (*read_bytes)(struct diag_port_s *port, size_t size, uint8_t *buf);
-	int (*write_byte)(struct diag_port_s *port, uint8_t i);
-	int (*write_bytes)(struct diag_port_s *port, size_t size, const uint8_t *buf);
-	void (*close)(struct diag_port_s *port);
-} diag_port_t;
+	int (*read_byte)(struct diag_port *port, uint8_t *i);
+	int (*read_bytes)(struct diag_port *port, size_t size, uint8_t *buf);
+	int (*write_byte)(struct diag_port *port, uint8_t i);
+	int (*write_bytes)(struct diag_port *port, size_t size, const uint8_t *buf);
+	void (*close)(struct diag_port *port);
+};
 
 DIAG_C_DECL_BEGIN
 
-extern diag_port_t *diag_port_new_fd(int fd, uint8_t flags);
-extern diag_port_t *diag_port_new_fp(FILE *fp, uint8_t flags);
-extern diag_port_t *diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags);
-extern diag_port_t *diag_port_new_path(const char *path, const char *mode);
+extern struct diag_port *diag_port_new_fd(int fd, uint8_t flags);
+extern struct diag_port *diag_port_new_fp(FILE *fp, uint8_t flags);
+extern struct diag_port *diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags);
+extern struct diag_port *diag_port_new_path(const char *path, const char *mode);
 
-extern void diag_port_destroy(diag_port_t *port);
+extern void diag_port_destroy(struct diag_port *port);
 
 DIAG_C_DECL_END
 

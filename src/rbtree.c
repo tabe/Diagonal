@@ -27,16 +27,16 @@ compare(diag_rbtree_key_t x, diag_rbtree_key_t y)
 	return (x > y) - (x < y);
 }
 
-static diag_rbtree_node_t *
-leftmost(diag_rbtree_node_t *n)
+static struct diag_rbtree_node *
+leftmost(struct diag_rbtree_node *n)
 {
 	assert(n);
 	while (n->left) n = n->left;
 	return n;
 }
 
-static diag_rbtree_node_t *
-rightmost(diag_rbtree_node_t *n)
+static struct diag_rbtree_node *
+rightmost(struct diag_rbtree_node *n)
 {
 	assert(n);
 	while (n->right) n = n->right;
@@ -44,9 +44,9 @@ rightmost(diag_rbtree_node_t *n)
 }
 
 static void
-destroy_subtree(diag_rbtree_node_t *n)
+destroy_subtree(struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *left, *right;
+	struct diag_rbtree_node *left, *right;
 
 	assert(n);
 	left = n->left;
@@ -58,7 +58,7 @@ destroy_subtree(diag_rbtree_node_t *n)
 }
 
 static void
-replace(diag_rbtree_t *t, diag_rbtree_node_t *n, diag_rbtree_node_t *by)
+replace(struct diag_rbtree *t, struct diag_rbtree_node *n, struct diag_rbtree_node *by)
 {
 	assert(n);
 	if (!n->parent) {
@@ -72,9 +72,9 @@ replace(diag_rbtree_t *t, diag_rbtree_node_t *n, diag_rbtree_node_t *by)
 }
 
 static void
-rotate_left(diag_rbtree_t *t, diag_rbtree_node_t *b)
+rotate_left(struct diag_rbtree *t, struct diag_rbtree_node *b)
 {
-	diag_rbtree_node_t *c, *d;
+	struct diag_rbtree_node *c, *d;
 
 	assert(t && b && b->right);
 	d = b->right;
@@ -87,9 +87,9 @@ rotate_left(diag_rbtree_t *t, diag_rbtree_node_t *b)
 }
 
 static void
-rotate_right(diag_rbtree_t *t, diag_rbtree_node_t *d)
+rotate_right(struct diag_rbtree *t, struct diag_rbtree_node *d)
 {
-	diag_rbtree_node_t *b, *c;
+	struct diag_rbtree_node *b, *c;
 
 	assert(t && d && d->left);
 	b = d->left;
@@ -101,14 +101,14 @@ rotate_right(diag_rbtree_t *t, diag_rbtree_node_t *d)
 	if (c) c->parent = d;
 }
 
-static void insert1(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void insert2(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void insert3(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void insert4(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void insert5(diag_rbtree_t *t, diag_rbtree_node_t *n);
+static void insert1(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void insert2(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void insert3(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void insert4(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void insert5(struct diag_rbtree *t, struct diag_rbtree_node *n);
 
 static void
-insert1(diag_rbtree_t *t, diag_rbtree_node_t *n)
+insert1(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
 	assert(t && n);
 	if (n->parent) {
@@ -120,7 +120,7 @@ insert1(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-insert2(diag_rbtree_t *t, diag_rbtree_node_t *n)
+insert2(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
 	assert(t && n && n->parent);
 	if (BLACKP(n->parent)) {
@@ -131,9 +131,9 @@ insert2(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-insert3(diag_rbtree_t *t, diag_rbtree_node_t *n)
+insert3(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *p, *g, *u;
+	struct diag_rbtree_node *p, *g, *u;
 
 	assert(t && n);
 	p = n->parent;
@@ -152,9 +152,9 @@ insert3(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-insert4(diag_rbtree_t *t, diag_rbtree_node_t *n)
+insert4(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *p, *g;
+	struct diag_rbtree_node *p, *g;
 
 	assert(t && n);
 	p = n->parent;
@@ -172,9 +172,9 @@ insert4(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-insert5(diag_rbtree_t *t, diag_rbtree_node_t *n)
+insert5(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *p, *g;
+	struct diag_rbtree_node *p, *g;
 
 	assert(t && n);
 	p = n->parent;
@@ -191,10 +191,10 @@ insert5(diag_rbtree_t *t, diag_rbtree_node_t *n)
 	}
 }
 
-static diag_rbtree_node_t *
-inorder_predecessor(const diag_rbtree_node_t *n)
+static struct diag_rbtree_node *
+inorder_predecessor(const struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *p;
+	struct diag_rbtree_node *p;
 
 	assert(n);
 	if (n->left) {
@@ -209,10 +209,10 @@ inorder_predecessor(const diag_rbtree_node_t *n)
 	return NULL;
 }
 
-static diag_rbtree_node_t *
-inorder_successor(const diag_rbtree_node_t *n)
+static struct diag_rbtree_node *
+inorder_successor(const struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *p;
+	struct diag_rbtree_node *p;
 
 	assert(n);
 	if (n->right) {
@@ -227,24 +227,24 @@ inorder_successor(const diag_rbtree_node_t *n)
 	return NULL;
 }
 
-static void delete1(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void delete2(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void delete3(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void delete4(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void delete5(diag_rbtree_t *t, diag_rbtree_node_t *n);
-static void delete6(diag_rbtree_t *t, diag_rbtree_node_t *n);
+static void delete1(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void delete2(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void delete3(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void delete4(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void delete5(struct diag_rbtree *t, struct diag_rbtree_node *n);
+static void delete6(struct diag_rbtree *t, struct diag_rbtree_node *n);
 
 static void
-delete1(diag_rbtree_t *t, diag_rbtree_node_t *n)
+delete1(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
 	assert(t && n && BLACKP(n));
 	if (n->parent) delete2(t, n);
 }
 
 static void
-delete2(diag_rbtree_t *t, diag_rbtree_node_t *n)
+delete2(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *s;
+	struct diag_rbtree_node *s;
 
 	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
@@ -261,9 +261,9 @@ delete2(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-delete3(diag_rbtree_t *t, diag_rbtree_node_t *n)
+delete3(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *s;
+	struct diag_rbtree_node *s;
 
 	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
@@ -279,9 +279,9 @@ delete3(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-delete4(diag_rbtree_t *t, diag_rbtree_node_t *n)
+delete4(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *s;
+	struct diag_rbtree_node *s;
 
 	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
@@ -297,9 +297,9 @@ delete4(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-delete5(diag_rbtree_t *t, diag_rbtree_node_t *n)
+delete5(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *s;
+	struct diag_rbtree_node *s;
 
 	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
@@ -322,9 +322,9 @@ delete5(diag_rbtree_t *t, diag_rbtree_node_t *n)
 }
 
 static void
-delete6(diag_rbtree_t *t, diag_rbtree_node_t *n)
+delete6(struct diag_rbtree *t, struct diag_rbtree_node *n)
 {
-	diag_rbtree_node_t *s;
+	struct diag_rbtree_node *s;
 
 	assert(t && n && BLACKP(n) && n->parent);
 	s = SIBLING(n);
@@ -345,11 +345,11 @@ delete6(diag_rbtree_t *t, diag_rbtree_node_t *n)
 
 /* Public API */
 
-diag_rbtree_t *
+struct diag_rbtree *
 diag_rbtree_new(diag_rbtree_cmp_t cmp)
 {
-	diag_rbtree_t *tree;
-	tree = diag_malloc(sizeof(diag_rbtree_t));
+	struct diag_rbtree *tree;
+	tree = diag_malloc(sizeof(struct diag_rbtree));
 	tree->root = NULL;
 	tree->num_nodes = 0;
 	tree->cmp = (cmp) ? cmp : compare;
@@ -357,7 +357,7 @@ diag_rbtree_new(diag_rbtree_cmp_t cmp)
 }
 
 void
-diag_rbtree_destroy(diag_rbtree_t *tree)
+diag_rbtree_destroy(struct diag_rbtree *tree)
 {
 	if (tree) {
 		if (tree->root) destroy_subtree(tree->root);
@@ -366,11 +366,11 @@ diag_rbtree_destroy(diag_rbtree_t *tree)
 	}
 }
 
-diag_rbtree_node_t *
+struct diag_rbtree_node *
 diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr)
 {
-	diag_rbtree_node_t *node;
-	node = diag_malloc(sizeof(diag_rbtree_node_t));
+	struct diag_rbtree_node *node;
+	node = diag_malloc(sizeof(struct diag_rbtree_node));
 	node->key = key;
 	node->color = '\0';
 	node->parent = node->left = node->right = NULL;
@@ -379,7 +379,7 @@ diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr)
 }
 
 void
-diag_rbtree_node_destroy(diag_rbtree_node_t *node)
+diag_rbtree_node_destroy(struct diag_rbtree_node *node)
 {
 	if (node) {
 		diag_free(node);
@@ -388,9 +388,9 @@ diag_rbtree_node_destroy(diag_rbtree_node_t *node)
 }
 
 diag_size_t
-diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node)
+diag_rbtree_insert(struct diag_rbtree *tree, struct diag_rbtree_node *node)
 {
-	diag_rbtree_node_t *n;
+	struct diag_rbtree_node *n;
 
 	assert(tree && node);
 	n = tree->root;
@@ -430,9 +430,9 @@ diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 }
 
 diag_size_t
-diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node)
+diag_rbtree_delete(struct diag_rbtree *tree, struct diag_rbtree_node *node)
 {
-	diag_rbtree_node_t *n, *c;
+	struct diag_rbtree_node *n, *c;
 
 	assert(tree && node);
 	while (node->left && node->right) {
@@ -460,9 +460,9 @@ diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node)
 }
 
 int
-diag_rbtree_search(diag_rbtree_t *tree, diag_rbtree_key_t key, diag_rbtree_node_t **found)
+diag_rbtree_search(struct diag_rbtree *tree, diag_rbtree_key_t key, struct diag_rbtree_node **found)
 {
-	diag_rbtree_node_t *n;
+	struct diag_rbtree_node *n;
 
 	assert(tree);
 	n = tree->root;
@@ -477,36 +477,36 @@ diag_rbtree_search(diag_rbtree_t *tree, diag_rbtree_key_t key, diag_rbtree_node_
 	return DIAG_FAILURE;
 }
 
-diag_rbtree_node_t *
-diag_rbtree_minimum(const diag_rbtree_t *tree)
+struct diag_rbtree_node *
+diag_rbtree_minimum(const struct diag_rbtree *tree)
 {
 	assert(tree);
 	return (tree->root) ? leftmost(tree->root) : NULL;
 }
 
-diag_rbtree_node_t *
-diag_rbtree_maximum(const diag_rbtree_t *tree)
+struct diag_rbtree_node *
+diag_rbtree_maximum(const struct diag_rbtree *tree)
 {
 	assert(tree);
 	return (tree->root) ? rightmost(tree->root) : NULL;
 }
 
-diag_rbtree_node_t *
-diag_rbtree_predecessor(const diag_rbtree_node_t *node)
+struct diag_rbtree_node *
+diag_rbtree_predecessor(const struct diag_rbtree_node *node)
 {
 	return inorder_predecessor(node);
 }
 
-diag_rbtree_node_t *
-diag_rbtree_successor(const diag_rbtree_node_t *node)
+struct diag_rbtree_node *
+diag_rbtree_successor(const struct diag_rbtree_node *node)
 {
 	return inorder_successor(node);
 }
 
 void
-diag_rbtree_for_each(const diag_rbtree_t *tree, diag_rbtree_callback_t callback)
+diag_rbtree_for_each(const struct diag_rbtree *tree, diag_rbtree_callback_t callback)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 
 	node = diag_rbtree_minimum(tree);
 	if (!node) return;
@@ -516,9 +516,9 @@ diag_rbtree_for_each(const diag_rbtree_t *tree, diag_rbtree_callback_t callback)
 }
 
 void
-diag_rbtree_for_each_attr(const diag_rbtree_t *tree, diag_rbtree_callback_attr_t callback)
+diag_rbtree_for_each_attr(const struct diag_rbtree *tree, diag_rbtree_callback_attr_t callback)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 
 	node = diag_rbtree_minimum(tree);
 	if (!node) return;

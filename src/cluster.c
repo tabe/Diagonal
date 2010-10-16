@@ -12,33 +12,33 @@
 #include "diagonal/metric.h"
 #include "diagonal/cluster.h"
 
-diag_cluster_t *
+struct diag_cluster *
 diag_cluster_new(diag_size_t num_data)
 {
-	diag_cluster_t *cluster;
+	struct diag_cluster *cluster;
 	size_t size;
 
-	size = (size_t)(sizeof(diag_cluster_t)+num_data*sizeof(diag_datum_t *));
+	size = (size_t)(sizeof(struct diag_cluster)+num_data*sizeof(struct diag_datum *));
 	cluster = diag_malloc(size);
 	cluster->num_data = num_data;
 	return cluster;
 }
 
 void
-diag_cluster_destroy(diag_cluster_t *cluster)
+diag_cluster_destroy(struct diag_cluster *cluster)
 {
 	if (cluster) {
 		diag_free(cluster);
 	}
 }
 
-diag_analysis_t *
-diag_analysis_new(diag_size_t num_data, diag_datum_t **data)
+struct diag_analysis *
+diag_analysis_new(diag_size_t num_data, struct diag_datum **data)
 {
-	diag_analysis_t *analysis;
+	struct diag_analysis *analysis;
 	size_t size;
 
-	size = (size_t)(sizeof(diag_analysis_t)+num_data*sizeof(diag_code_t *));
+	size = (size_t)(sizeof(struct diag_analysis)+num_data*sizeof(struct diag_code *));
 	analysis = diag_malloc(size);
 	analysis->num_data = num_data;
 	analysis->data = data;
@@ -50,20 +50,20 @@ diag_analysis_new(diag_size_t num_data, diag_datum_t **data)
 }
 
 void
-diag_analysis_destroy(diag_analysis_t *analysis)
+diag_analysis_destroy(struct diag_analysis *analysis)
 {
 	if (analysis) {
 		diag_free(analysis);
 	}
 }
 
-diag_code_t *
-diag_code_new(diag_cluster_t *cluster, diag_size_t num_deltas)
+struct diag_code *
+diag_code_new(struct diag_cluster *cluster, diag_size_t num_deltas)
 {
-	diag_code_t *code;
+	struct diag_code *code;
 	size_t size;
 
-	size = (size_t)(sizeof(diag_code_t)+num_deltas*sizeof(diag_delta_t *));
+	size = (size_t)(sizeof(struct diag_code)+num_deltas*sizeof(struct diag_delta *));
 	code = diag_malloc(size);
 	code->cluster = cluster;
 	code->num_deltas = num_deltas;
@@ -71,38 +71,38 @@ diag_code_new(diag_cluster_t *cluster, diag_size_t num_deltas)
 }
 
 void
-diag_code_destroy(diag_code_t *datum)
+diag_code_destroy(struct diag_code *datum)
 {
 	if (datum) {
 		diag_free(datum);
 	}
 }
 
-diag_delta_t *
+struct diag_delta *
 diag_delta_new(enum diag_delta_type type)
 {
-	diag_delta_t *delta;
+	struct diag_delta *delta;
 
-	delta = diag_malloc(sizeof(diag_delta_t));
+	delta = diag_malloc(sizeof(struct diag_delta));
 	delta->type = type;
 	return delta;
 }
 
 void
-diag_delta_destroy(diag_delta_t *delta)
+diag_delta_destroy(struct diag_delta *delta)
 {
 	if (delta) {
 		diag_free(delta);
 	}
 }
 
-diag_code_t *
-diag_delta_hamming_chars(diag_cluster_t *cluster, const char *x, const char *y)
+struct diag_code *
+diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char *y)
 {
-	diag_deque_t *deque;
-	diag_deque_elem_t *elem;
-	diag_delta_t *d;
-	diag_code_t *code;
+	struct diag_deque *deque;
+	struct diag_deque_elem *elem;
+	struct diag_delta *d;
+	struct diag_code *code;
 	diag_size_t i = 0;
 
 	assert(x && y);
@@ -133,7 +133,7 @@ diag_delta_hamming_chars(diag_cluster_t *cluster, const char *x, const char *y)
 	code = diag_code_new(cluster, deque->length);
 	i = 0;
 	DIAG_DEQUE_FOR_EACH(deque, elem) {
-		d = (diag_delta_t *)elem->attr;
+		d = (struct diag_delta *)elem->attr;
 		code->deltas[i++] = d;
 	}
 	assert(i == deque->length);

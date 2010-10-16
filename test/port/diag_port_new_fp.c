@@ -6,7 +6,7 @@
 int
 main()
 {
-	diag_port_t *port;
+	struct diag_port *port;
 	FILE *fp;
 	uint8_t b;
 #define BUFLEN 2

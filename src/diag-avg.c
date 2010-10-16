@@ -41,7 +41,7 @@ enum diag_avg_param_type {
 	DIAG_AVG_PARAM_DOUBLE = 1<<1,
 };
 
-typedef struct {
+struct diag_avg_param {
 	enum diag_avg_param_type type;
 	union {
 		long int l;
@@ -49,13 +49,13 @@ typedef struct {
 	} value;
 	unsigned int field_width;
 	int precision;
-} diag_avg_param_t;
+};
 
 static enum diag_avg_param_type
-couple_to_param(diag_deque_t *head, diag_deque_t *tail, diag_avg_param_t *param)
+couple_to_param(struct diag_deque *head, struct diag_deque *tail, struct diag_avg_param *param)
 {
 	char c, *s, *r;
-	diag_deque_elem_t *e;
+	struct diag_deque_elem *e;
 	unsigned int len;
 	int precision = -1;
 	int i = 0;
@@ -99,9 +99,9 @@ couple_to_param(diag_deque_t *head, diag_deque_t *tail, diag_avg_param_t *param)
 }
 
 static int
-read_parameter(diag_port_t *port, diag_deque_t *head, diag_avg_param_t *param, uint8_t *xp)
+read_parameter(struct diag_port *port, struct diag_deque *head, struct diag_avg_param *param, uint8_t *xp)
 {
-	diag_deque_t *tail;
+	struct diag_deque *tail;
 	uint8_t x;
 	int r = 0;
 
@@ -122,9 +122,9 @@ read_parameter(diag_port_t *port, diag_deque_t *head, diag_avg_param_t *param, u
 }
 
 static long int
-average_long(int n, diag_avg_param_t *param, char *buf)
+average_long(int n, struct diag_avg_param *param, char *buf)
 {
-	diag_avg_param_t *p;
+	struct diag_avg_param *p;
 	long int l = 0;
 	int i;
 
@@ -140,9 +140,9 @@ average_long(int n, diag_avg_param_t *param, char *buf)
 }
 
 static double
-average_double(int n, diag_avg_param_t *param, char *buf)
+average_double(int n, struct diag_avg_param *param, char *buf)
 {
-	diag_avg_param_t *p;
+	struct diag_avg_param *p;
 	double d = 0;
 	unsigned int field_width = 0;
 	int precision = 0;
@@ -168,7 +168,7 @@ average_double(int n, diag_avg_param_t *param, char *buf)
 }
 
 static void
-average_parameters(int n, diag_deque_t *q, diag_avg_param_t *param, char *buf)
+average_parameters(int n, struct diag_deque *q, struct diag_avg_param *param, char *buf)
 {
 	int i;
 	unsigned int t = 0;
@@ -190,15 +190,15 @@ average_parameters(int n, diag_deque_t *q, diag_avg_param_t *param, char *buf)
 static void
 run_files(char **paths, int n, int fd)
 {
-	diag_port_t **ports, *port, *fdport;
+	struct diag_port **ports, *port, *fdport;
 	uint8_t i, *x;
 	int d, cont;
-	diag_deque_t *q, *head;
-	diag_deque_elem_t *e;
-	diag_avg_param_t *param;
+	struct diag_deque *q, *head;
+	struct diag_deque_elem *e;
+	struct diag_avg_param *param;
 	char *buf;
 
-	ports = diag_calloc(n, sizeof(diag_port_t *));
+	ports = diag_calloc(n, sizeof(struct diag_port *));
 	for (i = 0; i < n; i++) {
 		ports[i] = diag_port_new_path(paths[i], "rb");
 	}
@@ -207,7 +207,7 @@ run_files(char **paths, int n, int fd)
 	q = diag_deque_new();
 	head = diag_deque_new();
 	cont = 0;
-	param = diag_calloc(n, sizeof(diag_avg_param_t));
+	param = diag_calloc(n, sizeof(struct diag_avg_param));
 	buf = diag_malloc(BUFFER_LENGTH);
 	while ( cont || port->read_byte(port, x) > 0 ) {
 		if (DECIMAL_P(*x)) {
@@ -263,9 +263,9 @@ run_files(char **paths, int n, int fd)
 }
 
 static void
-collect_children(diag_rbtree_t *ptree)
+collect_children(struct diag_rbtree *ptree)
 {
-	diag_rbtree_node_t *pnode;
+	struct diag_rbtree_node *pnode;
 	pid_t pid;
 
 	assert(ptree);
@@ -297,8 +297,8 @@ main(int argc, char *argv[])
 	int c, i, n = NUMBER_OF_TRIALS;
 	int leave_output = 0;
 	pid_t pid;
-	diag_rbtree_t *ptree;
-	diag_rbtree_node_t *pnode;
+	struct diag_rbtree *ptree;
+	struct diag_rbtree_node *pnode;
 	int status, *stable;
 	char *dir = NULL;
 	char **opaths, **epaths;

@@ -16,8 +16,8 @@ int
 main()
 {
 	int fd;
-	diag_port_t *port;
-	diag_line_context_t *context;
+	struct diag_port *port;
+	struct diag_line_context *context;
 	size_t size;
 	char *line;
 

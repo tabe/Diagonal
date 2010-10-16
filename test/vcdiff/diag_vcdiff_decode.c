@@ -9,9 +9,9 @@
 static void
 decode3(const char *source, const char *input, const char *output)
 {
-	diag_vcdiff_context_t *context;
-	diag_vcdiff_t *vcdiff;
-	diag_vcdiff_vm_t *vm;
+	struct diag_vcdiff_context *context;
+	struct diag_vcdiff *vcdiff;
+	struct diag_vcdiff_vm *vm;
 	int fd, r;
 	struct stat st;
 	uint8_t *expected;
@@ -57,9 +57,9 @@ decode2(const char *input, const char *output)
 static void
 fail_to_decode(const char *input)
 {
-	diag_vcdiff_context_t *context;
-	diag_vcdiff_t *vcdiff;
-	diag_vcdiff_vm_t *vm;
+	struct diag_vcdiff_context *context;
+	struct diag_vcdiff *vcdiff;
+	struct diag_vcdiff_vm *vm;
 
 	context = diag_vcdiff_context_new_path(input);
 	context->compatibility = 1;

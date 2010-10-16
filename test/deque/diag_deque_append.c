@@ -6,8 +6,8 @@
 int
 main()
 {
-	diag_deque_t *head, *tail;
-	diag_deque_elem_t *elem;
+	struct diag_deque *head, *tail;
+	struct diag_deque_elem *elem;
 	uintptr_t i;
 	unsigned int len;
 

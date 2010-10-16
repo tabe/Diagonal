@@ -41,7 +41,7 @@ struct rabin_karp_attr32_s {
 };
 
 static uint32_t
-rabin_karp_init32(diag_rolling_hash32_t *rh)
+rabin_karp_init32(struct diag_rolling_hash32 *rh)
 {
 	register diag_size_t i;
 	uint32_t base, factor = 1;
@@ -58,7 +58,7 @@ rabin_karp_init32(diag_rolling_hash32_t *rh)
 }
 
 static uint32_t
-rabin_karp_roll32(diag_rolling_hash32_t *rh)
+rabin_karp_roll32(struct diag_rolling_hash32 *rh)
 {
 	register uint32_t base, factor;
 	const uint8_t *tail;
@@ -74,10 +74,10 @@ rabin_karp_roll32(diag_rolling_hash32_t *rh)
 	return rh->value;
 }
 
-diag_rolling_hash32_t *
+struct diag_rolling_hash32 *
 diag_rolling_hash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
 {
-	diag_rolling_hash32_t *rh;
+	struct diag_rolling_hash32 *rh;
 
 	assert(data);
 	assert(size > 0);
@@ -94,10 +94,10 @@ diag_rolling_hash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_win
 	return rh;
 }
 
-diag_rolling_hash32_t *
+struct diag_rolling_hash32 *
 diag_rolling_hash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_size_t s_window, uint32_t base)
 {
-	diag_rolling_hash32_t *rh;
+	struct diag_rolling_hash32 *rh;
 	struct rabin_karp_attr32_s *attr;
 
 	assert(base > 0);
@@ -111,7 +111,7 @@ diag_rolling_hash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_s
 }
 
 void
-diag_rolling_hash32_destroy(diag_rolling_hash32_t *rh)
+diag_rolling_hash32_destroy(struct diag_rolling_hash32 *rh)
 {
 	if (rh) {
 		if (rh->attr) diag_free(rh->attr);
@@ -120,7 +120,7 @@ diag_rolling_hash32_destroy(diag_rolling_hash32_t *rh)
 }
 
 uint32_t *
-diag_rolling_hash32_collect(diag_rolling_hash32_t *rh, diag_size_t *length)
+diag_rolling_hash32_collect(struct diag_rolling_hash32 *rh, diag_size_t *length)
 {
 	register diag_size_t len, i;
 	uint32_t *arr;

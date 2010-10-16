@@ -22,18 +22,18 @@
 #include "diagonal/bytevector.h"
 
 static void
-bytevector_free(diag_bytevector_t *bv)
+bytevector_free(struct diag_bytevector *bv)
 {
 	assert(bv);
 	diag_free(bv->data);
 }
 
-diag_bytevector_t *
+struct diag_bytevector *
 diag_bytevector_new_heap(diag_size_t size, uint8_t *data)
 {
-	diag_bytevector_t *bv;
+	struct diag_bytevector *bv;
 
-	bv = diag_malloc(sizeof(diag_bytevector_t));
+	bv = diag_malloc(sizeof(struct diag_bytevector));
 	bv->size = size;
 	bv->data = data;
 	bv->finalize = bytevector_free;
@@ -41,16 +41,16 @@ diag_bytevector_new_heap(diag_size_t size, uint8_t *data)
 }
 
 static void
-bytevector_munmap(diag_bytevector_t *bv)
+bytevector_munmap(struct diag_bytevector *bv)
 {
 	assert(bv);
 	(void)munmap((void *)bv->data, (size_t)bv->size);
 }
 
-diag_bytevector_t *
+struct diag_bytevector *
 diag_bytevector_new_path(const char *path)
 {
-	diag_bytevector_t *bv;
+	struct diag_bytevector *bv;
 	int fd, r;
 	struct stat st;
 	diag_size_t size;
@@ -65,7 +65,7 @@ diag_bytevector_new_path(const char *path)
 	data = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	close(fd);
 	if (data == MAP_FAILED) return NULL;
-	bv = diag_malloc(sizeof(diag_bytevector_t));
+	bv = diag_malloc(sizeof(struct diag_bytevector));
 	bv->size = size;
 	bv->data = data;
 	bv->finalize = bytevector_munmap;
@@ -73,7 +73,7 @@ diag_bytevector_new_path(const char *path)
 }
 
 char *
-diag_bytevector_to_asciz(const diag_bytevector_t *bv)
+diag_bytevector_to_asciz(const struct diag_bytevector *bv)
 {
 	char *s;
 
@@ -85,7 +85,7 @@ diag_bytevector_to_asciz(const diag_bytevector_t *bv)
 }
 
 void
-diag_bytevector_destroy(diag_bytevector_t *bv)
+diag_bytevector_destroy(struct diag_bytevector *bv)
 {
 	if (!bv) return;
 	if (bv->finalize) bv->finalize(bv);

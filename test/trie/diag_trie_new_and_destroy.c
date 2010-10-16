@@ -6,7 +6,7 @@
 int
 main()
 {
-	diag_trie_t *trie;
+	struct diag_trie *trie;
 
 	trie = diag_trie_new();
 	assert(trie->size == 1);

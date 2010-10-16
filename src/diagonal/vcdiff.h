@@ -1,7 +1,7 @@
 #ifndef DIAGONAL_VCDIFF_H
 #define DIAGONAL_VCDIFF_H
 
-typedef struct {
+struct diag_vcdiff_delta {
 	uint32_t length;
 	uint32_t s_window;
 	uint8_t indicator;
@@ -11,7 +11,7 @@ typedef struct {
 	uint8_t *data;
 	uint8_t *inst;
 	uint8_t *addr;
-} diag_vcdiff_delta_t;
+};
 
 enum {
 	DIAG_VCD_DATACOMP = 0x1,
@@ -23,12 +23,12 @@ enum {
 #define DIAG_VCDIFF_INSTCOMPP(delta)  ((delta)->indicator & DIAG_VCD_INSTCOMP)
 #define DIAG_VCDIFF_ADDRCOMPP(delta)  ((delta)->indicator & DIAG_VCD_ADDRCOMP)
 
-typedef struct {
+struct diag_vcdiff_window {
 	uint8_t indicator;
 	uint32_t length_source_segment;
 	uint32_t position_source_segment;
-	diag_vcdiff_delta_t *delta;
-} diag_vcdiff_window_t;
+	struct diag_vcdiff_delta *delta;
+};
 
 enum {
 	DIAG_VCD_SOURCE = 0x1,
@@ -38,15 +38,15 @@ enum {
 #define DIAG_VCDIFF_SOURCEP(window) ((window)->indicator & DIAG_VCD_SOURCE)
 #define DIAG_VCDIFF_TARGETP(window) ((window)->indicator & DIAG_VCD_TARGET)
 
-typedef struct {
+struct diag_vcdiff {
 	uint8_t version;
 	uint8_t indicator;
 	uint8_t compressor_id;
 	uint32_t length_code_table_data;
 	uint8_t *code_table_data;
 	uint32_t num_windows;
-	diag_vcdiff_window_t **windows;
-} diag_vcdiff_t;
+	struct diag_vcdiff_window **windows;
+};
 
 enum {
 	DIAG_VCD_DECOMPRESS = 0x1,
@@ -56,13 +56,13 @@ enum {
 #define DIAG_VCDIFF_DECOMPRESSP(vcdiff) ((vcdiff)->indicator & DIAG_VCD_DECOMPRESS)
 #define DIAG_VCDIFF_CODETABLEP(vcdiff)  ((vcdiff)->indicator & DIAG_VCD_CODETABLE)
 
-typedef struct {
+struct diag_vcdiff_cache {
     uint32_t *near;     /* array of size s_near */
 	uint8_t s_near;
 	uint32_t next_slot; /* the circular index for near */
 	uint32_t *same;     /* array of size s_same * 256 */
 	uint8_t s_same;
-} diag_vcdiff_cache_t;
+};
 
 #define DIAG_VCDIFF_S_NEAR_DEFAULT 4
 #define DIAG_VCDIFF_S_SAME_DEFAULT 3
@@ -72,14 +72,14 @@ enum {
 	DIAG_VCD_HERE = 1,
 };
 
-typedef struct {
+struct diag_vcdiff_code {
 	uint8_t inst1;
 	uint8_t size1;
 	uint8_t mode1;
 	uint8_t inst2;
 	uint8_t size2;
 	uint8_t mode2;
-} diag_vcdiff_code_t;
+};
 
 enum {
 	DIAG_VCD_NOOP = 0,
@@ -88,25 +88,25 @@ enum {
 	DIAG_VCD_COPY = 3,
 };
 
-typedef struct {
+struct diag_vcdiff_code_table {
 	uint8_t s_near;
 	uint8_t s_same;
-	diag_vcdiff_code_t *entries;
-} diag_vcdiff_code_table_t;
+	struct diag_vcdiff_code *entries;
+};
 
-typedef struct diag_vcdiff_context_s {
+struct diag_vcdiff_context {
 	uint8_t compatibility;
-	diag_port_t *port;
-} diag_vcdiff_context_t;
+	struct diag_port *port;
+};
 
 #define DIAG_VCDIFF_COMPATIBLEP(context) (context)->compatibility
 
-typedef struct diag_vcdiff_vm_s {
-	diag_bytevector_t *source;
+struct diag_vcdiff_vm {
+	struct diag_bytevector *source;
 	uint32_t s_target;
 	uint8_t *target;
-	diag_vcdiff_cache_t *cache;
-	diag_vcdiff_code_table_t *code_table;
+	struct diag_vcdiff_cache *cache;
+	struct diag_vcdiff_code_table *code_table;
 	jmp_buf env;
 	const uint8_t *src;
 	const uint8_t *src_s;
@@ -116,11 +116,11 @@ typedef struct diag_vcdiff_vm_s {
 	const uint8_t *inst_s;
 	uint8_t *addr;
 	const uint8_t *addr_s;
-	void (*close)(struct diag_vcdiff_vm_s *vm);
-	void (*error)(struct diag_vcdiff_vm_s *vm, const char *message, ...);
-} diag_vcdiff_vm_t;
+	void (*close)(struct diag_vcdiff_vm *vm);
+	void (*error)(struct diag_vcdiff_vm *vm, const char *message, ...);
+};
 
-typedef struct diag_vcdiff_pcode_s {
+struct diag_vcdiff_pcode {
 	int inst;
 	diag_size_t size;
 	union {
@@ -128,37 +128,37 @@ typedef struct diag_vcdiff_pcode_s {
 		uint8_t *data;
 		uint8_t byte;
 	} attr;
-} diag_vcdiff_pcode_t;
+};
 
-typedef struct diag_vcdiff_script_s {
+struct diag_vcdiff_script {
 	const uint8_t *source;
 	diag_size_t s_pcodes;
-	diag_vcdiff_pcode_t *pcodes;
-} diag_vcdiff_script_t;
+	struct diag_vcdiff_pcode *pcodes;
+};
 
 DIAG_C_DECL_BEGIN
 
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_fp(FILE *fp);
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_fd(int fd);
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size);
-extern diag_vcdiff_context_t *diag_vcdiff_context_new_path(const char *path);
+extern struct diag_vcdiff_context *diag_vcdiff_context_new_fp(FILE *fp);
+extern struct diag_vcdiff_context *diag_vcdiff_context_new_fd(int fd);
+extern struct diag_vcdiff_context *diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size);
+extern struct diag_vcdiff_context *diag_vcdiff_context_new_path(const char *path);
 
-extern void diag_vcdiff_context_destroy(diag_vcdiff_context_t *context);
+extern void diag_vcdiff_context_destroy(struct diag_vcdiff_context *context);
 
-extern diag_vcdiff_t *diag_vcdiff_read(diag_vcdiff_context_t *context);
+extern struct diag_vcdiff *diag_vcdiff_read(struct diag_vcdiff_context *context);
 
-extern diag_vcdiff_vm_t *diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source);
-extern diag_vcdiff_vm_t *diag_vcdiff_vm_new_path(const char *path);
-extern void diag_vcdiff_vm_destroy(diag_vcdiff_vm_t *vm);
+extern struct diag_vcdiff_vm *diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source);
+extern struct diag_vcdiff_vm *diag_vcdiff_vm_new_path(const char *path);
+extern void diag_vcdiff_vm_destroy(struct diag_vcdiff_vm *vm);
 
-extern uint8_t *diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff);
+extern uint8_t *diag_vcdiff_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff);
 
-extern void diag_vcdiff_destroy(diag_vcdiff_t *vcdiff);
+extern void diag_vcdiff_destroy(struct diag_vcdiff *vcdiff);
 
-extern void diag_vcdiff_script_destroy(diag_vcdiff_script_t *script);
+extern void diag_vcdiff_script_destroy(struct diag_vcdiff_script *script);
 
-extern uint8_t *diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size);
-extern diag_vcdiff_script_t *diag_vcdiff_contract(diag_rolling_hash32_t *rh);
+extern uint8_t *diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size);
+extern struct diag_vcdiff_script *diag_vcdiff_contract(struct diag_rolling_hash32 *rh);
 
 DIAG_C_DECL_END
 

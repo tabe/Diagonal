@@ -48,7 +48,7 @@ usage(void)
 }
 
 static void *
-map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
+map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 {
 	int fd, r;
 	struct stat st;
@@ -66,7 +66,7 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 	close(fd);
 	*(p + len) = '\0';
 	while (q < p + len) {
-		diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
+		struct diag_rbtree_node *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
 		diag_rbtree_insert(tree, node);
 		do {
 			if (*q == '\n') {
@@ -79,9 +79,9 @@ map_file(const char *path, diag_rbtree_t *tree, size_t *plen)
 }
 
 static char **
-serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
+serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	char **e;
 	unsigned int i = 0;
 
@@ -100,17 +100,17 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 	return e;
 }
 
-static diag_rbtree_t *
+static struct diag_rbtree *
 aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_chars_t metric)
 {
-	diag_rbtree_t *comb;
+	struct diag_rbtree *comb;
 	unsigned int i, j;
 
 	if (num_entries == 0) return NULL;
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
-			diag_rbtree_node_t *node;
+			struct diag_rbtree_node *node;
 			diag_rbtree_key_t k;
 			unsigned int *p;
 
@@ -126,9 +126,9 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_cha
 }
 
 static unsigned int *
-process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entries, int t, unsigned int **occur)
+process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_entries, int t, unsigned int **occur)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	unsigned int *p, i = 0;
 
 	if (num_entries == 0) return NULL;
@@ -157,12 +157,12 @@ process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entrie
 
 #if 0
 static void
-display_clusters(diag_analysis_t *analysis, int one)
+display_clusters(struct diag_analysis *analysis, int one)
 {
 	diag_size_t i;
 
 	for (i = 0; i < analysis->num_clusters; i++) {
-		diag_cluster_t *cluster;
+		struct diag_cluster *cluster;
 		diag_size_t j;
 
 		cluster = analysis->clusters[i];
@@ -182,15 +182,15 @@ display_clusters(diag_analysis_t *analysis, int one)
 #endif
 
 static diag_distance_t
-metric_log(const diag_datum_t *d1, const diag_datum_t *d2)
+metric_log(const struct diag_datum *d1, const struct diag_datum *d2)
 {
 	return diag_hamming_chars((const char *)d1->value, (const char *)d2->value);
 }
 
-static diag_code_t *
-encode_log(diag_cluster_t *cluster, diag_datum_t *datum)
+static struct diag_code *
+encode_log(struct diag_cluster *cluster, struct diag_datum *datum)
 {
-	diag_code_t *code;
+	struct diag_code *code;
 
 	assert(cluster && datum);
 	code = diag_delta_hamming_chars(cluster, (const char *)cluster->data[0]->value, (const char *)datum->value);
@@ -198,7 +198,7 @@ encode_log(diag_cluster_t *cluster, diag_datum_t *datum)
 }
 
 static void
-process_cluster_data(diag_datum_t **data, unsigned int num_data, const unsigned int *parent, diag_size_t i, diag_deque_t *d)
+process_cluster_data(struct diag_datum **data, unsigned int num_data, const unsigned int *parent, diag_size_t i, struct diag_deque *d)
 {
 	diag_size_t j;
 
@@ -210,16 +210,16 @@ process_cluster_data(diag_datum_t **data, unsigned int num_data, const unsigned 
 	}
 }
 
-static diag_analysis_t *
+static struct diag_analysis *
 analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 {
-	diag_analysis_t *analysis;
-	diag_datum_t **data;
-	diag_deque_t *deque;
-	diag_deque_elem_t *elem;
+	struct diag_analysis *analysis;
+	struct diag_datum **data;
+	struct diag_deque *deque;
+	struct diag_deque_elem *elem;
 	diag_size_t i;
 
-	data = diag_calloc((size_t)num_entries, sizeof(diag_datum_t *));
+	data = diag_calloc((size_t)num_entries, sizeof(struct diag_datum *));
 	for (i = 0; i < num_entries; i++) {
 		data[i] = diag_datum_new((void *)entries[i]);
 		data[i]->id.number = i;
@@ -231,7 +231,7 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 	deque = diag_deque_new();
 	for (i = 1; i <= num_entries; i++) {
 		if (parent[i] == 0) {
-			diag_deque_t *d;
+			struct diag_deque *d;
 
 			d = diag_deque_new();
 			diag_deque_push(d, (uintptr_t)data[i-1]);
@@ -240,19 +240,19 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 		}
 	}
 	analysis->num_clusters = deque->length;
-	analysis->clusters = diag_calloc((size_t)deque->length, sizeof(diag_cluster_t *));
+	analysis->clusters = diag_calloc((size_t)deque->length, sizeof(struct diag_cluster *));
 	i = 0;
 	DIAG_DEQUE_FOR_EACH(deque, elem) {
-		diag_cluster_t *c;
-		diag_deque_t *d;
-		diag_deque_elem_t *e;
+		struct diag_cluster *c;
+		struct diag_deque *d;
+		struct diag_deque_elem *e;
 		diag_size_t j;
 
-		d = (diag_deque_t *)elem->attr;
+		d = (struct diag_deque *)elem->attr;
 		c = diag_cluster_new(d->length);
 		j = 0;
 		DIAG_DEQUE_FOR_EACH(d, e) {
-			diag_datum_t *da = (diag_datum_t *)e->attr;
+			struct diag_datum *da = (struct diag_datum *)e->attr;
 			c->data[j++] = da;
 		}
 		analysis->clusters[i++] = c;
@@ -264,12 +264,12 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 }
 
 static void
-display_codes(diag_analysis_t *analysis)
+display_codes(struct diag_analysis *analysis)
 {
 	diag_size_t i;
 
 	for (i = 0; i < analysis->num_data; i++) {
-		diag_code_t *code;
+		struct diag_code *code;
 		diag_size_t j;
 
 		code = analysis->codes[i];
@@ -278,7 +278,7 @@ display_codes(diag_analysis_t *analysis)
 		if (!code->cluster->data[0]) continue;
 		printf("[%s]\n", (char *)code->cluster->data[0]->value);
 		for (j = 0; j < code->num_deltas; j++) {
-			diag_delta_t *d;
+			struct diag_delta *d;
 
 			d = code->deltas[j];
 			switch (d->type) {
@@ -313,7 +313,7 @@ main(int argc, char *argv[])
 	diag_metric_chars_t metric = diag_levenshtein_chars;
 	size_t len;
 	void *p;
-	diag_rbtree_t *tree, *comb;
+	struct diag_rbtree *tree, *comb;
 	char **entries;
 	unsigned int num_entries, *parent, *occur;
 
@@ -374,7 +374,7 @@ main(int argc, char *argv[])
 	diag_rbtree_for_each_attr(comb, (diag_rbtree_callback_attr_t)diag_free);
 	diag_rbtree_destroy(comb);
 	if (parent) {
-		diag_analysis_t *analysis;
+		struct diag_analysis *analysis;
 
 		analysis = analyze(entries, num_entries, parent);
 #if 0

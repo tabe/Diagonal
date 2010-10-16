@@ -35,14 +35,14 @@ enum {
 	DIAG_TAG_IDNAM = 0x02<<16,
 };
 
-typedef struct {
+struct diag_datum {
 	diag_tag_t tag;
 	void *value;
 	union {
 		diag_size_t number;
 		char *name;
 	} id;
-} diag_datum_t;
+};
 
 #define DIAG_DATUM_IMMEDIATE_P(datum) (!(diag_size_t)((datum)->tag))
 #define DIAG_DATUM_CHARS_P(datum) ((datum)->tag & DIAG_TAG_CHARS)
@@ -71,8 +71,8 @@ extern void *diag_calloc(size_t nmemb, size_t size);
 extern void *diag_realloc(void *ptr, size_t size);
 extern void diag_free(void *ptr);
 
-extern diag_datum_t *diag_datum_new(void *value);
-extern void diag_datum_destroy(diag_datum_t *datum);
+extern struct diag_datum *diag_datum_new(void *value);
+extern void diag_datum_destroy(struct diag_datum *datum);
 
 DIAG_C_DECL_END
 

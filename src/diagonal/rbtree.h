@@ -11,45 +11,45 @@ typedef void (*diag_rbtree_callback_attr_t)(diag_rbtree_attr_t attr);
 
 #define DIAG_RBTREE_IMMEDIATE ((diag_rbtree_cmp_t)NULL)
 
-typedef struct diag_rbtree_node_s {
+struct diag_rbtree_node {
 	diag_rbtree_key_t key;
 	diag_rbtree_attr_t attr;
 	char color;
-	struct diag_rbtree_node_s *parent;
-	struct diag_rbtree_node_s *left;
-	struct diag_rbtree_node_s *right;
-} diag_rbtree_node_t;
+	struct diag_rbtree_node *parent;
+	struct diag_rbtree_node *left;
+	struct diag_rbtree_node *right;
+};
 
-typedef struct diag_rbtree_s {
-	diag_rbtree_node_t *root;
+struct diag_rbtree {
+	struct diag_rbtree_node *root;
 	diag_rbtree_cmp_t cmp;
 	diag_size_t num_nodes;
-} diag_rbtree_t;
+};
 
 DIAG_C_DECL_BEGIN
 
-extern diag_rbtree_t *diag_rbtree_new(diag_rbtree_cmp_t cmp);
+extern struct diag_rbtree *diag_rbtree_new(diag_rbtree_cmp_t cmp);
 
-extern void diag_rbtree_destroy(diag_rbtree_t *tree);
+extern void diag_rbtree_destroy(struct diag_rbtree *tree);
 
-extern diag_rbtree_node_t *diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr);
+extern struct diag_rbtree_node *diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr);
 
-extern void diag_rbtree_node_destroy(diag_rbtree_node_t *node);
+extern void diag_rbtree_node_destroy(struct diag_rbtree_node *node);
 
-extern diag_size_t diag_rbtree_insert(diag_rbtree_t *tree, diag_rbtree_node_t *node);
+extern diag_size_t diag_rbtree_insert(struct diag_rbtree *tree, struct diag_rbtree_node *node);
 
-extern diag_size_t diag_rbtree_delete(diag_rbtree_t *tree, diag_rbtree_node_t *node);
+extern diag_size_t diag_rbtree_delete(struct diag_rbtree *tree, struct diag_rbtree_node *node);
 
-extern int diag_rbtree_search(diag_rbtree_t *tree, diag_rbtree_key_t key, diag_rbtree_node_t **found);
+extern int diag_rbtree_search(struct diag_rbtree *tree, diag_rbtree_key_t key, struct diag_rbtree_node **found);
 
-extern diag_rbtree_node_t *diag_rbtree_minimum(const diag_rbtree_t *tree);
-extern diag_rbtree_node_t *diag_rbtree_maximum(const diag_rbtree_t *tree);
+extern struct diag_rbtree_node *diag_rbtree_minimum(const struct diag_rbtree *tree);
+extern struct diag_rbtree_node *diag_rbtree_maximum(const struct diag_rbtree *tree);
 
-extern diag_rbtree_node_t *diag_rbtree_predecessor(const diag_rbtree_node_t *node);
-extern diag_rbtree_node_t *diag_rbtree_successor(const diag_rbtree_node_t *node);
+extern struct diag_rbtree_node *diag_rbtree_predecessor(const struct diag_rbtree_node *node);
+extern struct diag_rbtree_node *diag_rbtree_successor(const struct diag_rbtree_node *node);
 
-extern void diag_rbtree_for_each(const diag_rbtree_t *tree, diag_rbtree_callback_t callback);
-extern void diag_rbtree_for_each_attr(const diag_rbtree_t *tree, diag_rbtree_callback_attr_t callback);
+extern void diag_rbtree_for_each(const struct diag_rbtree *tree, diag_rbtree_callback_t callback);
+extern void diag_rbtree_for_each_attr(const struct diag_rbtree *tree, diag_rbtree_callback_attr_t callback);
 
 DIAG_C_DECL_END
 

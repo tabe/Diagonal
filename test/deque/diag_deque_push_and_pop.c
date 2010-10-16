@@ -6,8 +6,8 @@
 int
 main()
 {
-	diag_deque_t *deque;
-	diag_deque_elem_t *elem;
+	struct diag_deque *deque;
+	struct diag_deque_elem *elem;
 
 	deque = diag_deque_new();
 	assert(!deque->last);

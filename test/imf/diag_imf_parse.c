@@ -7,7 +7,7 @@
 int
 main()
 {
-	diag_imf_t *imf;
+	struct diag_imf *imf;
 	char *s;
 	int r;
 

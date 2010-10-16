@@ -103,7 +103,7 @@ main(int argc, char *argv[])
 	} else if (pid1 == 0) { /* child */
 		execute_program(argv+optind, ifd1, ofd1);
 	} else { /* parent */
-		diag_port_t *port;
+		struct diag_port *port;
 
 		close(ofd1[1]);
 		close(ifd1[0]);
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 		} else if (pid##x == 0) { /* child */							\
 			execute_program(argv+optind, ifd##x, ofd##x);				\
 		} else { /* parent */											\
-			diag_port_t *port;											\
+			struct diag_port *port;											\
 																		\
 			close(ofd##x[1]);											\
 			close(ifd##x[0]);											\
@@ -183,7 +183,7 @@ main(int argc, char *argv[])
 					}													\
 				}														\
 				if (!d) {												\
-					diag_port_t *port;									\
+					struct diag_port *port;									\
 																		\
 					kill(pid##x, SIGINT);								\
 					waitpid(pid##x, NULL, 0);							\

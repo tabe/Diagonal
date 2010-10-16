@@ -9,9 +9,9 @@
 int
 main()
 {
-	diag_vcdiff_t *vcdiff;
-	diag_vcdiff_context_t *context;
-	diag_vcdiff_vm_t *vm;
+	struct diag_vcdiff *vcdiff;
+	struct diag_vcdiff_context *context;
+	struct diag_vcdiff_vm *vm;
 	uint8_t *target;
 
 #define HELLO_VCDIFF DIAGONAL_TEST_DIR "/vcdiff/hello.vcdiff"

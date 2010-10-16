@@ -8,7 +8,7 @@
 int
 main(void)
 {
-	diag_bytevector_t *bv;
+	struct diag_bytevector *bv;
 	uint8_t *data;
 
 	data = diag_malloc(SIZE);

@@ -5,10 +5,10 @@
 int
 main()
 {
-	diag_datum_t *datum;
+	struct diag_datum *datum;
 	char *value;
 
-#define VALUE "diag_datum_t"
+#define VALUE "struct diag_datum"
 
 	datum = diag_datum_new(NULL);
 	DIAG_DATUM_SET_IMMEDIATE(datum, 1);

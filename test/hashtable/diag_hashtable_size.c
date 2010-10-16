@@ -15,7 +15,7 @@
 int
 main()
 {
-	diag_hashtable_t *ht;
+	struct diag_hashtable *ht;
 
 	ht = diag_hashtable_new_eq(0);
 	assert(diag_hashtable_size(ht) == 0);

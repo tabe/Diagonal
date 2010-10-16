@@ -49,7 +49,7 @@ usage(void)
 }
 
 static int
-scan_directory(diag_rbtree_t *tree, int i, const char *path)
+scan_directory(struct diag_rbtree *tree, int i, const char *path)
 {
 	int result;
 	DIR *dir;
@@ -88,7 +88,7 @@ scan_directory(diag_rbtree_t *tree, int i, const char *path)
 				break;
 			default:
 				{
-					diag_rbtree_node_t *node = diag_rbtree_node_new((diag_rbtree_key_t)i, (diag_rbtree_attr_t)name);
+					struct diag_rbtree_node *node = diag_rbtree_node_new((diag_rbtree_key_t)i, (diag_rbtree_attr_t)name);
 					diag_rbtree_insert(tree, node);
 				}
 				break;
@@ -106,10 +106,10 @@ scan_directory(diag_rbtree_t *tree, int i, const char *path)
 	return result;
 }
 
-static diag_rbtree_t *
+static struct diag_rbtree *
 map_paths(char **paths)
 {
-	diag_rbtree_t *tree;
+	struct diag_rbtree *tree;
 	unsigned int i = 0;
 
 	assert(paths);
@@ -123,7 +123,7 @@ map_paths(char **paths)
 		const char *path = paths[i];
 		char *name;
 		struct stat st;
-		diag_rbtree_node_t *node;
+		struct diag_rbtree_node *node;
 
 		if (stat(path, &st) == -1) FAIL(tree);
 		if (S_ISDIR(st.st_mode)) {
@@ -140,9 +140,9 @@ map_paths(char **paths)
 }
 
 static char **
-serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
+serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	char **e;
 	unsigned int i = 0;
 
@@ -177,10 +177,10 @@ serialize_entries(const diag_rbtree_t *tree, unsigned int *num_entries)
 		if ((p) == MAP_FAILED) diag_fatal("could not map file");		\
 	} while (0)
 
-static diag_rbtree_t *
+static struct diag_rbtree *
 aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf_t metric)
 {
-	diag_rbtree_t *comb;
+	struct diag_rbtree *comb;
 	unsigned int i, j;
 
 	if (num_entries == 0) return NULL;
@@ -188,18 +188,18 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 	for (i = 0; i < num_entries; i++) {
 		char *px;
 		size_t lx;
-		diag_imf_t *imfx;
+		struct diag_imf *imfx;
 		int r;
 
 		MMAP_IMF((char *)entries[i], px, lx);
 		r = diag_imf_parse(px, &imfx, 1);
 		for (j = i + 1; j < num_entries; j++) {
-			diag_rbtree_node_t *node;
+			struct diag_rbtree_node *node;
 			diag_rbtree_key_t k;
 			unsigned int *pair;
 			char *py;
 			size_t ly;
-			diag_imf_t *imfy;
+			struct diag_imf *imfy;
 
 			pair = diag_calloc(2, sizeof(unsigned int));
 			pair[0] = i + 1;
@@ -226,9 +226,9 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 }
 
 static unsigned int *
-process_equivalence_relations(const diag_rbtree_t *comb, unsigned int num_entries, int t, unsigned int **occur)
+process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_entries, int t, unsigned int **occur)
 {
-	diag_rbtree_node_t *node;
+	struct diag_rbtree_node *node;
 	unsigned int *p, i = 0;
 
 	if (num_entries == 0) return NULL;
@@ -260,7 +260,7 @@ display_imf(unsigned int i, char *path)
 {
 	char *p;
 	size_t len;
-	diag_imf_t *imf;
+	struct diag_imf *imf;
 
 	printf("%03d| %s\n", i, path);
 	MMAP_IMF(path, p, len);
@@ -320,7 +320,7 @@ main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	diag_metric_imf_t metric = diag_hamming_imf;
-	diag_rbtree_t *tree, *comb;
+	struct diag_rbtree *tree, *comb;
 	char **entries;
 	unsigned int i, num_entries, *parent, *occur;
 

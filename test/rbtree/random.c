@@ -7,8 +7,8 @@
 int
 main()
 {
-	diag_rbtree_t *tree;
-	diag_rbtree_node_t *node;
+	struct diag_rbtree *tree;
+	struct diag_rbtree_node *node;
 	diag_size_t s;
 	int n, i, r;
 

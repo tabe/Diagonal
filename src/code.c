@@ -8,15 +8,15 @@
 #include "diagonal/metric.h"
 #include "diagonal/cluster.h"
 
-diag_code_t *
-diag_encode(diag_analysis_t *analysis)
+struct diag_code *
+diag_encode(struct diag_analysis *analysis)
 {
 	diag_size_t k, i;
 
 	assert(analysis && analysis->clusters && analysis->num_data > 0);
 	k = 0;
 	for (i = 0; i < analysis->num_clusters; i++) {
-		diag_cluster_t *cluster;
+		struct diag_cluster *cluster;
 		diag_size_t j;
 
 		cluster = analysis->clusters[i];
@@ -28,14 +28,14 @@ diag_encode(diag_analysis_t *analysis)
 	return analysis->codes[0];
 }
 
-diag_datum_t **
-diag_decode(diag_analysis_t *analysis)
+struct diag_datum **
+diag_decode(struct diag_analysis *analysis)
 {
-	diag_datum_t **data;
+	struct diag_datum **data;
 	diag_size_t i;
 
 	assert(analysis && analysis->codes && analysis->num_data > 0 && !analysis->data);
-	data = diag_calloc((size_t)analysis->num_data, sizeof(diag_datum_t *));
+	data = diag_calloc((size_t)analysis->num_data, sizeof(struct diag_datum *));
 	for (i = 0; i < analysis->num_data; i++) {
 		data[i] = analysis->decoder(analysis->codes[i]);
 	}

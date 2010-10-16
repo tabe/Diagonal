@@ -29,9 +29,9 @@
 #include "diagonal/vcdiff.h"
 
 static int
-integer_read(diag_vcdiff_context_t *context, uint32_t *i)
+integer_read(struct diag_vcdiff_context *context, uint32_t *i)
 {
-	diag_port_t *port;
+	struct diag_port *port;
 	uint8_t b;
 	uint32_t t = 0;
 	int r;
@@ -51,9 +51,9 @@ integer_read(diag_vcdiff_context_t *context, uint32_t *i)
 }
 
 static int
-code_table_data_read(diag_vcdiff_context_t *context, diag_vcdiff_t *vcdiff)
+code_table_data_read(struct diag_vcdiff_context *context, struct diag_vcdiff *vcdiff)
 {
-	diag_port_t *port;
+	struct diag_port *port;
 	uint32_t length;
 	uint8_t *data;
 	int r;
@@ -74,16 +74,16 @@ code_table_data_read(diag_vcdiff_context_t *context, diag_vcdiff_t *vcdiff)
 }
 
 static int
-delta_read(diag_vcdiff_context_t *context, diag_vcdiff_window_t *window)
+delta_read(struct diag_vcdiff_context *context, struct diag_vcdiff_window *window)
 {
-	diag_port_t *port;
-	diag_vcdiff_delta_t *delta;
+	struct diag_port *port;
+	struct diag_vcdiff_delta *delta;
 	uint8_t b, *data, *inst, *addr;
 	uint32_t i;
 	int r;
 
 	assert(context && window);
-	delta = diag_malloc(sizeof(diag_vcdiff_delta_t));
+	delta = diag_malloc(sizeof(struct diag_vcdiff_delta));
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
 	delta->length = i;
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
@@ -119,7 +119,7 @@ delta_read(diag_vcdiff_context_t *context, diag_vcdiff_window_t *window)
 }
 
 static void
-cache_init(diag_vcdiff_cache_t *cache, uint8_t s_near, uint8_t s_same)
+cache_init(struct diag_vcdiff_cache *cache, uint8_t s_near, uint8_t s_same)
 {
 	register uint32_t i;
 
@@ -138,7 +138,7 @@ cache_init(diag_vcdiff_cache_t *cache, uint8_t s_near, uint8_t s_same)
 }
 
 static void
-cache_update(diag_vcdiff_cache_t *cache, uint32_t addr)
+cache_update(struct diag_vcdiff_cache *cache, uint32_t addr)
 {
 	assert(cache);
 	if (cache->s_near > 0) {
@@ -151,7 +151,7 @@ cache_update(diag_vcdiff_cache_t *cache, uint32_t addr)
 }
 
 static void
-cache_clean(diag_vcdiff_cache_t *cache)
+cache_clean(struct diag_vcdiff_cache *cache)
 {
 	assert(cache && cache->near && cache->same);
 	diag_free(cache->near);
@@ -161,7 +161,7 @@ cache_clean(diag_vcdiff_cache_t *cache)
 }
 
 static void
-cache_destroy(diag_vcdiff_cache_t *cache)
+cache_destroy(struct diag_vcdiff_cache *cache)
 {
 	if (!cache) return;
 	if (cache->near) diag_free(cache->near);
@@ -171,7 +171,7 @@ cache_destroy(diag_vcdiff_cache_t *cache)
 
 #if 0
 uint32_t
-addr_encode(diag_vcdiff_cache_t *cache, uint32_t addr, uint32_t here, uint32_t *mode)
+addr_encode(struct diag_vcdiff_cache *cache, uint32_t addr, uint32_t here, uint32_t *mode)
 {
 	uint32_t i, d, bestd, bestm;
 
@@ -202,7 +202,7 @@ addr_encode(diag_vcdiff_cache_t *cache, uint32_t addr, uint32_t here, uint32_t *
 }
 #endif
 
-static const diag_vcdiff_code_t default_code_table_entries[256] = {
+static const struct diag_vcdiff_code default_code_table_entries[256] = {
 	/* line 1: index 0 */
 	{DIAG_VCD_RUN,  0, 0, DIAG_VCD_NOOP, 0, 0},
 	/* line 2: index [1,18] */
@@ -310,20 +310,20 @@ static const diag_vcdiff_code_t default_code_table_entries[256] = {
 	{DIAG_VCD_COPY, 4, 8, DIAG_VCD_ADD, 1, 0},
 };
 
-static diag_vcdiff_code_table_t default_code_table = {
+static struct diag_vcdiff_code_table default_code_table = {
 	DIAG_VCDIFF_S_NEAR_DEFAULT,
 	DIAG_VCDIFF_S_SAME_DEFAULT,
-	(diag_vcdiff_code_t *)default_code_table_entries
+	(struct diag_vcdiff_code *)default_code_table_entries
 };
 
-static diag_vcdiff_code_t *
+static struct diag_vcdiff_code *
 code_table_entries_from_string(const uint8_t *str)
 {
-	diag_vcdiff_code_t *entries;
+	struct diag_vcdiff_code *entries;
 	int i, j = 0;
 
 	assert(str);
-	entries = diag_calloc(256, sizeof(diag_vcdiff_code_t));
+	entries = diag_calloc(256, sizeof(struct diag_vcdiff_code));
 	for (i = 0; i < 256; i++) {
 		entries[i].inst1 = str[j++];
 	}
@@ -348,7 +348,7 @@ code_table_entries_from_string(const uint8_t *str)
 #define CODE_TABLE_LENGTH 1536
 
 static uint8_t *
-code_table_entries_to_string(const diag_vcdiff_code_t *entries)
+code_table_entries_to_string(const struct diag_vcdiff_code *entries)
 {
 	uint8_t *str;
 	int i, j = 0;
@@ -377,7 +377,7 @@ code_table_entries_to_string(const diag_vcdiff_code_t *entries)
 }
 
 static void
-code_table_destroy(diag_vcdiff_code_table_t *code_table)
+code_table_destroy(struct diag_vcdiff_code_table *code_table)
 {
 	if (!code_table) return;
 	if (code_table == &default_code_table) return;
@@ -386,14 +386,14 @@ code_table_destroy(diag_vcdiff_code_table_t *code_table)
 }
 
 static int
-code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
+code_table_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff)
 {
 	uint8_t *source;
-	diag_vcdiff_code_table_t *code_table;
-	diag_vcdiff_code_t *entries;
-	diag_vcdiff_context_t *c;
-	diag_vcdiff_t *v;
-	diag_vcdiff_vm_t *w;
+	struct diag_vcdiff_code_table *code_table;
+	struct diag_vcdiff_code *entries;
+	struct diag_vcdiff_context *c;
+	struct diag_vcdiff *v;
+	struct diag_vcdiff_vm *w;
 
 	assert(vm && vcdiff);
 	if (vcdiff->length_code_table_data <= 2) {
@@ -432,7 +432,7 @@ code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 	diag_vcdiff_vm_destroy(w);
 	diag_vcdiff_destroy(v);
 	diag_vcdiff_context_destroy(c);
-	code_table = diag_malloc(sizeof(diag_vcdiff_code_table_t));
+	code_table = diag_malloc(sizeof(struct diag_vcdiff_code_table));
 	code_table->s_near = vcdiff->code_table_data[0];
 	code_table->s_same = vcdiff->code_table_data[1];
 	code_table->entries = entries;
@@ -442,65 +442,65 @@ code_table_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 
 #undef CODE_TABLE_LENGTH
 
-diag_vcdiff_context_t *
+struct diag_vcdiff_context *
 diag_vcdiff_context_new_fp(FILE *fp)
 {
-	diag_vcdiff_context_t *context;
+	struct diag_vcdiff_context *context;
 
-	context = diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(struct diag_vcdiff_context));
 	context->port = diag_port_new_fp(fp, DIAG_PORT_INPUT);
 	return context;
 }
 
-diag_vcdiff_context_t *
+struct diag_vcdiff_context *
 diag_vcdiff_context_new_fd(int fd)
 {
-	diag_vcdiff_context_t *context;
+	struct diag_vcdiff_context *context;
 
-	context = diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(struct diag_vcdiff_context));
 	context->port = diag_port_new_fd(fd, DIAG_PORT_INPUT);
 	return context;
 }
 
-diag_vcdiff_context_t *
+struct diag_vcdiff_context *
 diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size)
 {
-	diag_vcdiff_context_t *context;
+	struct diag_vcdiff_context *context;
 
 	assert(head);
-	context = diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(struct diag_vcdiff_context));
 	context->port = diag_port_new_bm(head, size, DIAG_PORT_INPUT);
 	return context;
 }
 
-diag_vcdiff_context_t *
+struct diag_vcdiff_context *
 diag_vcdiff_context_new_path(const char *path)
 {
-	diag_port_t *port;
-	diag_vcdiff_context_t *context;
+	struct diag_port *port;
+	struct diag_vcdiff_context *context;
 
 	assert(path);
 	port = diag_port_new_path(path, "rb");
 	if (!port) return NULL;
-	context = diag_malloc(sizeof(diag_vcdiff_context_t));
+	context = diag_malloc(sizeof(struct diag_vcdiff_context));
 	context->port = port;
 	return context;
 }
 
 void
-diag_vcdiff_context_destroy(diag_vcdiff_context_t *context)
+diag_vcdiff_context_destroy(struct diag_vcdiff_context *context)
 {
 	if (!context) return;
 	diag_port_destroy(context->port);
 	diag_free(context);
 }
 
-diag_vcdiff_t *
-diag_vcdiff_read(diag_vcdiff_context_t *context)
+struct diag_vcdiff *
+diag_vcdiff_read(struct diag_vcdiff_context *context)
 {
-	diag_vcdiff_t *vcdiff;
-	diag_port_t *port;
-	diag_deque_t *deque;
+	struct diag_vcdiff *vcdiff;
+	struct diag_port *port;
+	struct diag_deque *deque;
 	uint8_t b;
 	int r;
 
@@ -511,7 +511,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 		 port->read_byte(port, &b) <= 0 || b != (uint8_t)0xC4 ) {
 		return NULL;
 	}
-	vcdiff = diag_malloc(sizeof(diag_vcdiff_t));
+	vcdiff = diag_malloc(sizeof(struct diag_vcdiff));
 	if ( port->read_byte(port, &b) <= 0 ||
 		 (DIAG_VCDIFF_COMPATIBLEP(context) && b != (uint8_t)0x0) ) {
 		goto bail;
@@ -534,7 +534,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 	}
 	deque = diag_deque_new();
 	while ( (r = port->read_byte(port, &b)) > 0) {
-		diag_vcdiff_window_t *window;
+		struct diag_vcdiff_window *window;
 
 		if (DIAG_VCDIFF_COMPATIBLEP(context)) {
 			if (b && (b & (b-1))) {
@@ -542,7 +542,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 				goto clear;
 			}
 		}
-		window = diag_malloc(sizeof(diag_vcdiff_window_t));
+		window = diag_malloc(sizeof(struct diag_vcdiff_window));
 		window->indicator = b;
 		if ( DIAG_VCDIFF_SOURCEP(window) ||
 			 DIAG_VCDIFF_TARGETP(window) ) {
@@ -566,13 +566,13 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 		goto clear;
 	}
 	vcdiff->num_windows = (uint32_t)deque->length;
-	DIAG_DEQUE_TO_ARRAY(deque, diag_vcdiff_window_t *, vcdiff->windows);
+	DIAG_DEQUE_TO_ARRAY(deque, struct diag_vcdiff_window *, vcdiff->windows);
 	diag_deque_destroy(deque);
 	return vcdiff;
 
  clear:
 	{
-		diag_deque_elem_t *elem;
+		struct diag_deque_elem *elem;
 
 		DIAG_DEQUE_FOR_EACH(deque, elem) {
 			diag_free((void *)elem->attr);
@@ -586,7 +586,7 @@ diag_vcdiff_read(diag_vcdiff_context_t *context)
 }
 
 static void
-vm_error(diag_vcdiff_vm_t *vm, const char *message, ...)
+vm_error(struct diag_vcdiff_vm *vm, const char *message, ...)
 {
 	va_list ap;
 
@@ -597,15 +597,15 @@ vm_error(diag_vcdiff_vm_t *vm, const char *message, ...)
 	longjmp(vm->env, 1);
 }
 
-static diag_vcdiff_vm_t *
-vm_new(diag_bytevector_t *source)
+static struct diag_vcdiff_vm *
+vm_new(struct diag_bytevector *source)
 {
-	diag_vcdiff_vm_t *vm;
-	diag_vcdiff_cache_t *cache;
+	struct diag_vcdiff_vm *vm;
+	struct diag_vcdiff_cache *cache;
 
-	cache = diag_malloc(sizeof(diag_vcdiff_cache_t));
+	cache = diag_malloc(sizeof(struct diag_vcdiff_cache));
 	cache->near = cache->same = NULL;
-	vm = diag_malloc(sizeof(diag_vcdiff_vm_t));
+	vm = diag_malloc(sizeof(struct diag_vcdiff_vm));
 	vm->source = source;
 	vm->s_target = 0;
 	vm->target = NULL;
@@ -615,19 +615,19 @@ vm_new(diag_bytevector_t *source)
 	return vm;
 }
 
-diag_vcdiff_vm_t *
+struct diag_vcdiff_vm *
 diag_vcdiff_vm_new(diag_size_t size, uint8_t *data)
 {
-	diag_bytevector_t *source;
+	struct diag_bytevector *source;
 
 	source = diag_bytevector_new_heap(size, data);
 	return vm_new(source);
 }
 
-diag_vcdiff_vm_t *
+struct diag_vcdiff_vm *
 diag_vcdiff_vm_new_path(const char *path)
 {
-	diag_bytevector_t *source;
+	struct diag_bytevector *source;
 
 	if (path) {
 		source = diag_bytevector_new_path(path);
@@ -639,7 +639,7 @@ diag_vcdiff_vm_new_path(const char *path)
 }
 
 void
-diag_vcdiff_vm_destroy(diag_vcdiff_vm_t *vm)
+diag_vcdiff_vm_destroy(struct diag_vcdiff_vm *vm)
 {
 	if (!vm) return;
 	code_table_destroy(vm->code_table);
@@ -669,7 +669,7 @@ read_integer(uint8_t *buf, const uint8_t *sentinel, uint32_t *i)
 }
 
 static uint32_t
-vm_inst_read_size(diag_vcdiff_vm_t *vm)
+vm_inst_read_size(struct diag_vcdiff_vm *vm)
 {
 	uint32_t size;
 
@@ -680,7 +680,7 @@ vm_inst_read_size(diag_vcdiff_vm_t *vm)
 }
 
 static uint32_t
-vm_addr_read_integer(diag_vcdiff_vm_t *vm)
+vm_addr_read_integer(struct diag_vcdiff_vm *vm)
 {
 	uint32_t i;
 
@@ -691,7 +691,7 @@ vm_addr_read_integer(diag_vcdiff_vm_t *vm)
 }
 
 static uint8_t
-vm_addr_read_byte(diag_vcdiff_vm_t *vm)
+vm_addr_read_byte(struct diag_vcdiff_vm *vm)
 {
 	assert(vm);
 	if (vm->addr + 1 > vm->addr_s) vm->error(vm, "exceed addresses section");
@@ -699,9 +699,9 @@ vm_addr_read_byte(diag_vcdiff_vm_t *vm)
 }
 
 static uint32_t
-vm_addr_decode(diag_vcdiff_vm_t *vm, uint32_t here, uint8_t mode)
+vm_addr_decode(struct diag_vcdiff_vm *vm, uint32_t here, uint8_t mode)
 {
-	diag_vcdiff_cache_t *cache;
+	struct diag_vcdiff_cache *cache;
 	uint32_t addr, m;
 
 	assert(vm && vm->cache);
@@ -724,7 +724,7 @@ vm_addr_decode(diag_vcdiff_vm_t *vm, uint32_t here, uint8_t mode)
 }
 
 static uint32_t
-vm_decode(diag_vcdiff_vm_t *vm, uint32_t here, uint8_t inst, uint32_t size, uint8_t mode)
+vm_decode(struct diag_vcdiff_vm *vm, uint32_t here, uint8_t inst, uint32_t size, uint8_t mode)
 {
 	uint8_t b, i;
 	uint32_t addr;
@@ -764,7 +764,7 @@ vm_decode(diag_vcdiff_vm_t *vm, uint32_t here, uint8_t inst, uint32_t size, uint
 }
 
 uint8_t *
-diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
+diag_vcdiff_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff)
 {
 	uint32_t s_target = 0;
 	uint32_t here = 0;
@@ -793,8 +793,8 @@ diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 	status = setjmp(vm->env);
 	if (status != 0) goto bail;
 	for (i = 0; i < vcdiff->num_windows; i++) {
-		diag_vcdiff_window_t *window;
-		diag_vcdiff_delta_t *delta;
+		struct diag_vcdiff_window *window;
+		struct diag_vcdiff_delta *delta;
 
 		window = vcdiff->windows[i];
 		assert(window->delta);
@@ -829,7 +829,7 @@ diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 		vm->addr   = delta->addr;
 		vm->addr_s = delta->addr + delta->length_addr;
 		while (vm->inst < vm->inst_s) {
-			diag_vcdiff_code_t code;
+			struct diag_vcdiff_code code;
 			uint32_t size1, size2;
 			uint8_t index;
 
@@ -861,14 +861,14 @@ diag_vcdiff_decode(diag_vcdiff_vm_t *vm, diag_vcdiff_t *vcdiff)
 }
 
 void
-diag_vcdiff_destroy(diag_vcdiff_t *vcdiff)
+diag_vcdiff_destroy(struct diag_vcdiff *vcdiff)
 {
 	if (!vcdiff) return;
 	diag_free(vcdiff);
 }
 
 void
-diag_vcdiff_script_destroy(diag_vcdiff_script_t *script)
+diag_vcdiff_script_destroy(struct diag_vcdiff_script *script)
 {
 	register diag_size_t i;
 
@@ -885,10 +885,10 @@ diag_vcdiff_script_destroy(diag_vcdiff_script_t *script)
 }
 
 uint8_t *
-diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size)
+diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size)
 {
 	register diag_size_t i, n = 0, p, s;
-	diag_vcdiff_pcode_t *pcode;
+	struct diag_vcdiff_pcode *pcode;
 	const uint8_t *source;
 	uint8_t *result;
 
@@ -933,27 +933,27 @@ diag_vcdiff_expand(const diag_vcdiff_script_t *script, diag_size_t *size)
 	return result;
 }
 
-static diag_vcdiff_pcode_t *
+static struct diag_vcdiff_pcode *
 pcode_copy_new(diag_size_t size, diag_size_t addr)
 {
-	diag_vcdiff_pcode_t *pcode;
+	struct diag_vcdiff_pcode *pcode;
 
 	assert(size > 0);
-	pcode = diag_malloc(sizeof(diag_vcdiff_pcode_t));
+	pcode = diag_malloc(sizeof(struct diag_vcdiff_pcode));
 	pcode->inst = DIAG_VCD_COPY;
 	pcode->size = size;
 	pcode->attr.addr = addr;
 	return pcode;
 }
 
-static diag_vcdiff_pcode_t *
+static struct diag_vcdiff_pcode *
 pcode_add_new(diag_size_t size, const uint8_t *data)
 {
-	diag_vcdiff_pcode_t *pcode;
+	struct diag_vcdiff_pcode *pcode;
 	uint8_t *d;
 
 	assert(size > 0);
-	pcode = diag_malloc(sizeof(diag_vcdiff_pcode_t));
+	pcode = diag_malloc(sizeof(struct diag_vcdiff_pcode));
 	pcode->inst = DIAG_VCD_ADD;
 	pcode->size = size;
 	d = diag_calloc(size + 1, sizeof(uint8_t));
@@ -964,12 +964,12 @@ pcode_add_new(diag_size_t size, const uint8_t *data)
 }
 
 static diag_size_t
-lookback(diag_rolling_hash32_t *rh, uint32_t *arr, diag_size_t i, uint32_t h, diag_rbtree_t *tree)
+lookback(struct diag_rolling_hash32 *rh, uint32_t *arr, diag_size_t i, uint32_t h, struct diag_rbtree *tree)
 {
 	register diag_size_t k, n;
 	diag_size_t m, head, tail;
-	diag_vcdiff_pcode_t *p;
-	diag_rbtree_node_t *node;
+	struct diag_vcdiff_pcode *p;
+	struct diag_rbtree_node *node;
 
 	/* check whether some hash value matches */
 	for (k = 0; k < i / rh->s_window; k++) {
@@ -1013,15 +1013,15 @@ lookback(diag_rolling_hash32_t *rh, uint32_t *arr, diag_size_t i, uint32_t h, di
 	return i + 1;
 }
 
-diag_vcdiff_script_t *
-diag_vcdiff_contract(diag_rolling_hash32_t *rh)
+struct diag_vcdiff_script *
+diag_vcdiff_contract(struct diag_rolling_hash32 *rh)
 {
-	diag_vcdiff_script_t *script;
-	diag_rbtree_t *tree;
-	diag_rbtree_node_t *node, *n;
+	struct diag_vcdiff_script *script;
+	struct diag_rbtree *tree;
+	struct diag_rbtree_node *node, *n;
 	register diag_size_t s, i, a;
 	uint32_t *arr, h;
-	diag_vcdiff_pcode_t *p;
+	struct diag_vcdiff_pcode *p;
 
 	assert(rh);
 	assert(rh->size >= rh->s_window);
@@ -1051,7 +1051,7 @@ diag_vcdiff_contract(diag_rolling_hash32_t *rh)
 			n = diag_rbtree_node_new((diag_rbtree_key_t)a, (diag_rbtree_attr_t)p);
 			diag_rbtree_insert(tree, n);
 		}
-		p = (diag_vcdiff_pcode_t *)node->attr;
+		p = (struct diag_vcdiff_pcode *)node->attr;
 		a = b + p->size;
 		node = diag_rbtree_successor(node);
 	}
@@ -1061,14 +1061,14 @@ diag_vcdiff_contract(diag_rolling_hash32_t *rh)
 		diag_rbtree_insert(tree, n);
 	}
 
-	script = diag_malloc(sizeof(diag_vcdiff_script_t));
+	script = diag_malloc(sizeof(struct diag_vcdiff_script));
 	script->source = NULL;
 	script->s_pcodes = (diag_size_t)tree->num_nodes;
-	script->pcodes = diag_calloc(script->s_pcodes, sizeof(diag_vcdiff_pcode_t));
+	script->pcodes = diag_calloc(script->s_pcodes, sizeof(struct diag_vcdiff_pcode));
 	node = diag_rbtree_minimum(tree);
 	i = 0;
 	do {
-		script->pcodes[i++] = (*(diag_vcdiff_pcode_t *)node->attr);
+		script->pcodes[i++] = (*(struct diag_vcdiff_pcode *)node->attr);
 	} while ( (node = diag_rbtree_successor(node)) );
 	diag_rbtree_destroy(tree);
 	return script;

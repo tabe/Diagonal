@@ -10,12 +10,12 @@
 #include "diagonal.h"
 #include "diagonal/deque.h"
 
-diag_deque_t *
+struct diag_deque *
 diag_deque_new(void)
 {
-	diag_deque_t *deque;
+	struct diag_deque *deque;
 
-	deque = diag_malloc(sizeof(diag_deque_t));
+	deque = diag_malloc(sizeof(struct diag_deque));
 	deque->first = NULL;
 	deque->last = NULL;
 	deque->length = 0;
@@ -23,12 +23,12 @@ diag_deque_new(void)
 }
 
 void
-diag_deque_destroy(diag_deque_t *deque)
+diag_deque_destroy(struct diag_deque *deque)
 {
 	if (deque) {
-		diag_deque_elem_t *elem = deque->first;
+		struct diag_deque_elem *elem = deque->first;
 		while (elem) {
-			diag_deque_elem_t *tmp = elem;
+			struct diag_deque_elem *tmp = elem;
 			elem = tmp->next;
 			diag_free(tmp);
 		}
@@ -37,11 +37,11 @@ diag_deque_destroy(diag_deque_t *deque)
 }
 
 #define DIAG_DEQUE_ADD(end1, end2, link1, link2) do {					\
-		diag_deque_elem_t *tmp;											\
+		struct diag_deque_elem *tmp;											\
 																		\
 		assert(deque);													\
 		tmp = deque->end1;												\
-		elem = diag_malloc(sizeof(diag_deque_elem_t));					\
+		elem = diag_malloc(sizeof(struct diag_deque_elem));					\
 		elem->attr = attr;												\
 		elem->link1 = NULL;												\
 		elem->link2 = tmp;												\
@@ -56,7 +56,7 @@ diag_deque_destroy(diag_deque_t *deque)
 	} while (0)
 
 #define DIAG_DEQUE_REMOVE(end1, end2, link1, link2) do {	\
-		diag_deque_elem_t *tmp;								\
+		struct diag_deque_elem *tmp;								\
 															\
 		assert(deque);										\
 		elem = deque->end1;									\
@@ -79,47 +79,47 @@ diag_deque_destroy(diag_deque_t *deque)
 		}													\
 	} while (0)
 
-diag_deque_elem_t *
-diag_deque_shift(diag_deque_t *deque)
+struct diag_deque_elem *
+diag_deque_shift(struct diag_deque *deque)
 {
-	diag_deque_elem_t *elem;
+	struct diag_deque_elem *elem;
 
 	DIAG_DEQUE_REMOVE(first, last, prev, next);
 	return elem;
 }
 
-diag_deque_elem_t *
-diag_deque_unshift(diag_deque_t *deque, uintptr_t attr)
+struct diag_deque_elem *
+diag_deque_unshift(struct diag_deque *deque, uintptr_t attr)
 {
-	diag_deque_elem_t *elem;
+	struct diag_deque_elem *elem;
 
 	DIAG_DEQUE_ADD(first, last, prev, next);
 	return elem;
 }
 
-diag_deque_elem_t *
-diag_deque_push(diag_deque_t *deque, uintptr_t attr)
+struct diag_deque_elem *
+diag_deque_push(struct diag_deque *deque, uintptr_t attr)
 {
-	diag_deque_elem_t *elem;
+	struct diag_deque_elem *elem;
 
 	DIAG_DEQUE_ADD(last, first, next, prev);
 	return elem;
 }
 
-diag_deque_elem_t *
-diag_deque_pop(diag_deque_t *deque)
+struct diag_deque_elem *
+diag_deque_pop(struct diag_deque *deque)
 {
-	diag_deque_elem_t *elem;
+	struct diag_deque_elem *elem;
 	
 	DIAG_DEQUE_REMOVE(last, first, next, prev);
 	return elem;
 }
 
 unsigned int
-diag_deque_append(diag_deque_t *head, diag_deque_t *tail)
+diag_deque_append(struct diag_deque *head, struct diag_deque *tail)
 {
 	unsigned int len;
-	diag_deque_elem_t *x, *y;
+	struct diag_deque_elem *x, *y;
 
 	assert(head && tail);
 	if (tail->length == 0) return head->length;

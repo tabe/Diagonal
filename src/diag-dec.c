@@ -36,9 +36,9 @@ main(int argc, char *argv[])
 	int c;
 	const char *path_source = NULL;
 	const char *path_target = NULL;
-	diag_vcdiff_t *vcdiff;
-	diag_vcdiff_context_t *context;
-	diag_vcdiff_vm_t *vm;
+	struct diag_vcdiff *vcdiff;
+	struct diag_vcdiff_context *context;
+	struct diag_vcdiff_vm *vm;
 
 	while ( (c = getopt(argc, argv, "Vhs:t:")) >= 0) {
 		switch (c) {
@@ -79,7 +79,7 @@ main(int argc, char *argv[])
 	}
 	if (diag_vcdiff_decode(vm, vcdiff)) {
 		int fd;
-		diag_port_t *port;
+		struct diag_port *port;
 		ssize_t s;
 
 		if (path_target) {

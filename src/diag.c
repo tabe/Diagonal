@@ -37,7 +37,7 @@ static const char *commands[] = {
 
 #define NUM_OF_COMMANDS (sizeof(commands)/sizeof(commands[0]))
 
-struct diag_command_variation_s {
+struct diag_command_variation {
 	unsigned int i;
 	char *name;
 } command_variations[] = {
@@ -57,8 +57,8 @@ struct diag_command_variation_s {
 static int
 cmpcmd(const void *x, const void *y)
 {
-	struct diag_command_variation_s *cx = (struct diag_command_variation_s *)x;
-	struct diag_command_variation_s *cy = (struct diag_command_variation_s *)y;
+	struct diag_command_variation *cx = (struct diag_command_variation *)x;
+	struct diag_command_variation *cy = (struct diag_command_variation *)y;
 	return strcmp(cx->name, cy->name);
 }
 
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
 	char c, *e;
 	char *path1, *path2, *dir, *base;
 	const char *cmd;
-	struct diag_command_variation_s cv, *found;
+	struct diag_command_variation cv, *found;
 	int elen;
 
 	if (argc < 2) {
@@ -125,7 +125,7 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	cv.name = argv[optind];
-	found = (struct diag_command_variation_s *)bsearch(&cv, (const void *)command_variations, NUM_OF_COMMAND_VARIATIONS, sizeof(struct diag_command_variation_s), cmpcmd);
+	found = (struct diag_command_variation *)bsearch(&cv, (const void *)command_variations, NUM_OF_COMMAND_VARIATIONS, sizeof(struct diag_command_variation), cmpcmd);
 	if (!found) {
 		usage();
 		exit(EXIT_FAILURE);

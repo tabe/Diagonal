@@ -16,13 +16,13 @@
 #include "diagonal.h"
 #include "diagonal/line.h"
 
-diag_line_context_t *
-diag_line_context_new(diag_port_t *port)
+struct diag_line_context *
+diag_line_context_new(struct diag_port *port)
 {
-	diag_line_context_t *context;
+	struct diag_line_context *context;
 
 	assert(port);
-	context = diag_malloc(sizeof(diag_line_context_t));
+	context = diag_malloc(sizeof(struct diag_line_context));
 	context->port = port;
 	context->bufsize = DIAG_LINE_BUFSIZE;
 	if (DIAG_PORT_FD_P(port)) {
@@ -38,7 +38,7 @@ diag_line_context_new(diag_port_t *port)
 }
 
 void
-diag_line_context_destroy(diag_line_context_t *context)
+diag_line_context_destroy(struct diag_line_context *context)
 {
 	if (context) {
 		if (context->buf) diag_free(context->buf);
@@ -46,12 +46,12 @@ diag_line_context_destroy(diag_line_context_t *context)
 	}
 }
 
-diag_line_context_t *
-diag_line_read(diag_line_context_t *context, size_t *sizep, char **linep)
+struct diag_line_context *
+diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 {
 	size_t h, i_pos, size = 0;
 	int s;
-	diag_port_t *port;
+	struct diag_port *port;
 	char *line = NULL;
 
 	assert(context && linep);

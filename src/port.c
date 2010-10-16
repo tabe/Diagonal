@@ -23,7 +23,7 @@
 #include "diagonal/port.h"
 
 static int
-read_byte_fd(diag_port_t *port, uint8_t *i)
+read_byte_fd(struct diag_port *port, uint8_t *i)
 {
 	int r;
 
@@ -35,7 +35,7 @@ read_byte_fd(diag_port_t *port, uint8_t *i)
 }
 
 static int
-read_bytes_fd(diag_port_t *port, size_t size, uint8_t *buf)
+read_bytes_fd(struct diag_port *port, size_t size, uint8_t *buf)
 {
 	ssize_t s;
 
@@ -54,7 +54,7 @@ read_bytes_fd(diag_port_t *port, size_t size, uint8_t *buf)
 }
 
 static int
-write_byte_fd(diag_port_t *port, uint8_t i)
+write_byte_fd(struct diag_port *port, uint8_t i)
 {
 	int r;
 
@@ -70,7 +70,7 @@ write_byte_fd(diag_port_t *port, uint8_t i)
 }
 
 static int
-write_bytes_fd(diag_port_t *port, size_t size, const uint8_t *buf)
+write_bytes_fd(struct diag_port *port, size_t size, const uint8_t *buf)
 {
 	ssize_t s;
 
@@ -91,7 +91,7 @@ write_bytes_fd(diag_port_t *port, size_t size, const uint8_t *buf)
 }
 
 static int
-read_byte_fp(diag_port_t *port, uint8_t *i)
+read_byte_fp(struct diag_port *port, uint8_t *i)
 {
 	FILE *fp;
 	size_t s;
@@ -109,7 +109,7 @@ read_byte_fp(diag_port_t *port, uint8_t *i)
 }
 
 static int
-read_bytes_fp(diag_port_t *port, size_t size, uint8_t *buf)
+read_bytes_fp(struct diag_port *port, size_t size, uint8_t *buf)
 {
 	FILE *fp;
 	size_t s;
@@ -128,7 +128,7 @@ read_bytes_fp(diag_port_t *port, size_t size, uint8_t *buf)
 }
 
 static int
-write_byte_fp(diag_port_t *port, uint8_t i)
+write_byte_fp(struct diag_port *port, uint8_t i)
 {
 	FILE *fp;
 	size_t s;
@@ -146,7 +146,7 @@ write_byte_fp(diag_port_t *port, uint8_t i)
 }
 
 static int
-write_bytes_fp(diag_port_t *port, size_t size, const uint8_t *buf)
+write_bytes_fp(struct diag_port *port, size_t size, const uint8_t *buf)
 {
 	FILE *fp;
 	size_t s;
@@ -165,14 +165,14 @@ write_bytes_fp(diag_port_t *port, size_t size, const uint8_t *buf)
 }
 
 static void
-close_fp(diag_port_t *port)
+close_fp(struct diag_port *port)
 {
 	assert(port);
 	(void)fclose(port->stream.fp);
 }
 
 static int
-read_byte_bm(diag_port_t *port, uint8_t *i)
+read_byte_bm(struct diag_port *port, uint8_t *i)
 {
 	assert(port && i);
 	if (port->i_pos < port->stream.bm.size) {
@@ -183,7 +183,7 @@ read_byte_bm(diag_port_t *port, uint8_t *i)
 }
 
 static int
-read_bytes_bm(diag_port_t *port, size_t size, uint8_t *buf)
+read_bytes_bm(struct diag_port *port, size_t size, uint8_t *buf)
 {
 	assert(port && buf);
 	if (port->i_pos + size <= port->stream.bm.size) {
@@ -195,7 +195,7 @@ read_bytes_bm(diag_port_t *port, size_t size, uint8_t *buf)
 }
 
 static int
-write_byte_bm(diag_port_t *port, uint8_t i)
+write_byte_bm(struct diag_port *port, uint8_t i)
 {
 	assert(port);
 	if (port->o_pos < port->stream.bm.size) {
@@ -206,7 +206,7 @@ write_byte_bm(diag_port_t *port, uint8_t i)
 }
 
 static int
-write_bytes_bm(diag_port_t *port, size_t size, const uint8_t *buf)
+write_bytes_bm(struct diag_port *port, size_t size, const uint8_t *buf)
 {
 	assert(port && buf);
 	if (port->o_pos + size <= port->stream.bm.size) {
@@ -217,12 +217,12 @@ write_bytes_bm(diag_port_t *port, size_t size, const uint8_t *buf)
 	return 0;
 }
 
-diag_port_t *
+struct diag_port *
 diag_port_new_fd(int fd, uint8_t flags)
 {
-	diag_port_t *port;
+	struct diag_port *port;
 
-	port = diag_malloc(sizeof(diag_port_t));
+	port = diag_malloc(sizeof(struct diag_port));
 	port->tag = DIAG_PORT_FD|flags;
 	port->stream.fd = fd;
 	if (DIAG_PORT_INPUT_P(port)) {
@@ -239,12 +239,12 @@ diag_port_new_fd(int fd, uint8_t flags)
 	return port;
 }
 
-diag_port_t *
+struct diag_port *
 diag_port_new_fp(FILE *fp, uint8_t flags)
 {
-	diag_port_t *port;
+	struct diag_port *port;
 
-	port = diag_malloc(sizeof(diag_port_t));
+	port = diag_malloc(sizeof(struct diag_port));
 	port->tag = DIAG_PORT_FP|flags;
 	port->stream.fp = fp;
 	if (DIAG_PORT_INPUT_P(port)) {
@@ -261,13 +261,13 @@ diag_port_new_fp(FILE *fp, uint8_t flags)
 	return port;
 }
 
-diag_port_t *
+struct diag_port *
 diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags)
 {
-	diag_port_t *port;
+	struct diag_port *port;
 
 	assert(head);
-	port = diag_malloc(sizeof(diag_port_t));
+	port = diag_malloc(sizeof(struct diag_port));
 	port->tag = DIAG_PORT_BM|flags;
 	port->stream.bm.head = head;
 	port->stream.bm.size = size;
@@ -285,10 +285,10 @@ diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags)
 	return port;
 }
 
-diag_port_t *
+struct diag_port *
 diag_port_new_path(const char *path, const char *mode)
 {
-	diag_port_t *port;
+	struct diag_port *port;
 	FILE *fp;
 	uint8_t flags = 0;
 
@@ -317,7 +317,7 @@ diag_port_new_path(const char *path, const char *mode)
 }
 
 void
-diag_port_destroy(diag_port_t *port)
+diag_port_destroy(struct diag_port *port)
 {
 	if (!port) return;
 	if (port->close) port->close(port);

@@ -6,8 +6,8 @@
 int
 main()
 {
-	diag_rbtree_t *tree;
-	diag_rbtree_node_t *node;
+	struct diag_rbtree *tree;
+	struct diag_rbtree_node *node;
 	int keys[] = {1, 6, 8, 11, 13, 15, 17, 22, 25, 27, 0};
 	int i, r;
 

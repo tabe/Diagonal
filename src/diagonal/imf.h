@@ -4,15 +4,15 @@
 #define DIAG_IMF_LINE_LIMIT 998
 #define DIAG_IMF_LINE_CLIMIT 78
 
-typedef struct {
+struct diag_imf_header_field {
 	char *name;
 	char *body;
-} diag_imf_header_field_t;
+};
 
-typedef struct {
-	diag_imf_header_field_t **header_fields;
+struct diag_imf {
+	struct diag_imf_header_field **header_fields;
 	char *body;
-} diag_imf_t;
+};
 
 enum diag_imf_error {
 	DIAG_IMF_ERROR_INPUT,
@@ -31,15 +31,15 @@ enum diag_imf_option {
 
 DIAG_C_DECL_BEGIN
 
-typedef diag_distance_t (*diag_metric_imf_t)(const diag_imf_t *x, const diag_imf_t *y);
+typedef diag_distance_t (*diag_metric_imf_t)(const struct diag_imf *x, const struct diag_imf *y);
 
 extern void diag_imf_raise_error(enum diag_imf_error e);
 
-extern int diag_imf_parse(char *s, diag_imf_t **imfp, unsigned int option);
+extern int diag_imf_parse(char *s, struct diag_imf **imfp, unsigned int option);
 
-extern void diag_imf_destroy(diag_imf_t *imf);
+extern void diag_imf_destroy(struct diag_imf *imf);
 
-extern diag_distance_t diag_hamming_imf(const diag_imf_t *x, const diag_imf_t *y);
+extern diag_distance_t diag_hamming_imf(const struct diag_imf *x, const struct diag_imf *y);
 
 DIAG_C_DECL_END
 

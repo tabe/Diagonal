@@ -7,7 +7,7 @@
 #include "diagonal/vcdiff.h"
 
 static void
-dump_pcodes(diag_vcdiff_script_t *script)
+dump_pcodes(struct diag_vcdiff_script *script)
 {
 	diag_size_t i;
 
@@ -43,14 +43,14 @@ dump_pcodes(diag_vcdiff_script_t *script)
 static void
 contract_and_expand(const char *data, diag_size_t s_window, uint32_t base, diag_size_t s_pcodes)
 {
-	diag_vcdiff_script_t *script;
-	diag_rolling_hash32_t *rh;
+	struct diag_vcdiff_script *script;
+	struct diag_rolling_hash32 *rh;
 	diag_size_t size, s;
 	uint8_t *result;
 	char *result0;
 
 	size = strlen(data);
-	rh = (diag_rolling_hash32_t *)diag_rolling_hash32_new_rabin_karp((const uint8_t *)data, size, s_window, base);
+	rh = (struct diag_rolling_hash32 *)diag_rolling_hash32_new_rabin_karp((const uint8_t *)data, size, s_window, base);
 	ASSERT_NOT_NULL(rh);
 	script = diag_vcdiff_contract(rh);
 	ASSERT_NOT_NULL(script);

@@ -19,15 +19,15 @@
 
 #define CODE(b) (((diag_ssize_t)(b))+2)
 
-struct diag_trie_children_s {
+struct diag_trie_children {
 	diag_ssize_t base;
-	diag_deque_t *deque;
+	struct diag_deque *deque;
 };
 
-struct diag_trie_child_s {
+struct diag_trie_child {
 	diag_ssize_t code;
 	diag_ssize_t dst;
-	struct diag_trie_children_s *children;
+	struct diag_trie_children *children;
 };
 
 #define SET_BASE(trie, s, b)  (trie)->bc[s].base = (b)
@@ -35,14 +35,14 @@ struct diag_trie_child_s {
 #define SET_CHECK(trie, s, c) (trie)->bc[s].check = (c)
 #define GET_CHECK(trie, s)    (trie)->bc[s].check
 
-static diag_trie_t *
-extend_if_necessary(diag_trie_t *trie, diag_ssize_t s)
+static struct diag_trie *
+extend_if_necessary(struct diag_trie *trie, diag_ssize_t s)
 {
 	diag_ssize_t t;
 
 	assert(trie);
 	if ( (t = trie->size) <= s) {
-		trie = (diag_trie_t *)diag_realloc(trie, sizeof(diag_trie_t) + sizeof(diag_trie_bc_t) * (s + 1));
+		trie = (struct diag_trie *)diag_realloc(trie, sizeof(struct diag_trie) + sizeof(struct diag_trie_bc) * (s + 1));
 		trie->size = s + 1;
 		do {
 			SET_BASE(trie, t, CODE_NONE);
@@ -52,8 +52,8 @@ extend_if_necessary(diag_trie_t *trie, diag_ssize_t s)
 	return trie;
 }
 
-static diag_trie_t *
-fetch_base(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t *basep)
+static struct diag_trie *
+fetch_base(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t *basep)
 {
 	assert(trie);
 	trie = extend_if_necessary(trie, s);
@@ -61,8 +61,8 @@ fetch_base(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t *basep)
 	return trie;
 }
 
-static diag_trie_t *
-set_check(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t check)
+static struct diag_trie *
+set_check(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t check)
 {
 	assert(trie);
 	trie = extend_if_necessary(trie, s);
@@ -70,8 +70,8 @@ set_check(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t check)
 	return trie;
 }
 
-static diag_trie_t *
-fetch_check(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t *checkp)
+static struct diag_trie *
+fetch_check(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t *checkp)
 {
 	assert(trie);
 	trie = extend_if_necessary(trie, s);
@@ -79,20 +79,20 @@ fetch_check(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t *checkp)
 	return trie;
 }
 
-static struct diag_trie_children_s *
-transitions(diag_trie_t *trie, diag_ssize_t s)
+static struct diag_trie_children *
+transitions(struct diag_trie *trie, diag_ssize_t s)
 {
 	diag_ssize_t t, c;
-	struct diag_trie_children_s *children;
-	struct diag_trie_child_s *child;
+	struct diag_trie_children *children;
+	struct diag_trie_child *child;
 
 	assert(trie && s < trie->size);
-	children = diag_malloc(sizeof(struct diag_trie_children_s));
+	children = diag_malloc(sizeof(struct diag_trie_children));
 	children->deque = diag_deque_new();
 	children->base = GET_BASE(trie, s);
 	for (c = CODE_EOF; c <= CODE_MAX && ( (t = children->base + c) < trie->size); c++) {
 		if (GET_CHECK(trie, t) == s) {
-			child = diag_malloc(sizeof(struct diag_trie_child_s));
+			child = diag_malloc(sizeof(struct diag_trie_child));
 			child->dst  = t;
 			child->code = c;
 			child->children = NULL;
@@ -102,25 +102,25 @@ transitions(diag_trie_t *trie, diag_ssize_t s)
 	return children;
 }
 
-static diag_trie_t *
-relocate(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t b)
+static struct diag_trie *
+relocate(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t b)
 {
-	struct diag_trie_children_s *children;
-	struct diag_trie_child_s *child, *gchild;
-	diag_deque_elem_t *e_child, *e_gchild;
+	struct diag_trie_children *children;
+	struct diag_trie_child *child, *gchild;
+	struct diag_deque_elem *e_child, *e_gchild;
 
 	assert(trie && s < trie->size);
 	children = transitions(trie, s);
 	DIAG_DEQUE_FOR_EACH(children->deque, e_child) {
-		child = (struct diag_trie_child_s *)e_child->attr;
+		child = (struct diag_trie_child *)e_child->attr;
 		child->children = transitions(trie, child->dst);
 	}
 	DIAG_DEQUE_FOR_EACH(children->deque, e_child) {
-		child = (struct diag_trie_child_s *)e_child->attr;
+		child = (struct diag_trie_child *)e_child->attr;
 		trie = set_check(trie, b + child->code, s);
 		SET_BASE(trie, b + child->code, child->children->base);
 		DIAG_DEQUE_FOR_EACH(child->children->deque, e_gchild) {
-			gchild = (struct diag_trie_child_s *)e_gchild->attr;
+			gchild = (struct diag_trie_child *)e_gchild->attr;
 			SET_CHECK(trie, gchild->dst, b + child->code);
 			diag_free(gchild);
 		}
@@ -135,8 +135,8 @@ relocate(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t b)
 	return trie;
 }
 
-static diag_trie_t *
-add_transition(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t c, diag_ssize_t *tp)
+static struct diag_trie *
+add_transition(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t c, diag_ssize_t *tp)
 {
 	diag_ssize_t base, check, t;
 
@@ -159,12 +159,12 @@ add_transition(diag_trie_t *trie, diag_ssize_t s, diag_ssize_t c, diag_ssize_t *
 	return trie;
 }
 
-diag_trie_t *
+struct diag_trie *
 diag_trie_new(void)
 {
-	diag_trie_t *trie;
+	struct diag_trie *trie;
 
-	trie = diag_malloc(sizeof(diag_trie_t) + sizeof(diag_trie_bc_t));
+	trie = diag_malloc(sizeof(struct diag_trie) + sizeof(struct diag_trie_bc));
 	trie->size = 1;
 	SET_BASE(trie, 0, CODE_NONE);
 	SET_CHECK(trie, 0, CODE_NONE);
@@ -172,7 +172,7 @@ diag_trie_new(void)
 }
 
 void
-diag_trie_destroy(diag_trie_t *trie)
+diag_trie_destroy(struct diag_trie *trie)
 {
 	if (trie) {
 		diag_free(trie);
@@ -180,7 +180,7 @@ diag_trie_destroy(diag_trie_t *trie)
 }
 
 int
-diag_trie_traverse(diag_trie_t *trie, diag_ssize_t length, const uint8_t *seq, diag_trie_t **insert)
+diag_trie_traverse(struct diag_trie *trie, diag_ssize_t length, const uint8_t *seq, struct diag_trie **insert)
 {
 	diag_ssize_t s, t, i;
 

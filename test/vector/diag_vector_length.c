@@ -7,7 +7,7 @@
 int
 main()
 {
-	diag_vector_t *ht;
+	struct diag_vector *ht;
 
 	ht = diag_vector_new(0);
 	assert(diag_vector_length(ht) == 0);

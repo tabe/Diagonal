@@ -4,7 +4,7 @@
 typedef unsigned int diag_distance_t;
 typedef signed int diag_sdistance_t;
 
-typedef diag_distance_t (*diag_metric_t)(const diag_datum_t *d1, const diag_datum_t *d2);
+typedef diag_distance_t (*diag_metric_t)(const struct diag_datum *d1, const struct diag_datum *d2);
 typedef diag_distance_t (*diag_metric_chars_t)(const char *x, const char *y);
 typedef diag_sdistance_t (*diag_emetric_chars_t)(const char *x, const char *y, diag_distance_t e);
 

@@ -9,7 +9,7 @@
 #define ABE  ((const uint8_t *)"abe")
 
 static void
-dump(diag_trie_t *trie)
+dump(struct diag_trie *trie)
 {
 	diag_ssize_t i, b, c;
 
@@ -26,7 +26,7 @@ dump(diag_trie_t *trie)
 int
 main()
 {
-	diag_trie_t *trie, *next;
+	struct diag_trie *trie, *next;
 	int r;
 
 	trie = diag_trie_new();
