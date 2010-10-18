@@ -17,16 +17,16 @@
 #define CODE_EOF  1
 #define CODE_MAX  257
 
-#define CODE(b) (((diag_ssize_t)(b))+2)
+#define CODE(b) (((ssize_t)(b))+2)
 
 struct diag_trie_children {
-	diag_ssize_t base;
+	ssize_t base;
 	struct diag_deque *deque;
 };
 
 struct diag_trie_child {
-	diag_ssize_t code;
-	diag_ssize_t dst;
+	ssize_t code;
+	ssize_t dst;
 	struct diag_trie_children *children;
 };
 
@@ -36,9 +36,9 @@ struct diag_trie_child {
 #define GET_CHECK(trie, s)    (trie)->bc[s].check
 
 static struct diag_trie *
-extend_if_necessary(struct diag_trie *trie, diag_ssize_t s)
+extend_if_necessary(struct diag_trie *trie, ssize_t s)
 {
-	diag_ssize_t t;
+	ssize_t t;
 
 	assert(trie);
 	if ( (t = trie->size) <= s) {
@@ -53,7 +53,7 @@ extend_if_necessary(struct diag_trie *trie, diag_ssize_t s)
 }
 
 static struct diag_trie *
-fetch_base(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t *basep)
+fetch_base(struct diag_trie *trie, ssize_t s, ssize_t *basep)
 {
 	assert(trie);
 	trie = extend_if_necessary(trie, s);
@@ -62,7 +62,7 @@ fetch_base(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t *basep)
 }
 
 static struct diag_trie *
-set_check(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t check)
+set_check(struct diag_trie *trie, ssize_t s, ssize_t check)
 {
 	assert(trie);
 	trie = extend_if_necessary(trie, s);
@@ -71,7 +71,7 @@ set_check(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t check)
 }
 
 static struct diag_trie *
-fetch_check(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t *checkp)
+fetch_check(struct diag_trie *trie, ssize_t s, ssize_t *checkp)
 {
 	assert(trie);
 	trie = extend_if_necessary(trie, s);
@@ -80,9 +80,9 @@ fetch_check(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t *checkp)
 }
 
 static struct diag_trie_children *
-transitions(struct diag_trie *trie, diag_ssize_t s)
+transitions(struct diag_trie *trie, ssize_t s)
 {
-	diag_ssize_t t, c;
+	ssize_t t, c;
 	struct diag_trie_children *children;
 	struct diag_trie_child *child;
 
@@ -103,7 +103,7 @@ transitions(struct diag_trie *trie, diag_ssize_t s)
 }
 
 static struct diag_trie *
-relocate(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t b)
+relocate(struct diag_trie *trie, ssize_t s, ssize_t b)
 {
 	struct diag_trie_children *children;
 	struct diag_trie_child *child, *gchild;
@@ -136,9 +136,9 @@ relocate(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t b)
 }
 
 static struct diag_trie *
-add_transition(struct diag_trie *trie, diag_ssize_t s, diag_ssize_t c, diag_ssize_t *tp)
+add_transition(struct diag_trie *trie, ssize_t s, ssize_t c, ssize_t *tp)
 {
-	diag_ssize_t base, check, t;
+	ssize_t base, check, t;
 
 	assert(trie);
 	trie = fetch_base(trie, s, &base);
@@ -180,9 +180,9 @@ diag_trie_destroy(struct diag_trie *trie)
 }
 
 int
-diag_trie_traverse(struct diag_trie *trie, diag_ssize_t length, const uint8_t *seq, struct diag_trie **insert)
+diag_trie_traverse(struct diag_trie *trie, ssize_t length, const uint8_t *seq, struct diag_trie **insert)
 {
-	diag_ssize_t s, t, i;
+	ssize_t s, t, i;
 
 	assert(trie && seq);
 	s = 0;

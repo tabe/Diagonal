@@ -79,7 +79,7 @@ diag_hashtable_copy(struct diag_hashtable *ht, int mutable)
 }
 
 void
-diag_hashtable_clear(struct diag_hashtable *ht, diag_ssize_t k)
+diag_hashtable_clear(struct diag_hashtable *ht, ssize_t k)
 {
 	assert(ht);
 	if (k >= 0) {

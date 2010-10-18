@@ -2,12 +2,12 @@
 #define DIAGONAL_TRIE_H
 
 struct diag_trie_bc {
-	diag_ssize_t base;
-	diag_ssize_t check;
+	ssize_t base;
+	ssize_t check;
 };
 
 struct diag_trie {
-	diag_ssize_t size;
+	ssize_t size;
 	struct diag_trie_bc bc[];
 };
 
@@ -17,7 +17,7 @@ extern struct diag_trie *diag_trie_new(void);
 
 extern void diag_trie_destroy(struct diag_trie *trie);
 
-extern int diag_trie_traverse(struct diag_trie *trie, diag_ssize_t length, const uint8_t *seq, struct diag_trie **insert);
+extern int diag_trie_traverse(struct diag_trie *trie, ssize_t length, const uint8_t *seq, struct diag_trie **insert);
 
 DIAG_C_DECL_END
 

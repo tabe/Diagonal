@@ -11,7 +11,7 @@
 static void
 dump(struct diag_trie *trie)
 {
-	diag_ssize_t i, b, c;
+	ssize_t i, b, c;
 
 	printf("-- size %d\n", trie->size);
 	for (i = 0; i < trie->size; i++) {

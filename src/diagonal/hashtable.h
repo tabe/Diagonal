@@ -25,7 +25,7 @@ extern int diag_hashtable_contains(struct diag_hashtable *ht, diag_object_t key)
 
 extern struct diag_hashtable *diag_hashtable_copy(struct diag_hashtable *ht, int mutable);
 
-extern void diag_hashtable_clear(struct diag_hashtable *ht, diag_ssize_t k);
+extern void diag_hashtable_clear(struct diag_hashtable *ht, ssize_t k);
 
 extern struct diag_vector *diag_hashtable_keys(struct diag_hashtable *ht);
 
