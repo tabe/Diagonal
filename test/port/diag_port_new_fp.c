@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 #include "test.h"
 
 #include "diagonal.h"
@@ -23,11 +24,11 @@ main()
 	ASSERT_FALSE(DIAG_PORT_OUTPUT_P(port));
 	ASSERT_TRUE(DIAG_PORT_FP_P(port));
 	ASSERT_EQ_INT(1, port->read_byte(port, &b));
-	ASSERT_EQ_UINT8(35, b);
+	ASSERT_EQ_UINT8(47, b); /* '/' */
 	ASSERT_EQ_SIZE(1, port->i_pos);
 	ASSERT_EQ_INT(1, port->read_bytes(port, BUFLEN, buf));
-	ASSERT_EQ_UINT8(105, buf[0]);
-	ASSERT_EQ_UINT8(110, buf[1]);
+	ASSERT_EQ_UINT8(42, buf[0]); /* '*' */
+	ASSERT_EQ_UINT8(32, buf[1]); /* ' ' */
 	ASSERT_EQ_SIZE(3, port->i_pos);
 	diag_port_destroy(port);
 

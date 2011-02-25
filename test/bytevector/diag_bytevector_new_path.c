@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 #include "test.h"
 
 #include "diagonal.h"
@@ -15,7 +16,7 @@ main(void)
 	s = diag_malloc(9);
 	(void)memcpy(s, bv->data, 8);
 	s[8] = '\0';
-	ASSERT_EQ_STRING("#include", s);
+	ASSERT_EQ_STRING("/* -*- M", s);
 	diag_free(s);
 	diag_bytevector_destroy(bv);
 	return EXIT_SUCCESS;

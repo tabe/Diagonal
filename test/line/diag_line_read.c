@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 #include "test.h"
 
 #include "diagonal.h"
@@ -33,6 +34,12 @@ main()
 
 	context = diag_line_read(context, &size, &line);
 	ASSERT_NO_ERROR(context);
+	ASSERT_EQ_SIZE(75, size);
+	ASSERT_EQ_STRING("/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */", line);
+	diag_free(line);
+
+	context = diag_line_read(context, &size, &line);
+	ASSERT_NO_ERROR(context);
 	ASSERT_EQ_SIZE(17, size);
 	ASSERT_EQ_STRING("#include \"test.h\"", line);
 	diag_free(line);
@@ -41,12 +48,6 @@ main()
 	ASSERT_NO_ERROR(context);
 	ASSERT_EQ_SIZE(0, size);
 	ASSERT_EQ_STRING("", line);
-	diag_free(line);
-
-	context = diag_line_read(context, &size, &line);
-	ASSERT_NO_ERROR(context);
-	ASSERT_EQ_SIZE(21, size);
-	ASSERT_EQ_STRING("#include \"diagonal.h\"", line);
 	diag_free(line);
 
 	diag_line_context_destroy(context);
