@@ -115,11 +115,11 @@ map_paths(char **paths)
 
 	assert(paths);
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
-#define FAIL(tree) {							\
-		/* TODO */								\
-		diag_rbtree_destroy(tree);				\
-		return NULL;							\
-}
+#define FAIL(tree) {				\
+		/* TODO */			\
+		diag_rbtree_destroy(tree);	\
+		return NULL;			\
+	}
 	while (paths[i]) {
 		const char *path = paths[i];
 		char *name;
@@ -163,19 +163,19 @@ serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
 	return e;
 }
 
-#define MMAP_IMF(path, p, len) do {										\
-		int fd;															\
-		struct stat st;													\
-																		\
+#define MMAP_IMF(path, p, len) do {					\
+		int fd;							\
+		struct stat st;						\
+									\
 		if ( (fd = open(path, O_RDONLY)) < 0) diag_fatal("could not open file"); \
-		if (fstat(fd, &st) < 0) {										\
-			close(fd);													\
-			diag_fatal("could not stat file");							\
-		}																\
-		(len) = st.st_size;												\
+		if (fstat(fd, &st) < 0) {				\
+			close(fd);					\
+			diag_fatal("could not stat file");		\
+		}							\
+		(len) = st.st_size;					\
 		(p) = (char *)mmap(NULL, (len), PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0); \
-		close(fd);														\
-		if ((p) == MAP_FAILED) diag_fatal("could not map file");		\
+		close(fd);						\
+		if ((p) == MAP_FAILED) diag_fatal("could not map file"); \
 	} while (0)
 
 static struct diag_rbtree *

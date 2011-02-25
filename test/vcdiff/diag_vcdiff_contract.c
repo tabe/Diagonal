@@ -18,8 +18,7 @@ dump_pcodes(struct diag_vcdiff_script *script)
 		case DIAG_VCD_ADD:
 			printf("ADD\t(");
 			break;
-		case DIAG_VCD_COPY
-:
+		case DIAG_VCD_COPY:
 			printf("COPY\t(");
 			break;
 		default:

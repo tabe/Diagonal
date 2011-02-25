@@ -125,79 +125,79 @@ main(int argc, char *argv[])
 		m1 = (char *)diag_realloc((void *)m1, s1);
 	}
 
-#define RUN(x, y) do {													\
-		waitpid(pid##y, &status, 0);									\
-		if (!WIFEXITED(status)) {										\
-			exit(EXIT_FAILURE);											\
-		}																\
-		if (WEXITSTATUS(status) != EXIT_SUCCESS) {						\
-			exit(WEXITSTATUS(status));									\
-		}																\
-		r = pipe(ifd##x);												\
-		if (r < 0) {													\
-			close(ofd##y[0]);											\
-			close(ofd##y[1]);											\
-			exit(EXIT_FAILURE);											\
-		}																\
-		r = pipe(ofd##x);												\
-		if (r < 0) {													\
-			close(ofd##y[0]);											\
-			close(ofd##y[1]);											\
-			close(ifd##x[0]);											\
-			close(ifd##x[1]);											\
-			exit(EXIT_FAILURE);											\
-		}																\
-		pid##x = fork();												\
-		if (pid##x < 0) {												\
-			exit(EXIT_FAILURE);											\
-		} else if (pid##x == 0) { /* child */							\
-			execute_program(argv+optind, ifd##x, ofd##x);				\
-		} else { /* parent */											\
-			struct diag_port *port;											\
-																		\
-			close(ofd##x[1]);											\
-			close(ifd##x[0]);											\
-			s##x = BUFFER_LENGTH;										\
-			m##x = diag_malloc(s##x);									\
-			s = 0;														\
-			port = diag_port_new_fd(ifd##x[1], DIAG_PORT_OUTPUT);		\
-			while (read(ofd##y[0], (void *)m##x+s, 1) > 0) {			\
-				if (port->write_byte(port, m##x[s]) < 1) {				\
-					exit(EXIT_FAILURE);									\
-				}														\
-				if (++s == s##x) {										\
-					s##x += BUFFER_LENGTH;								\
-					m##x = (char *)diag_realloc((void *)m##x, s##x);	\
-				}														\
-			}															\
-			diag_port_destroy(port);									\
-			close(ifd##x[1]);											\
-			s##x = s;													\
-			m##x = (char *)diag_realloc((void *)m##x, s##x);			\
-			close(ofd##y[0]);											\
-			if (s##x == s##y) {											\
-				d = 0;													\
-				for (s = 0; s < s##x; s++) {							\
-					if (m##x[s] != m##y[s]) {							\
-						d = 1;											\
-						break;											\
-					}													\
-				}														\
-				if (!d) {												\
-					struct diag_port *port;									\
-																		\
-					kill(pid##x, SIGINT);								\
-					waitpid(pid##x, NULL, 0);							\
+#define RUN(x, y) do {							\
+		waitpid(pid##y, &status, 0);				\
+		if (!WIFEXITED(status)) {				\
+			exit(EXIT_FAILURE);				\
+		}							\
+		if (WEXITSTATUS(status) != EXIT_SUCCESS) {		\
+			exit(WEXITSTATUS(status));			\
+		}							\
+		r = pipe(ifd##x);					\
+		if (r < 0) {						\
+			close(ofd##y[0]);				\
+			close(ofd##y[1]);				\
+			exit(EXIT_FAILURE);				\
+		}							\
+		r = pipe(ofd##x);					\
+		if (r < 0) {						\
+			close(ofd##y[0]);				\
+			close(ofd##y[1]);				\
+			close(ifd##x[0]);				\
+			close(ifd##x[1]);				\
+			exit(EXIT_FAILURE);				\
+		}							\
+		pid##x = fork();					\
+		if (pid##x < 0) {					\
+			exit(EXIT_FAILURE);				\
+		} else if (pid##x == 0) { /* child */			\
+			execute_program(argv+optind, ifd##x, ofd##x);	\
+		} else { /* parent */					\
+			struct diag_port *port;				\
+									\
+			close(ofd##x[1]);				\
+			close(ifd##x[0]);				\
+			s##x = BUFFER_LENGTH;				\
+			m##x = diag_malloc(s##x);			\
+			s = 0;						\
+			port = diag_port_new_fd(ifd##x[1], DIAG_PORT_OUTPUT); \
+			while (read(ofd##y[0], (void *)m##x+s, 1) > 0) { \
+				if (port->write_byte(port, m##x[s]) < 1) { \
+					exit(EXIT_FAILURE);		\
+				}					\
+				if (++s == s##x) {			\
+					s##x += BUFFER_LENGTH;		\
+					m##x = (char *)diag_realloc((void *)m##x, s##x); \
+				}					\
+			}						\
+			diag_port_destroy(port);			\
+			close(ifd##x[1]);				\
+			s##x = s;					\
+			m##x = (char *)diag_realloc((void *)m##x, s##x); \
+			close(ofd##y[0]);				\
+			if (s##x == s##y) {				\
+				d = 0;					\
+				for (s = 0; s < s##x; s++) {		\
+					if (m##x[s] != m##y[s]) {	\
+						d = 1;			\
+						break;			\
+					}				\
+				}					\
+				if (!d) {				\
+					struct diag_port *port;		\
+									\
+					kill(pid##x, SIGINT);		\
+					waitpid(pid##x, NULL, 0);	\
 					port = diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT); \
 					r = port->write_bytes(port, s##x, (uint8_t *)m##x); \
-					diag_port_destroy(port);							\
-					if (r <= 0) {										\
-						exit(EXIT_FAILURE);								\
-					}													\
-					exit(EXIT_SUCCESS);									\
-				}														\
-			}															\
-		}																\
+					diag_port_destroy(port);	\
+					if (r <= 0) {			\
+						exit(EXIT_FAILURE);	\
+					}				\
+					exit(EXIT_SUCCESS);		\
+				}					\
+			}						\
+		}							\
 	} while (0)
 
  loop:

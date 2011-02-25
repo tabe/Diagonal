@@ -37,47 +37,47 @@ diag_deque_destroy(struct diag_deque *deque)
 	}
 }
 
-#define DIAG_DEQUE_ADD(end1, end2, link1, link2) do {					\
-		struct diag_deque_elem *tmp;											\
-																		\
-		assert(deque);													\
-		tmp = deque->end1;												\
-		elem = diag_malloc(sizeof(struct diag_deque_elem));					\
-		elem->attr = attr;												\
-		elem->link1 = NULL;												\
-		elem->link2 = tmp;												\
-		if (deque->length == 0) {										\
-			deque->end2 = elem;											\
-		} else {														\
-			assert(tmp);												\
-			tmp->link1 = elem;											\
-		}																\
-		deque->end1 = elem;												\
-		deque->length++;												\
+#define DIAG_DEQUE_ADD(end1, end2, link1, link2) do {			\
+		struct diag_deque_elem *tmp;				\
+									\
+		assert(deque);						\
+		tmp = deque->end1;					\
+		elem = diag_malloc(sizeof(struct diag_deque_elem));	\
+		elem->attr = attr;					\
+		elem->link1 = NULL;					\
+		elem->link2 = tmp;					\
+		if (deque->length == 0) {				\
+			deque->end2 = elem;				\
+		} else {						\
+			assert(tmp);					\
+			tmp->link1 = elem;				\
+		}							\
+		deque->end1 = elem;					\
+		deque->length++;					\
 	} while (0)
 
 #define DIAG_DEQUE_REMOVE(end1, end2, link1, link2) do {	\
-		struct diag_deque_elem *tmp;								\
-															\
-		assert(deque);										\
-		elem = deque->end1;									\
-		switch (deque->length) {							\
-		case 0:												\
-			assert(!elem);									\
-			break;											\
-		case 1:												\
-			assert(elem && elem == deque->end2);			\
-			deque->end1 = deque->end2 = NULL;				\
-			deque->length--;								\
-			break;											\
-		default:											\
-			assert(elem && elem->link2);					\
-			tmp = elem->link2;								\
-			tmp->link1 = NULL;								\
-			deque->end1 = tmp;								\
-			deque->length--;								\
-			break;											\
-		}													\
+		struct diag_deque_elem *tmp;			\
+								\
+		assert(deque);					\
+		elem = deque->end1;				\
+		switch (deque->length) {			\
+		case 0:						\
+			assert(!elem);				\
+			break;					\
+		case 1:						\
+			assert(elem && elem == deque->end2);	\
+			deque->end1 = deque->end2 = NULL;	\
+			deque->length--;			\
+			break;					\
+		default:					\
+			assert(elem && elem->link2);		\
+			tmp = elem->link2;			\
+			tmp->link1 = NULL;			\
+			deque->end1 = tmp;			\
+			deque->length--;			\
+			break;					\
+		}						\
 	} while (0)
 
 struct diag_deque_elem *
@@ -111,7 +111,7 @@ struct diag_deque_elem *
 diag_deque_pop(struct diag_deque *deque)
 {
 	struct diag_deque_elem *elem;
-	
+
 	DIAG_DEQUE_REMOVE(last, first, next, prev);
 	return elem;
 }

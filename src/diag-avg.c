@@ -65,20 +65,20 @@ couple_to_param(struct diag_deque *head, struct diag_deque *tail, struct diag_av
 	len = head->length + tail->length;
 	s = diag_malloc(len + 1);
 
-#define FILLUP(q) do {								\
-		DIAG_DEQUE_FOR_EACH(q, e) {					\
-			c = (char)e->attr;						\
-			switch (c) {							\
-			case '.':								\
+#define FILLUP(q) do {							\
+		DIAG_DEQUE_FOR_EACH(q, e) {				\
+			c = (char)e->attr;				\
+			switch (c) {					\
+			case '.':					\
 				type = DIAG_AVG_PARAM_DOUBLE;		\
-				precision = 0;						\
-				break;								\
-			default:								\
+				precision = 0;				\
+				break;					\
+			default:					\
 				if (precision >= 0) precision++;	\
-				break;								\
-			}										\
-			s[i++] = c;								\
-		}											\
+				break;					\
+			}						\
+			s[i++] = c;					\
+		}							\
 	} while (0)
 
 	FILLUP(head);
@@ -304,17 +304,17 @@ main(int argc, char *argv[])
 	char *dir = NULL;
 	char **opaths, **epaths;
 
-#define CHECK_DIR() do {								\
-		struct stat st;									\
-		if (!dir) {										\
+#define CHECK_DIR() do {						\
+		struct stat st;						\
+		if (!dir) {						\
 			diag_fatal("could not allocate memory");	\
-		}												\
-		if (stat(dir, &st) < 0) {						\
+		}							\
+		if (stat(dir, &st) < 0) {				\
 			diag_fatal("could not stat %s", dir);		\
-		}												\
-		if (!S_ISDIR(st.st_mode)) {						\
+		}							\
+		if (!S_ISDIR(st.st_mode)) {				\
 			diag_fatal("%s is not a directory", dir);	\
-		}												\
+		}							\
 	} while (0)
 
 	while ( (c = getopt(argc, argv, "+Vhn:o:")) >= 0) {
@@ -357,33 +357,33 @@ main(int argc, char *argv[])
 		CHECK_DIR();
 	}
 
-#define FAIL() do {								\
-		collect_children(ptree);				\
-		while (i--) {							\
-			diag_free(opaths[i]);				\
-			diag_free(epaths[i]);				\
-		}										\
-		diag_free(opaths);						\
-		exit(EXIT_FAILURE);						\
+#define FAIL() do {				\
+		collect_children(ptree);	\
+		while (i--) {			\
+			diag_free(opaths[i]);	\
+			diag_free(epaths[i]);	\
+		}				\
+		diag_free(opaths);		\
+		exit(EXIT_FAILURE);		\
 	} while (0)
 
 	for (i = 0; i < n; i++) {
 
-#define BUILD_PATHS() do {												\
-			build_path(opaths, i, "%s/diagonal%d.out", dir, pid);		\
-			build_path(epaths, i, "%s/diagonal%d.err", dir, pid);		\
+#define BUILD_PATHS() do {						\
+			build_path(opaths, i, "%s/diagonal%d.out", dir, pid); \
+			build_path(epaths, i, "%s/diagonal%d.err", dir, pid); \
 		} while (0)
 
-#define FREE_PATHS() do {						\
-			for (i = 0; i < n; i++) {			\
-				if (!leave_output) {			\
-					unlink(opaths[i]);			\
-					unlink(epaths[i]);			\
-				}								\
-				diag_free(opaths[i]);			\
-				diag_free(epaths[i]);			\
-			}									\
-			diag_free(opaths);					\
+#define FREE_PATHS() do {					\
+			for (i = 0; i < n; i++) {		\
+				if (!leave_output) {		\
+					unlink(opaths[i]);	\
+					unlink(epaths[i]);	\
+				}				\
+				diag_free(opaths[i]);		\
+				diag_free(epaths[i]);		\
+			}					\
+			diag_free(opaths);			\
 		} while (0)
 
 		pid = fork();
@@ -420,14 +420,14 @@ main(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 
-#define DETERMINE_STATUS() do {											\
+#define DETERMINE_STATUS() do {						\
 			if (diag_rbtree_search(ptree, (diag_rbtree_key_t)pid, &pnode)) { \
-				i = (int)pnode->attr;									\
-				diag_rbtree_delete(ptree, pnode);						\
-				stable[i] = status;										\
-			} else {													\
-				FAIL();													\
-			}															\
+				i = (int)pnode->attr;			\
+				diag_rbtree_delete(ptree, pnode);	\
+				stable[i] = status;			\
+			} else {					\
+				FAIL();					\
+			}						\
 		} while (0)
 
 		if (WIFEXITED(status)) {
@@ -435,9 +435,9 @@ main(int argc, char *argv[])
 		} else if (WIFSIGNALED(status)) {
 			DETERMINE_STATUS();
 		} else if (WIFSTOPPED(status)) {
-			
+
 		} else if (WIFCONTINUED(status)) {
-			
+
 		}
 	} while (diag_rbtree_minimum(ptree));
 

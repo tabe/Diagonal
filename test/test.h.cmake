@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 #include "config.h"
 
 #include <assert.h>
@@ -27,7 +28,7 @@
 		int result = (int)(expr);										\
 		if (result) break;												\
 		printf("%s:%d: " #expr " is expected to be true, but false\n", __FILE__, __LINE__); \
-		exit(EXIT_FAILURE);														\
+		exit(EXIT_FAILURE);												\
 	} while (0)
 
 #define ASSERT_FALSE(expr) ASSERT_TRUE(!(expr))
@@ -36,14 +37,14 @@
 		void *result = (void *)(expr);									\
 		if (result != NULL) break;										\
 		printf("%s:%d: expected " #expr " != NULL, but NULL\n", __FILE__, __LINE__); \
-		exit(EXIT_FAILURE);														\
+		exit(EXIT_FAILURE);												\
 	} while (0)
 
 #define ASSERT_EQ_(type, slot, expected, expr) do {						\
 		type actual = (type)(expr);										\
 		if ((type)expected == actual) break;							\
 		printf("%s:%d: " slot " is expected, but " slot "\n", __FILE__, __LINE__, (type)expected, actual); \
-		exit(EXIT_FAILURE);														\
+		exit(EXIT_FAILURE);												\
 	} while (0)
 
 #define ASSERT_EQ_INT(expected, expr)     ASSERT_EQ_(int, "%d", expected, expr)
@@ -58,5 +59,5 @@
 		char *actual = (char *)(expr);									\
 		if (strcmp(expected, actual) == 0) break;						\
 		printf("%s:%d: %s is expected, but %s\n", __FILE__, __LINE__, expected, actual); \
-		exit(EXIT_FAILURE);														\
+		exit(EXIT_FAILURE);												\
 	} while (0)

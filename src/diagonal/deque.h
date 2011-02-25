@@ -16,13 +16,13 @@ struct diag_deque {
 
 #define DIAG_DEQUE_FOR_EACH(deque, elem) for ((elem) = (deque)->first; (elem); (elem) = (elem)->next)
 
-#define DIAG_DEQUE_TO_ARRAY(deque, type, array) do {					\
-		unsigned int i = 0;												\
-		struct diag_deque_elem *elem;										\
+#define DIAG_DEQUE_TO_ARRAY(deque, type, array) do {			\
+		unsigned int i = 0;					\
+		struct diag_deque_elem *elem;				\
 		array = (type *)diag_calloc((size_t)(deque)->length, sizeof(type)); \
-		DIAG_DEQUE_FOR_EACH(deque, elem) {								\
-			array[i++] = (type)elem->attr;								\
-		}																\
+		DIAG_DEQUE_FOR_EACH(deque, elem) {			\
+			array[i++] = (type)elem->attr;			\
+		}							\
 	} while (0)
 
 DIAG_C_DECL_BEGIN

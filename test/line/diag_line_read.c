@@ -4,13 +4,13 @@
 #include "diagonal.h"
 #include "diagonal/line.h"
 
-#define ASSERT_NO_ERROR(context)							\
-	if (DIAG_LINE_HAS_ERROR(context)) {						\
+#define ASSERT_NO_ERROR(context)					\
+	if (DIAG_LINE_HAS_ERROR(context)) {				\
 		printf("unintented error: %d\n", (context)->error);	\
-		diag_line_context_destroy(context);					\
-		diag_port_destroy(port);							\
-		close(fd);											\
-		exit(EXIT_FAILURE);											\
+		diag_line_context_destroy(context);			\
+		diag_port_destroy(port);				\
+		close(fd);						\
+		exit(EXIT_FAILURE);					\
 	}
 
 int
