@@ -382,10 +382,8 @@ diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr)
 void
 diag_rbtree_node_destroy(struct diag_rbtree_node *node)
 {
-	if (node) {
-		diag_free(node);
-		node = NULL;
-	}
+	diag_free(node);
+	node = NULL;
 }
 
 diag_size_t

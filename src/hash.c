@@ -114,10 +114,9 @@ diag_rolling_hash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_s
 void
 diag_rolling_hash32_destroy(struct diag_rolling_hash32 *rh)
 {
-	if (rh) {
-		if (rh->attr) diag_free(rh->attr);
-		diag_free(rh);
-	}
+	if (!rh) return;
+	diag_free(rh->attr);
+	diag_free(rh);
 }
 
 uint32_t *

@@ -175,9 +175,7 @@ diag_trie_new(void)
 void
 diag_trie_destroy(struct diag_trie *trie)
 {
-	if (trie) {
-		diag_free(trie);
-	}
+	diag_free(trie);
 }
 
 int

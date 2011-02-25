@@ -28,9 +28,7 @@ diag_cluster_new(diag_size_t num_data)
 void
 diag_cluster_destroy(struct diag_cluster *cluster)
 {
-	if (cluster) {
-		diag_free(cluster);
-	}
+	diag_free(cluster);
 }
 
 struct diag_analysis *
@@ -53,9 +51,7 @@ diag_analysis_new(diag_size_t num_data, struct diag_datum **data)
 void
 diag_analysis_destroy(struct diag_analysis *analysis)
 {
-	if (analysis) {
-		diag_free(analysis);
-	}
+	diag_free(analysis);
 }
 
 struct diag_code *
@@ -74,9 +70,7 @@ diag_code_new(struct diag_cluster *cluster, diag_size_t num_deltas)
 void
 diag_code_destroy(struct diag_code *datum)
 {
-	if (datum) {
-		diag_free(datum);
-	}
+	diag_free(datum);
 }
 
 struct diag_delta *
@@ -92,9 +86,7 @@ diag_delta_new(enum diag_delta_type type)
 void
 diag_delta_destroy(struct diag_delta *delta)
 {
-	if (delta) {
-		diag_free(delta);
-	}
+	diag_free(delta);
 }
 
 struct diag_code *

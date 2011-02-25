@@ -41,10 +41,9 @@ diag_line_context_new(struct diag_port *port)
 void
 diag_line_context_destroy(struct diag_line_context *context)
 {
-	if (context) {
-		if (context->buf) diag_free(context->buf);
-		diag_free(context);
-	}
+	if (!context) return;
+	diag_free(context->buf);
+	diag_free(context);
 }
 
 struct diag_line_context *
@@ -77,7 +76,7 @@ diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 					return context;
 				}
 			} else {
-				if (line) diag_free(line);
+				diag_free(line);
 				context->error = DIAG_LINE_ERROR_UNKNOWN;
 				return context;
 			}

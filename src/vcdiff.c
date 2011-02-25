@@ -165,8 +165,8 @@ static void
 cache_destroy(struct diag_vcdiff_cache *cache)
 {
 	if (!cache) return;
-	if (cache->near) diag_free(cache->near);
-	if (cache->same) diag_free(cache->same);
+	diag_free(cache->near);
+	diag_free(cache->same);
 	diag_free(cache);
 }
 
@@ -645,7 +645,7 @@ diag_vcdiff_vm_destroy(struct diag_vcdiff_vm *vm)
 	if (!vm) return;
 	code_table_destroy(vm->code_table);
 	cache_destroy(vm->cache);
-	if (vm->target) diag_free(vm->target);
+	diag_free(vm->target);
 	diag_bytevector_destroy(vm->source);
 	diag_free(vm);
 }
@@ -864,7 +864,6 @@ diag_vcdiff_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff)
 void
 diag_vcdiff_destroy(struct diag_vcdiff *vcdiff)
 {
-	if (!vcdiff) return;
 	diag_free(vcdiff);
 }
 

@@ -147,7 +147,7 @@ diag_realloc(void *ptr, size_t size)
 void
 diag_free(void *ptr)
 {
-	if (ptr) free(ptr);
+	free(ptr);
 }
 
 struct diag_datum *

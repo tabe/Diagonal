@@ -67,6 +67,10 @@ extern void diag_printf(const char *message, ...);
 extern void *diag_malloc(size_t size);
 extern void *diag_calloc(size_t nmemb, size_t size);
 extern void *diag_realloc(void *ptr, size_t size);
+/**
+ * Free the resource which `ptr' refers to.
+ * Do nothing if `ptr' is NULL.
+ */
 extern void diag_free(void *ptr);
 
 extern struct diag_datum *diag_datum_new(void *value);
