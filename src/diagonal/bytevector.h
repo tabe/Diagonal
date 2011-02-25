@@ -3,8 +3,11 @@
 #define DIAGONAL_BYTEVECTOR_H
 
 struct diag_bytevector {
+	/* number of bytes in vector */
 	diag_size_t size;
+	/* array of bytes */
 	uint8_t *data;
+	/* callback invoked with this bytevector itself for finalization */
 	void (*finalize)(struct diag_bytevector *);
 };
 
@@ -12,11 +15,26 @@ typedef void (*diag_bytevector_finalizer_t)(struct diag_bytevector *);
 
 DIAG_C_DECL_BEGIN
 
+/*
+ * Return new diag_bytevector having `data' of size `size'.
+ * `data' will be freed in case of finalization.
+ */
 extern struct diag_bytevector *diag_bytevector_new_heap(diag_size_t size, uint8_t *data);
+/*
+ * Return new diag_bytevector having the content of file of path `path'.
+ * The data is mounted as read-only, and will be unmounted in case of
+ * finalization.
+ */
 extern struct diag_bytevector *diag_bytevector_new_path(const char *path);
-
+/*
+ * Return a copy of `bv'.
+ * It consists of bytes of length (size of `bv') + 1 and is null-terminated.
+ * The client code is responsible to free it after use.
+ */
 extern char *diag_bytevector_to_asciz(const struct diag_bytevector *bv);
-
+/*
+ * Finalize and free `bv'.
+ */
 extern void diag_bytevector_destroy(struct diag_bytevector *bv);
 
 DIAG_C_DECL_END
