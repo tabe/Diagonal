@@ -87,7 +87,7 @@ struct diag_deque_elem *diag_deque_shift(struct diag_deque *deque)
 }
 
 struct diag_deque_elem *diag_deque_unshift(struct diag_deque *deque,
-					   uintptr_t attr)
+					   intptr_t attr)
 {
 	struct diag_deque_elem *elem;
 
@@ -96,7 +96,7 @@ struct diag_deque_elem *diag_deque_unshift(struct diag_deque *deque,
 }
 
 struct diag_deque_elem *diag_deque_push(struct diag_deque *deque,
-					uintptr_t attr)
+					intptr_t attr)
 {
 	struct diag_deque_elem *elem;
 

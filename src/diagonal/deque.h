@@ -3,7 +3,7 @@
 #define DIAGONAL_DEQUE_H
 
 struct diag_deque_elem {
-	uintptr_t attr;
+	intptr_t attr;
 	struct diag_deque_elem *prev;
 	struct diag_deque_elem *next;
 };
@@ -42,7 +42,7 @@ extern void diag_deque_destroy(struct diag_deque *deque);
  * Append `attr' to `deque'.
  */
 extern struct diag_deque_elem *diag_deque_push(struct diag_deque *deque,
-					       uintptr_t attr);
+					       intptr_t attr);
 /*
  * Drop the last element from `deque' and return it.
  * It is safe to call this function even if `deque' is empty.
@@ -59,7 +59,7 @@ extern struct diag_deque_elem *diag_deque_shift(struct diag_deque *deque);
  * Prepend `attr' to `deque'.
  */
 extern struct diag_deque_elem *diag_deque_unshift(struct diag_deque *deque,
-						  uintptr_t attr);
+						  intptr_t attr);
 /*
  * Join `head' and `tail' destructively.
  * Return the length of the resulting `head'.
