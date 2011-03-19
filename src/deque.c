@@ -112,7 +112,7 @@ struct diag_deque_elem *diag_deque_pop(struct diag_deque *deque)
 	return elem;
 }
 
-unsigned int diag_deque_append(struct diag_deque *head, struct diag_deque *tail)
+diag_size_t diag_deque_append(struct diag_deque *head, struct diag_deque *tail)
 {
 	assert(head && tail);
 	if (tail->length == 0) return head->length;
@@ -121,7 +121,7 @@ unsigned int diag_deque_append(struct diag_deque *head, struct diag_deque *tail)
 		head->last   = tail->last;
 		head->length = tail->length;
 	} else {
-		unsigned int len = head->length + tail->length;
+		diag_size_t len = head->length + tail->length;
 		struct diag_deque_elem *x = head->last;
 		struct diag_deque_elem *y = tail->first;
 		assert(x && y);

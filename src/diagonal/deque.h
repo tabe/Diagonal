@@ -11,14 +11,14 @@ struct diag_deque_elem {
 struct diag_deque {
 	struct diag_deque_elem *first;
 	struct diag_deque_elem *last;
-	unsigned int length;
+	diag_size_t length;
 };
 
 #define DIAG_DEQUE_FOR_EACH(deque, elem) \
 	for ((elem) = (deque)->first; (elem); (elem) = (elem)->next)
 
 #define DIAG_DEQUE_TO_ARRAY(deque, type, array) do {			\
-		unsigned int i = 0;					\
+		diag_size_t i = 0;					\
 		struct diag_deque_elem *elem;				\
 		array = (type *)diag_calloc((size_t)(deque)->length,	\
 					    sizeof(type));		\
@@ -64,8 +64,8 @@ extern struct diag_deque_elem *diag_deque_unshift(struct diag_deque *deque,
  * Join `head' and `tail' destructively.
  * Return the length of the resulting `head'.
  */
-extern unsigned int diag_deque_append(struct diag_deque *head,
-				      struct diag_deque *tail);
+extern diag_size_t diag_deque_append(struct diag_deque *head,
+				     struct diag_deque *tail);
 
 DIAG_C_DECL_END
 
