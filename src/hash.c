@@ -37,6 +37,7 @@ diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size, uint64_t base)
 }
 
 struct rabin_karp_attr32 {
+	const uint8_t *tail;
 	uint32_t base;
 	uint32_t factor;
 };
@@ -55,23 +56,25 @@ rabin_karp_init32(struct diag_rollinghash32 *rh)
 	((struct rabin_karp_attr32 *)rh->attr)->factor = factor;
 	rh->value = diag_hash32_rabin_karp(rh->data, rh->s_window, base);
 	rh->head = rh->data + rh->s_window;
+	((struct rabin_karp_attr32 *)rh->attr)->tail = rh->data;
 	return rh->value;
 }
 
 static uint32_t
 rabin_karp_roll32(struct diag_rollinghash32 *rh)
 {
-	register uint32_t base, factor;
-	const uint8_t *tail;
+	struct rabin_karp_attr32 *attr;
+	const uint8_t *head, *tail;
 
 	assert(rh);
-	tail = rh->head - rh->s_window;
+	attr = rh->attr;
+	assert(attr);
+	head = rh->head++, tail = attr->tail++;
 	assert(tail >= rh->data);
-	base = ((struct rabin_karp_attr32 *)rh->attr)->base;
-	factor = ((struct rabin_karp_attr32 *)rh->attr)->factor;
-	rh->value -= *tail * factor;
-	rh->value *= base;
-	rh->value += *rh->head++;
+	assert(tail + rh->s_window == head);
+	rh->value -= *tail * attr->factor;
+	rh->value *= attr->base;
+	rh->value += *head;
 	return rh->value;
 }
 
