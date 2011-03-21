@@ -159,7 +159,7 @@ extern void diag_vcdiff_destroy(struct diag_vcdiff *vcdiff);
 extern void diag_vcdiff_script_destroy(struct diag_vcdiff_script *script);
 
 extern uint8_t *diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size);
-extern struct diag_vcdiff_script *diag_vcdiff_contract(struct diag_rolling_hash32 *rh);
+extern struct diag_vcdiff_script *diag_vcdiff_contract(struct diag_rollinghash32 *rh);
 
 DIAG_C_DECL_END
 

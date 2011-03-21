@@ -42,7 +42,7 @@ struct rabin_karp_attr32_s {
 };
 
 static uint32_t
-rabin_karp_init32(struct diag_rolling_hash32 *rh)
+rabin_karp_init32(struct diag_rollinghash32 *rh)
 {
 	register diag_size_t i;
 	uint32_t base, factor = 1;
@@ -59,7 +59,7 @@ rabin_karp_init32(struct diag_rolling_hash32 *rh)
 }
 
 static uint32_t
-rabin_karp_roll32(struct diag_rolling_hash32 *rh)
+rabin_karp_roll32(struct diag_rollinghash32 *rh)
 {
 	register uint32_t base, factor;
 	const uint8_t *tail;
@@ -75,10 +75,10 @@ rabin_karp_roll32(struct diag_rolling_hash32 *rh)
 	return rh->value;
 }
 
-struct diag_rolling_hash32 *
-diag_rolling_hash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
+struct diag_rollinghash32 *
+diag_rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
 {
-	struct diag_rolling_hash32 *rh;
+	struct diag_rollinghash32 *rh;
 
 	assert(data);
 	assert(size > 0);
@@ -95,14 +95,14 @@ diag_rolling_hash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_win
 	return rh;
 }
 
-struct diag_rolling_hash32 *
-diag_rolling_hash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_size_t s_window, uint32_t base)
+struct diag_rollinghash32 *
+diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_size_t s_window, uint32_t base)
 {
-	struct diag_rolling_hash32 *rh;
+	struct diag_rollinghash32 *rh;
 	struct rabin_karp_attr32_s *attr;
 
 	assert(base > 0);
-	rh = diag_rolling_hash32_new(data, size, s_window);
+	rh = diag_rollinghash32_new(data, size, s_window);
 	attr = diag_malloc(sizeof(*attr));
 	attr->base = base;
 	rh->attr = attr;
@@ -112,7 +112,7 @@ diag_rolling_hash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_s
 }
 
 void
-diag_rolling_hash32_destroy(struct diag_rolling_hash32 *rh)
+diag_rollinghash32_destroy(struct diag_rollinghash32 *rh)
 {
 	if (!rh) return;
 	diag_free(rh->attr);
@@ -120,7 +120,7 @@ diag_rolling_hash32_destroy(struct diag_rolling_hash32 *rh)
 }
 
 uint32_t *
-diag_rolling_hash32_collect(struct diag_rolling_hash32 *rh, diag_size_t *length)
+diag_rollinghash32_collect(struct diag_rollinghash32 *rh, diag_size_t *length)
 {
 	register diag_size_t len, i;
 	uint32_t *arr;

@@ -964,7 +964,7 @@ pcode_add_new(diag_size_t size, const uint8_t *data)
 }
 
 static diag_size_t
-lookback(struct diag_rolling_hash32 *rh, uint32_t *arr, diag_size_t i, uint32_t h, struct diag_rbtree *tree)
+lookback(struct diag_rollinghash32 *rh, uint32_t *arr, diag_size_t i, uint32_t h, struct diag_rbtree *tree)
 {
 	register diag_size_t k, n;
 	diag_size_t m, head, tail;
@@ -1014,7 +1014,7 @@ lookback(struct diag_rolling_hash32 *rh, uint32_t *arr, diag_size_t i, uint32_t 
 }
 
 struct diag_vcdiff_script *
-diag_vcdiff_contract(struct diag_rolling_hash32 *rh)
+diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 {
 	struct diag_vcdiff_script *script;
 	struct diag_rbtree *tree;

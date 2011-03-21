@@ -1,7 +1,7 @@
 set(tests
     diag_hash32_rabin_karp
     diag_hash64_rabin_karp
-    diag_rolling_hash32_collect
+    diag_rollinghash32_collect
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")

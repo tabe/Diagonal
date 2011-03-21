@@ -44,13 +44,13 @@ static void
 contract_and_expand(const char *data, diag_size_t s_window, uint32_t base, diag_size_t s_pcodes)
 {
 	struct diag_vcdiff_script *script;
-	struct diag_rolling_hash32 *rh;
+	struct diag_rollinghash32 *rh;
 	diag_size_t size, s;
 	uint8_t *result;
 	char *result0;
 
 	size = strlen(data);
-	rh = (struct diag_rolling_hash32 *)diag_rolling_hash32_new_rabin_karp((const uint8_t *)data, size, s_window, base);
+	rh = (struct diag_rollinghash32 *)diag_rollinghash32_new_rabin_karp((const uint8_t *)data, size, s_window, base);
 	ASSERT_NOT_NULL(rh);
 	script = diag_vcdiff_contract(rh);
 	ASSERT_NOT_NULL(script);
@@ -65,7 +65,7 @@ contract_and_expand(const char *data, diag_size_t s_window, uint32_t base, diag_
 	diag_free(result0);
 	diag_free(result);
 	diag_vcdiff_script_destroy(script);
-	diag_rolling_hash32_destroy(rh);
+	diag_rollinghash32_destroy(rh);
 }
 
 int
