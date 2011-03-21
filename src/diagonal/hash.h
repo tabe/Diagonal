@@ -29,7 +29,6 @@ DIAG_C_DECL_BEGIN
 extern uint32_t diag_hash32_rabin_karp(const uint8_t *data, diag_size_t size, uint32_t base);
 extern uint64_t diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size, uint64_t base);
 
-extern struct diag_rollinghash32 *diag_rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window);
 extern struct diag_rollinghash32 *diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_size_t s_window, uint32_t base);
 extern void diag_rollinghash32_destroy(struct diag_rollinghash32 *rh);
 extern uint32_t *diag_rollinghash32_collect(struct diag_rollinghash32 *rh, diag_size_t *length);

@@ -78,8 +78,8 @@ rabin_karp_roll32(struct diag_rollinghash32 *rh)
 	return rh->value;
 }
 
-struct diag_rollinghash32 *
-diag_rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
+static struct diag_rollinghash32 *
+rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
 {
 	struct diag_rollinghash32 *rh;
 
@@ -88,13 +88,9 @@ diag_rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_wind
 	assert(s_window > 0);
 	assert(size >= s_window);
 	rh = diag_malloc(sizeof(*rh));
-	rh->value = 0;
-	rh->data = rh->head = data;
+	rh->data = data;
 	rh->size = size;
 	rh->s_window = s_window;
-	rh->attr = NULL;
-	rh->init = NULL;
-	rh->roll = NULL;
 	return rh;
 }
 
@@ -105,7 +101,7 @@ diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_si
 	struct rabin_karp_attr32 *attr;
 
 	assert(base > 0);
-	rh = diag_rollinghash32_new(data, size, s_window);
+	rh = rollinghash32_new(data, size, s_window);
 	attr = diag_malloc(sizeof(*attr));
 	attr->base = base;
 	rh->attr = attr;
