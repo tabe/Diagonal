@@ -36,6 +36,14 @@ extern uint32_t diag_hash32_rabin_karp(const uint8_t *data, diag_size_t size, ui
  * `base'.
  */
 extern uint64_t diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size, uint64_t base);
+
+#ifdef HAVE_ARPA_INET_H
+/*
+ * Return the Adler-32 hash value of `data' of length `size'.
+ */
+extern uint32_t diag_hash32_adler32(const uint8_t *data, diag_size_t size);
+#endif
+
 /*
  * Return new opaque data to calculate 32-bit Rabin-Karp hash values, with
  * `base', for each window of size `s_window' of `data' of length `size'.

@@ -1,4 +1,5 @@
 set(tests
+    diag_hash32_adler32
     diag_hash32_rabin_karp
     diag_hash64_rabin_karp
     diag_rollinghash32_collect

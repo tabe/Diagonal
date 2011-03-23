@@ -40,6 +40,7 @@ if(NOT HAVE_STRING_H)
   message(FATAL_ERROR "string.h is required")
 endif(NOT HAVE_STRING_H)
 # check optional headers
+check_include_file(arpa/inet.h HAVE_ARPA_INET_H)
 check_include_file(dirent.h HAVE_DIRENT_H)
 check_include_file(fcntl.h HAVE_FCNTL_H)
 check_include_file(libgen.h HAVE_LIBGEN_H)

@@ -1,6 +1,9 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 #include "config.h"
 
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
 #include <assert.h>
 #include <stdint.h>
 #include <string.h>
@@ -35,6 +38,27 @@ diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size, uint64_t base)
 	}
 	return v;
 }
+
+#ifdef HAVE_ARPA_INET_H
+
+#define ADLER32_MODULO 65521
+
+uint32_t diag_hash32_adler32(const uint8_t *data, diag_size_t size)
+{
+	register diag_size_t i;
+	register uint32_t a = 1, b = 0;
+
+	assert(data);
+	for (i = 0; i < size; i++) {
+		a += data[i];
+		a %= ADLER32_MODULO;
+		b += a;
+		b %= ADLER32_MODULO;
+	}
+	return htonl((b << 16) | a);
+}
+
+#endif
 
 struct rabin_karp_attr32 {
 	const uint8_t *tail;

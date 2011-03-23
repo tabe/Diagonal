@@ -1,3 +1,4 @@
+#cmakedefine HAVE_ARPA_INET_H
 #cmakedefine HAVE_DIRENT_H
 #cmakedefine HAVE_FCNTL_H
 #cmakedefine HAVE_LIBGEN_H
