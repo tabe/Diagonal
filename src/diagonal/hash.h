@@ -30,12 +30,14 @@ DIAG_C_DECL_BEGIN
  * Return the 32-bit Rabin-Karp hash value of `data' of length `size' with
  * `base'.
  */
-extern uint32_t diag_hash32_rabin_karp(const uint8_t *data, diag_size_t size, uint32_t base);
+extern uint32_t diag_hash32_rabin_karp(const uint8_t *data, diag_size_t size,
+				       uint32_t base);
 /*
  * Return the 64-bit Rabin-Karp hash value of `data' of length `size' with
  * `base'.
  */
-extern uint64_t diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size, uint64_t base);
+extern uint64_t diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size,
+				       uint64_t base);
 
 #ifdef HAVE_ARPA_INET_H
 /*
@@ -48,7 +50,9 @@ extern uint32_t diag_hash32_adler32(const uint8_t *data, diag_size_t size);
  * Return new opaque data to calculate 32-bit Rabin-Karp hash values, with
  * `base', for each window of size `s_window' of `data' of length `size'.
  */
-extern struct diag_rollinghash32 *diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_size_t s_window, uint32_t base);
+extern struct diag_rollinghash32 *
+diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size,
+				  diag_size_t s_window, uint32_t base);
 /*
  * Finalize and free `rh'.
  */
@@ -57,7 +61,8 @@ extern void diag_rollinghash32_destroy(struct diag_rollinghash32 *rh);
  * Calculate and return the array of 32-bit rolling hash values, which length
  * will be stored at `length'.
  */
-extern uint32_t *diag_rollinghash32_collect(struct diag_rollinghash32 *rh, diag_size_t *length);
+extern uint32_t *diag_rollinghash32_collect(struct diag_rollinghash32 *rh,
+					    diag_size_t *length);
 
 DIAG_C_DECL_END
 

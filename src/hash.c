@@ -11,8 +11,9 @@
 #include "diagonal.h"
 #include "diagonal/hash.h"
 
-uint32_t
-diag_hash32_rabin_karp(const uint8_t *data, diag_size_t size, uint32_t base)
+uint32_t diag_hash32_rabin_karp(const uint8_t *data,
+				diag_size_t size,
+				uint32_t base)
 {
 	register diag_size_t i;
 	register uint32_t v = 0;
@@ -25,8 +26,9 @@ diag_hash32_rabin_karp(const uint8_t *data, diag_size_t size, uint32_t base)
 	return v;
 }
 
-uint64_t
-diag_hash64_rabin_karp(const uint8_t *data, diag_size_t size, uint64_t base)
+uint64_t diag_hash64_rabin_karp(const uint8_t *data,
+				diag_size_t size,
+				uint64_t base)
 {
 	register diag_size_t i;
 	register uint64_t v = 0;
@@ -66,8 +68,7 @@ struct rabin_karp_attr32 {
 	uint32_t factor;
 };
 
-static uint32_t
-rabin_karp_init32(struct diag_rollinghash32 *rh)
+static uint32_t rabin_karp_init32(struct diag_rollinghash32 *rh)
 {
 	register diag_size_t i;
 	uint32_t base, factor = 1;
@@ -84,8 +85,7 @@ rabin_karp_init32(struct diag_rollinghash32 *rh)
 	return rh->value;
 }
 
-static uint32_t
-rabin_karp_roll32(struct diag_rollinghash32 *rh)
+static uint32_t rabin_karp_roll32(struct diag_rollinghash32 *rh)
 {
 	struct rabin_karp_attr32 *attr;
 	const uint8_t *head, *tail;
@@ -102,8 +102,9 @@ rabin_karp_roll32(struct diag_rollinghash32 *rh)
 	return rh->value;
 }
 
-static struct diag_rollinghash32 *
-rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
+static struct diag_rollinghash32 *rollinghash32_new(const uint8_t *data,
+						    diag_size_t size,
+						    diag_size_t s_window)
 {
 	struct diag_rollinghash32 *rh;
 
@@ -119,7 +120,8 @@ rollinghash32_new(const uint8_t *data, diag_size_t size, diag_size_t s_window)
 }
 
 struct diag_rollinghash32 *
-diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_size_t s_window, uint32_t base)
+diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size,
+				  diag_size_t s_window, uint32_t base)
 {
 	struct diag_rollinghash32 *rh;
 	struct rabin_karp_attr32 *attr;
@@ -134,16 +136,15 @@ diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size, diag_si
 	return rh;
 }
 
-void
-diag_rollinghash32_destroy(struct diag_rollinghash32 *rh)
+void diag_rollinghash32_destroy(struct diag_rollinghash32 *rh)
 {
 	if (!rh) return;
 	diag_free(rh->attr);
 	diag_free(rh);
 }
 
-uint32_t *
-diag_rollinghash32_collect(struct diag_rollinghash32 *rh, diag_size_t *length)
+uint32_t *diag_rollinghash32_collect(struct diag_rollinghash32 *rh,
+				     diag_size_t *length)
 {
 	register diag_size_t len, i;
 	uint32_t *arr;
