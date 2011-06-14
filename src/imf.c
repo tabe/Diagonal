@@ -33,7 +33,7 @@ read_header_field_name(char *s, char **name)
 		} else if (c == ' ') {
 			diag_imf_raise_error(DIAG_IMF_ERROR_UNEXPECTED_WS);
 			return NULL;
-		} else if (isprint(c)) {
+		} else if (isprint((int)c)) {
 			continue;
 		} else {
 			diag_imf_raise_error(DIAG_IMF_ERROR_INVALID_HEADER_FIELD_NAME);
