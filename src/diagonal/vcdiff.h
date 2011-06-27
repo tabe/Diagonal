@@ -139,27 +139,27 @@ struct diag_vcdiff_script {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_vcdiff_context *diag_vcdiff_context_new_fp(FILE *fp);
-extern struct diag_vcdiff_context *diag_vcdiff_context_new_fd(int fd);
-extern struct diag_vcdiff_context *diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size);
-extern struct diag_vcdiff_context *diag_vcdiff_context_new_path(const char *path);
+DIAG_FUNCTION struct diag_vcdiff_context *diag_vcdiff_context_new_fp(FILE *fp);
+DIAG_FUNCTION struct diag_vcdiff_context *diag_vcdiff_context_new_fd(int fd);
+DIAG_FUNCTION struct diag_vcdiff_context *diag_vcdiff_context_new_bm(uint8_t *head, uint32_t size);
+DIAG_FUNCTION struct diag_vcdiff_context *diag_vcdiff_context_new_path(const char *path);
 
-extern void diag_vcdiff_context_destroy(struct diag_vcdiff_context *context);
+DIAG_FUNCTION void diag_vcdiff_context_destroy(struct diag_vcdiff_context *context);
 
-extern struct diag_vcdiff *diag_vcdiff_read(struct diag_vcdiff_context *context);
+DIAG_FUNCTION struct diag_vcdiff *diag_vcdiff_read(struct diag_vcdiff_context *context);
 
-extern struct diag_vcdiff_vm *diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source);
-extern struct diag_vcdiff_vm *diag_vcdiff_vm_new_path(const char *path);
-extern void diag_vcdiff_vm_destroy(struct diag_vcdiff_vm *vm);
+DIAG_FUNCTION struct diag_vcdiff_vm *diag_vcdiff_vm_new(uint32_t s_source, uint8_t *source);
+DIAG_FUNCTION struct diag_vcdiff_vm *diag_vcdiff_vm_new_path(const char *path);
+DIAG_FUNCTION void diag_vcdiff_vm_destroy(struct diag_vcdiff_vm *vm);
 
-extern uint8_t *diag_vcdiff_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff);
+DIAG_FUNCTION uint8_t *diag_vcdiff_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff);
 
-extern void diag_vcdiff_destroy(struct diag_vcdiff *vcdiff);
+DIAG_FUNCTION void diag_vcdiff_destroy(struct diag_vcdiff *vcdiff);
 
-extern void diag_vcdiff_script_destroy(struct diag_vcdiff_script *script);
+DIAG_FUNCTION void diag_vcdiff_script_destroy(struct diag_vcdiff_script *script);
 
-extern uint8_t *diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size);
-extern struct diag_vcdiff_script *diag_vcdiff_contract(struct diag_rollinghash32 *rh);
+DIAG_FUNCTION uint8_t *diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size);
+DIAG_FUNCTION struct diag_vcdiff_script *diag_vcdiff_contract(struct diag_rollinghash32 *rh);
 
 DIAG_C_DECL_END
 

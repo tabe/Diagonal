@@ -14,11 +14,11 @@ struct diag_trie {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_trie *diag_trie_new(void);
+DIAG_FUNCTION struct diag_trie *diag_trie_new(void);
 
-extern void diag_trie_destroy(struct diag_trie *trie);
+DIAG_FUNCTION void diag_trie_destroy(struct diag_trie *trie);
 
-extern int diag_trie_traverse(struct diag_trie *trie, ssize_t length, const uint8_t *seq, struct diag_trie **insert);
+DIAG_FUNCTION int diag_trie_traverse(struct diag_trie *trie, ssize_t length, const uint8_t *seq, struct diag_trie **insert);
 
 DIAG_C_DECL_END
 

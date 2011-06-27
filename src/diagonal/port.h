@@ -40,12 +40,12 @@ struct diag_port {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_port *diag_port_new_fd(int fd, uint8_t flags);
-extern struct diag_port *diag_port_new_fp(FILE *fp, uint8_t flags);
-extern struct diag_port *diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags);
-extern struct diag_port *diag_port_new_path(const char *path, const char *mode);
+DIAG_FUNCTION struct diag_port *diag_port_new_fd(int fd, uint8_t flags);
+DIAG_FUNCTION struct diag_port *diag_port_new_fp(FILE *fp, uint8_t flags);
+DIAG_FUNCTION struct diag_port *diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags);
+DIAG_FUNCTION struct diag_port *diag_port_new_path(const char *path, const char *mode);
 
-extern void diag_port_destroy(struct diag_port *port);
+DIAG_FUNCTION void diag_port_destroy(struct diag_port *port);
 
 DIAG_C_DECL_END
 

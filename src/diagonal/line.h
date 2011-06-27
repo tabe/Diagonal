@@ -24,10 +24,10 @@ struct diag_line_context {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_line_context *diag_line_context_new(struct diag_port *port);
-extern void diag_line_context_destroy(struct diag_line_context *context);
+DIAG_FUNCTION struct diag_line_context *diag_line_context_new(struct diag_port *port);
+DIAG_FUNCTION void diag_line_context_destroy(struct diag_line_context *context);
 
-extern struct diag_line_context *diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep);
+DIAG_FUNCTION struct diag_line_context *diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep);
 
 DIAG_C_DECL_END
 

@@ -10,29 +10,29 @@ struct diag_hashtable {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_hashtable *diag_hashtable_new_eq(diag_size_t size);
+DIAG_FUNCTION struct diag_hashtable *diag_hashtable_new_eq(diag_size_t size);
 
-extern void diag_hashtable_destroy(struct diag_hashtable *ht);
+DIAG_FUNCTION void diag_hashtable_destroy(struct diag_hashtable *ht);
 
-extern diag_size_t diag_hashtable_size(struct diag_hashtable *ht);
+DIAG_FUNCTION diag_size_t diag_hashtable_size(struct diag_hashtable *ht);
 
-extern diag_object_t diag_hashtable_ref(struct diag_hashtable *ht, diag_object_t key, diag_object_t alt);
+DIAG_FUNCTION diag_object_t diag_hashtable_ref(struct diag_hashtable *ht, diag_object_t key, diag_object_t alt);
 
-extern void diag_hashtable_set(struct diag_hashtable *ht, diag_object_t key, diag_object_t value);
+DIAG_FUNCTION void diag_hashtable_set(struct diag_hashtable *ht, diag_object_t key, diag_object_t value);
 
-extern void diag_hashtable_delete(struct diag_hashtable *ht, diag_object_t key);
+DIAG_FUNCTION void diag_hashtable_delete(struct diag_hashtable *ht, diag_object_t key);
 
-extern int diag_hashtable_contains(struct diag_hashtable *ht, diag_object_t key);
+DIAG_FUNCTION int diag_hashtable_contains(struct diag_hashtable *ht, diag_object_t key);
 
-extern struct diag_hashtable *diag_hashtable_copy(struct diag_hashtable *ht, int mutable);
+DIAG_FUNCTION struct diag_hashtable *diag_hashtable_copy(struct diag_hashtable *ht, int mutable);
 
-extern void diag_hashtable_clear(struct diag_hashtable *ht, ssize_t k);
+DIAG_FUNCTION void diag_hashtable_clear(struct diag_hashtable *ht, ssize_t k);
 
-extern struct diag_vector *diag_hashtable_keys(struct diag_hashtable *ht);
+DIAG_FUNCTION struct diag_vector *diag_hashtable_keys(struct diag_hashtable *ht);
 
-extern void diag_hashtable_entries(struct diag_hashtable *ht, struct diag_vector **keys, struct diag_vector **values);
+DIAG_FUNCTION void diag_hashtable_entries(struct diag_hashtable *ht, struct diag_vector **keys, struct diag_vector **values);
 
-extern int diag_hashtable_mutable(struct diag_hashtable *ht);
+DIAG_FUNCTION int diag_hashtable_mutable(struct diag_hashtable *ht);
 
 DIAG_C_DECL_END
 

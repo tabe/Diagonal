@@ -48,22 +48,22 @@ struct diag_gac {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_cluster *diag_cluster_new(diag_size_t num_data);
-extern void diag_cluster_destroy(struct diag_cluster *cluster);
+DIAG_FUNCTION struct diag_cluster *diag_cluster_new(diag_size_t num_data);
+DIAG_FUNCTION void diag_cluster_destroy(struct diag_cluster *cluster);
 
-extern struct diag_delta *diag_delta_new(enum diag_delta_type type);
-extern void diag_delta_destroy(struct diag_delta *delta);
+DIAG_FUNCTION struct diag_delta *diag_delta_new(enum diag_delta_type type);
+DIAG_FUNCTION void diag_delta_destroy(struct diag_delta *delta);
 
-extern struct diag_code *diag_code_new(struct diag_cluster *cluster, diag_size_t num_deltas);
-extern void diag_code_destroy(struct diag_code *datum);
+DIAG_FUNCTION struct diag_code *diag_code_new(struct diag_cluster *cluster, diag_size_t num_deltas);
+DIAG_FUNCTION void diag_code_destroy(struct diag_code *datum);
 
-extern struct diag_analysis *diag_analysis_new(diag_size_t num_data, struct diag_datum **data);
-extern void diag_analysis_destroy(struct diag_analysis *analysis);
+DIAG_FUNCTION struct diag_analysis *diag_analysis_new(diag_size_t num_data, struct diag_datum **data);
+DIAG_FUNCTION void diag_analysis_destroy(struct diag_analysis *analysis);
 
-extern struct diag_code *diag_encode(struct diag_analysis *analysis);
-extern struct diag_datum **diag_decode(struct diag_analysis *analysis);
+DIAG_FUNCTION struct diag_code *diag_encode(struct diag_analysis *analysis);
+DIAG_FUNCTION struct diag_datum **diag_decode(struct diag_analysis *analysis);
 
-extern struct diag_code *diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char *y);
+DIAG_FUNCTION struct diag_code *diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char *y);
 
 DIAG_C_DECL_END
 

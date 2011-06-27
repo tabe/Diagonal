@@ -18,6 +18,8 @@
 
 DIAG_C_DECL_BEGIN
 
+#define DIAG_FUNCTION extern
+
 #define DIAG_SUCCESS 1
 #define DIAG_FAILURE 0
 
@@ -52,29 +54,29 @@ struct diag_datum {
 #define DIAG_DATUM_SET_IMMEDIATE(datum, x) ((datum)->tag = (uint64_t)(x)<<(sizeof(diag_size_t)*8))
 #define DIAG_DATUM_GET_IMMEDIATE(datum) DIAG_DATUM_SIZE(datum)
 
-extern void diag_print_version(void);
+DIAG_FUNCTION void diag_print_version(void);
 
-extern void diag_fatal(const char *message, ...);
-extern void diag_verror(const char *message, va_list ap);
-extern void diag_error(const char *message, ...);
-extern void diag_vwarn(const char *message, va_list ap);
-extern void diag_warn(const char *message, ...);
-extern void diag_vinfo(const char *message, va_list ap);
-extern void diag_info(const char *message, ...);
-extern void diag_vprintf(const char *message, va_list ap);
-extern void diag_printf(const char *message, ...);
+DIAG_FUNCTION void diag_fatal(const char *message, ...);
+DIAG_FUNCTION void diag_verror(const char *message, va_list ap);
+DIAG_FUNCTION void diag_error(const char *message, ...);
+DIAG_FUNCTION void diag_vwarn(const char *message, va_list ap);
+DIAG_FUNCTION void diag_warn(const char *message, ...);
+DIAG_FUNCTION void diag_vinfo(const char *message, va_list ap);
+DIAG_FUNCTION void diag_info(const char *message, ...);
+DIAG_FUNCTION void diag_vprintf(const char *message, va_list ap);
+DIAG_FUNCTION void diag_printf(const char *message, ...);
 
-extern void *diag_malloc(size_t size);
-extern void *diag_calloc(size_t nmemb, size_t size);
-extern void *diag_realloc(void *ptr, size_t size);
+DIAG_FUNCTION void *diag_malloc(size_t size);
+DIAG_FUNCTION void *diag_calloc(size_t nmemb, size_t size);
+DIAG_FUNCTION void *diag_realloc(void *ptr, size_t size);
 /**
  * Free the resource which `ptr' refers to.
  * Do nothing if `ptr' is NULL.
  */
-extern void diag_free(void *ptr);
+DIAG_FUNCTION void diag_free(void *ptr);
 
-extern struct diag_datum *diag_datum_new(void *value);
-extern void diag_datum_destroy(struct diag_datum *datum);
+DIAG_FUNCTION struct diag_datum *diag_datum_new(void *value);
+DIAG_FUNCTION void diag_datum_destroy(struct diag_datum *datum);
 
 DIAG_C_DECL_END
 

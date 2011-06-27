@@ -32,39 +32,39 @@ DIAG_C_DECL_BEGIN
 /*
  * Return new empty deque.
  */
-extern struct diag_deque *diag_deque_new(void);
+DIAG_FUNCTION struct diag_deque *diag_deque_new(void);
 /*
  * Finalize and free `deque'.
  * Do nothing if `deque' is NULL.
  */
-extern void diag_deque_destroy(struct diag_deque *deque);
+DIAG_FUNCTION void diag_deque_destroy(struct diag_deque *deque);
 /*
  * Append `attr' to `deque'.
  */
-extern struct diag_deque_elem *diag_deque_push(struct diag_deque *deque,
+DIAG_FUNCTION struct diag_deque_elem *diag_deque_push(struct diag_deque *deque,
 					       intptr_t attr);
 /*
  * Drop the last element from `deque' and return it.
  * It is safe to call this function even if `deque' is empty.
  * NULL may be returned in such case.
  */
-extern struct diag_deque_elem *diag_deque_pop(struct diag_deque *deque);
+DIAG_FUNCTION struct diag_deque_elem *diag_deque_pop(struct diag_deque *deque);
 /*
  * Drop the first element from `deque' and return it.
  * It is safe to call this function even if `deque' is empty.
  * NULL may be returned in such case.
  */
-extern struct diag_deque_elem *diag_deque_shift(struct diag_deque *deque);
+DIAG_FUNCTION struct diag_deque_elem *diag_deque_shift(struct diag_deque *deque);
 /*
  * Prepend `attr' to `deque'.
  */
-extern struct diag_deque_elem *diag_deque_unshift(struct diag_deque *deque,
+DIAG_FUNCTION struct diag_deque_elem *diag_deque_unshift(struct diag_deque *deque,
 						  intptr_t attr);
 /*
  * Join `head' and `tail' destructively.
  * Return the length of the resulting `head'.
  */
-extern diag_size_t diag_deque_append(struct diag_deque *head,
+DIAG_FUNCTION diag_size_t diag_deque_append(struct diag_deque *head,
 				     struct diag_deque *tail);
 
 DIAG_C_DECL_END

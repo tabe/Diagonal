@@ -9,17 +9,17 @@ struct diag_vector {
 
 DIAG_C_DECL_BEGIN
 
-extern struct diag_vector *diag_vector_new(diag_size_t length);
+DIAG_FUNCTION struct diag_vector *diag_vector_new(diag_size_t length);
 
-extern void diag_vector_destroy(struct diag_vector *v);
+DIAG_FUNCTION void diag_vector_destroy(struct diag_vector *v);
 
-extern diag_size_t diag_vector_length(struct diag_vector *v);
+DIAG_FUNCTION diag_size_t diag_vector_length(struct diag_vector *v);
 
-extern diag_object_t diag_vector_ref(struct diag_vector *v, diag_size_t k);
+DIAG_FUNCTION diag_object_t diag_vector_ref(struct diag_vector *v, diag_size_t k);
 
-extern void diag_vector_set(struct diag_vector *v, diag_size_t k, diag_object_t e);
+DIAG_FUNCTION void diag_vector_set(struct diag_vector *v, diag_size_t k, diag_object_t e);
 
-extern void diag_vector_fill(struct diag_vector *v, diag_object_t fill);
+DIAG_FUNCTION void diag_vector_fill(struct diag_vector *v, diag_object_t fill);
 
 DIAG_C_DECL_END
 
