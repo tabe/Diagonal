@@ -9,7 +9,7 @@ main()
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;
-	diag_size_t s;
+	size_t s;
 	int r;
 
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);

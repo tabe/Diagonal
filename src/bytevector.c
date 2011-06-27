@@ -30,7 +30,7 @@ bytevector_free(struct diag_bytevector *bv)
 }
 
 struct diag_bytevector *
-diag_bytevector_new_heap(diag_size_t size, uint8_t *data)
+diag_bytevector_new_heap(size_t size, uint8_t *data)
 {
 	struct diag_bytevector *bv;
 
@@ -54,7 +54,7 @@ diag_bytevector_new_path(const char *path)
 	struct diag_bytevector *bv;
 	int fd, r;
 	struct stat st;
-	diag_size_t size;
+	size_t size;
 	uint8_t *data;
 
 	assert(path);
@@ -62,7 +62,7 @@ diag_bytevector_new_path(const char *path)
 	if (fd < 0) return NULL;
 	r = fstat(fd, &st);
 	if (r < 0) return NULL;
-	size = (diag_size_t)st.st_size;
+	size = st.st_size;
 	data = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	close(fd);
 	if (data == MAP_FAILED) return NULL;

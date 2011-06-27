@@ -13,7 +13,7 @@ main()
 {
 	uint8_t arr[83] = "This is a sentence of length 83 for testing function `diag_rollinghash32_collect'.";
 	uint32_t *result;
-	diag_size_t length, i;
+	size_t length, i;
 	struct diag_rollinghash32 *rh;
 
 	rh = diag_rollinghash32_new_rabin_karp(arr, 1, 1, 107);

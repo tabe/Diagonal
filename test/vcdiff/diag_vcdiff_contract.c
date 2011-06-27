@@ -10,7 +10,7 @@
 static void
 dump_pcodes(struct diag_vcdiff_script *script)
 {
-	diag_size_t i;
+	size_t i;
 
 	for (i = 0; i < script->s_pcodes; i++) {
 		printf("%d: ", i);
@@ -41,11 +41,11 @@ dump_pcodes(struct diag_vcdiff_script *script)
 }
 
 static void
-contract_and_expand(const char *data, diag_size_t s_window, uint32_t base, diag_size_t s_pcodes)
+contract_and_expand(const char *data, size_t s_window, uint32_t base, size_t s_pcodes)
 {
 	struct diag_vcdiff_script *script;
 	struct diag_rollinghash32 *rh;
-	diag_size_t size, s;
+	size_t size, s;
 	uint8_t *result;
 	char *result0;
 

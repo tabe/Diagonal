@@ -10,7 +10,7 @@ main()
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;
-	diag_size_t s;
+	size_t s;
 	int n, i, r;
 
 	srand((int)time(NULL));

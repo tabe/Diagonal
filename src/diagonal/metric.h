@@ -2,6 +2,8 @@
 #ifndef DIAGONAL_METRIC_H
 #define DIAGONAL_METRIC_H
 
+#include <diagonal/datum.h>
+
 typedef unsigned int diag_distance_t;
 typedef signed int diag_sdistance_t;
 

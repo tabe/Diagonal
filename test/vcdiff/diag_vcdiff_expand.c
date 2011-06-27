@@ -13,7 +13,7 @@ main()
 	struct diag_vcdiff_pcode *pcodes;
 	struct diag_vcdiff_script *script;
 	uint8_t *result;
-	diag_size_t size, i;
+	size_t size, i;
 
 	pcodes = diag_calloc(2, sizeof(struct diag_vcdiff_pcode));
 	pcodes[0].inst = DIAG_VCD_RUN;

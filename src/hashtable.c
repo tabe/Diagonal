@@ -18,7 +18,7 @@
 #include "diagonal/hashtable.h"
 
 struct diag_hashtable *
-diag_hashtable_new_eq(diag_size_t size)
+diag_hashtable_new_eq(size_t size)
 {
 	struct diag_hashtable *ht;
 
@@ -34,7 +34,7 @@ diag_hashtable_destroy(struct diag_hashtable *ht)
 	diag_free(ht);
 }
 
-diag_size_t
+size_t
 diag_hashtable_size(struct diag_hashtable *ht)
 {
 	assert(ht);

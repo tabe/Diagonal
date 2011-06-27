@@ -3,18 +3,18 @@
 #define DIAGONAL_HASHTABLE_H
 
 struct diag_hashtable {
-	diag_size_t size;
+	size_t size;
 	struct diag_trie *trie;
 	int mutable;
 };
 
 DIAG_C_DECL_BEGIN
 
-DIAG_FUNCTION struct diag_hashtable *diag_hashtable_new_eq(diag_size_t size);
+DIAG_FUNCTION struct diag_hashtable *diag_hashtable_new_eq(size_t size);
 
 DIAG_FUNCTION void diag_hashtable_destroy(struct diag_hashtable *ht);
 
-DIAG_FUNCTION diag_size_t diag_hashtable_size(struct diag_hashtable *ht);
+DIAG_FUNCTION size_t diag_hashtable_size(struct diag_hashtable *ht);
 
 DIAG_FUNCTION diag_object_t diag_hashtable_ref(struct diag_hashtable *ht, diag_object_t key, diag_object_t alt);
 

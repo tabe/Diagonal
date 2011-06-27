@@ -617,7 +617,7 @@ vm_new(struct diag_bytevector *source)
 }
 
 struct diag_vcdiff_vm *
-diag_vcdiff_vm_new(diag_size_t size, uint8_t *data)
+diag_vcdiff_vm_new(size_t size, uint8_t *data)
 {
 	struct diag_bytevector *source;
 
@@ -870,7 +870,7 @@ diag_vcdiff_destroy(struct diag_vcdiff *vcdiff)
 void
 diag_vcdiff_script_destroy(struct diag_vcdiff_script *script)
 {
-	register diag_size_t i;
+	register size_t i;
 
 	if (!script) return;
 	for (i = 0; i < script->s_pcodes; i++) {
@@ -885,9 +885,9 @@ diag_vcdiff_script_destroy(struct diag_vcdiff_script *script)
 }
 
 uint8_t *
-diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size)
+diag_vcdiff_expand(const struct diag_vcdiff_script *script, size_t *size)
 {
-	register diag_size_t i, n = 0, p, s;
+	register size_t i, n = 0, p, s;
 	struct diag_vcdiff_pcode *pcode;
 	const uint8_t *source;
 	uint8_t *result;
@@ -934,7 +934,7 @@ diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size)
 }
 
 static struct diag_vcdiff_pcode *
-pcode_copy_new(diag_size_t size, diag_size_t addr)
+pcode_copy_new(size_t size, size_t addr)
 {
 	struct diag_vcdiff_pcode *pcode;
 
@@ -947,7 +947,7 @@ pcode_copy_new(diag_size_t size, diag_size_t addr)
 }
 
 static struct diag_vcdiff_pcode *
-pcode_add_new(diag_size_t size, const uint8_t *data)
+pcode_add_new(size_t size, const uint8_t *data)
 {
 	struct diag_vcdiff_pcode *pcode;
 	uint8_t *d;
@@ -963,11 +963,11 @@ pcode_add_new(diag_size_t size, const uint8_t *data)
 	return pcode;
 }
 
-static diag_size_t
-lookback(struct diag_rollinghash32 *rh, uint32_t *arr, diag_size_t i, uint32_t h, struct diag_rbtree *tree)
+static size_t
+lookback(struct diag_rollinghash32 *rh, uint32_t *arr, size_t i, uint32_t h, struct diag_rbtree *tree)
 {
-	register diag_size_t k, n;
-	diag_size_t m, head, tail;
+	register size_t k, n;
+	size_t m, head, tail;
 	struct diag_vcdiff_pcode *p;
 	struct diag_rbtree_node *node;
 
@@ -1019,7 +1019,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 	struct diag_vcdiff_script *script;
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node, *n;
-	register diag_size_t s, i, a;
+	register size_t s, i, a;
 	uint32_t *arr, h;
 	struct diag_vcdiff_pcode *p;
 
@@ -1044,7 +1044,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 	a = 0;
 	node = diag_rbtree_minimum(tree);
 	while (node) {
-		diag_size_t b = (diag_size_t)node->key;
+		size_t b = (size_t)node->key;
 
 		if (a < b) {
 			p = pcode_add_new(b - a, rh->data + a);
@@ -1063,7 +1063,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 
 	script = diag_malloc(sizeof(struct diag_vcdiff_script));
 	script->source = NULL;
-	script->s_pcodes = (diag_size_t)tree->num_nodes;
+	script->s_pcodes = (size_t)tree->num_nodes;
 	script->pcodes = diag_calloc(script->s_pcodes, sizeof(struct diag_vcdiff_pcode));
 	node = diag_rbtree_minimum(tree);
 	i = 0;

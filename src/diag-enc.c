@@ -160,11 +160,11 @@ process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_e
 static void
 display_clusters(struct diag_analysis *analysis, int one)
 {
-	diag_size_t i;
+	size_t i;
 
 	for (i = 0; i < analysis->num_clusters; i++) {
 		struct diag_cluster *cluster;
-		diag_size_t j;
+		size_t j;
 
 		cluster = analysis->clusters[i];
 		switch (cluster->num_data) {
@@ -199,9 +199,9 @@ encode_log(struct diag_cluster *cluster, struct diag_datum *datum)
 }
 
 static void
-process_cluster_data(struct diag_datum **data, unsigned int num_data, const unsigned int *parent, diag_size_t i, struct diag_deque *d)
+process_cluster_data(struct diag_datum **data, unsigned int num_data, const unsigned int *parent, size_t i, struct diag_deque *d)
 {
-	diag_size_t j;
+	size_t j;
 
 	for (j = 1; j <= num_data; j++) {
 		if (j != i && parent[j] == i) {
@@ -212,13 +212,13 @@ process_cluster_data(struct diag_datum **data, unsigned int num_data, const unsi
 }
 
 static struct diag_analysis *
-analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
+analyze(char **entries, size_t num_entries, const size_t *parent)
 {
 	struct diag_analysis *analysis;
 	struct diag_datum **data;
 	struct diag_deque *deque;
 	struct diag_deque_elem *elem;
-	diag_size_t i;
+	size_t i;
 
 	data = diag_calloc((size_t)num_entries, sizeof(struct diag_datum *));
 	for (i = 0; i < num_entries; i++) {
@@ -247,7 +247,7 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 		struct diag_cluster *c;
 		struct diag_deque *d;
 		struct diag_deque_elem *e;
-		diag_size_t j;
+		size_t j;
 
 		d = (struct diag_deque *)elem->attr;
 		c = diag_cluster_new(d->length);
@@ -267,11 +267,11 @@ analyze(char **entries, diag_size_t num_entries, const diag_size_t *parent)
 static void
 display_codes(struct diag_analysis *analysis)
 {
-	diag_size_t i;
+	size_t i;
 
 	for (i = 0; i < analysis->num_data; i++) {
 		struct diag_code *code;
-		diag_size_t j;
+		size_t j;
 
 		code = analysis->codes[i];
 		if (!code) continue;

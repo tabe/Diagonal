@@ -14,7 +14,7 @@
 #include "diagonal/cluster.h"
 
 struct diag_cluster *
-diag_cluster_new(diag_size_t num_data)
+diag_cluster_new(size_t num_data)
 {
 	struct diag_cluster *cluster;
 	size_t size;
@@ -32,7 +32,7 @@ diag_cluster_destroy(struct diag_cluster *cluster)
 }
 
 struct diag_analysis *
-diag_analysis_new(diag_size_t num_data, struct diag_datum **data)
+diag_analysis_new(size_t num_data, struct diag_datum **data)
 {
 	struct diag_analysis *analysis;
 	size_t size;
@@ -55,7 +55,7 @@ diag_analysis_destroy(struct diag_analysis *analysis)
 }
 
 struct diag_code *
-diag_code_new(struct diag_cluster *cluster, diag_size_t num_deltas)
+diag_code_new(struct diag_cluster *cluster, size_t num_deltas)
 {
 	struct diag_code *code;
 	size_t size;
@@ -96,7 +96,7 @@ diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char
 	struct diag_deque_elem *elem;
 	struct diag_delta *d;
 	struct diag_code *code;
-	diag_size_t i = 0;
+	size_t i = 0;
 
 	assert(x && y);
 	if (x == y) return NULL;

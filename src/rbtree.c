@@ -386,7 +386,7 @@ diag_rbtree_node_destroy(struct diag_rbtree_node *node)
 	node = NULL;
 }
 
-diag_size_t
+size_t
 diag_rbtree_insert(struct diag_rbtree *tree, struct diag_rbtree_node *node)
 {
 	struct diag_rbtree_node *n;
@@ -428,7 +428,7 @@ diag_rbtree_insert(struct diag_rbtree *tree, struct diag_rbtree_node *node)
 	return tree->num_nodes;
 }
 
-diag_size_t
+size_t
 diag_rbtree_delete(struct diag_rbtree *tree, struct diag_rbtree_node *node)
 {
 	struct diag_rbtree_node *n, *c;

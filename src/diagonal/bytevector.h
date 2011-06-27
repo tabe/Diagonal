@@ -4,7 +4,7 @@
 
 struct diag_bytevector {
 	/* number of bytes in vector */
-	diag_size_t size;
+	size_t size;
 	/* array of bytes */
 	uint8_t *data;
 	/* callback invoked with this bytevector itself for finalization */
@@ -19,7 +19,7 @@ DIAG_C_DECL_BEGIN
  * Return new diag_bytevector having `data' of size `size'.
  * `data' will be freed in case of finalization.
  */
-DIAG_FUNCTION struct diag_bytevector *diag_bytevector_new_heap(diag_size_t size, uint8_t *data);
+DIAG_FUNCTION struct diag_bytevector *diag_bytevector_new_heap(size_t size, uint8_t *data);
 /*
  * Return new diag_bytevector having the content of file of path `path'.
  * The data is mounted as read-only, and will be unmounted in case of

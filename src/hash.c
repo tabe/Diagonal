@@ -12,10 +12,10 @@
 #include "diagonal/hash.h"
 
 uint32_t diag_hash32_rabin_karp(const uint8_t *data,
-				diag_size_t size,
+				size_t size,
 				uint32_t base)
 {
-	register diag_size_t i;
+	register size_t i;
 	register uint32_t v = 0;
 
 	assert(data);
@@ -27,10 +27,10 @@ uint32_t diag_hash32_rabin_karp(const uint8_t *data,
 }
 
 uint64_t diag_hash64_rabin_karp(const uint8_t *data,
-				diag_size_t size,
+				size_t size,
 				uint64_t base)
 {
-	register diag_size_t i;
+	register size_t i;
 	register uint64_t v = 0;
 
 	assert(data);
@@ -45,9 +45,9 @@ uint64_t diag_hash64_rabin_karp(const uint8_t *data,
 
 #define ADLER32_MODULO 65521
 
-uint32_t diag_hash32_adler32(const uint8_t *data, diag_size_t size)
+uint32_t diag_hash32_adler32(const uint8_t *data, size_t size)
 {
-	register diag_size_t i;
+	register size_t i;
 	register uint32_t a = 1, b = 0;
 
 	assert(data);
@@ -70,7 +70,7 @@ struct rabin_karp_attr32 {
 
 static uint32_t rabin_karp_init32(struct diag_rollinghash32 *rh)
 {
-	register diag_size_t i;
+	register size_t i;
 	uint32_t base, factor = 1;
 
 	assert(rh);
@@ -103,8 +103,8 @@ static uint32_t rabin_karp_roll32(struct diag_rollinghash32 *rh)
 }
 
 static struct diag_rollinghash32 *rollinghash32_new(const uint8_t *data,
-						    diag_size_t size,
-						    diag_size_t s_window)
+						    size_t size,
+						    size_t s_window)
 {
 	struct diag_rollinghash32 *rh;
 
@@ -120,8 +120,8 @@ static struct diag_rollinghash32 *rollinghash32_new(const uint8_t *data,
 }
 
 struct diag_rollinghash32 *
-diag_rollinghash32_new_rabin_karp(const uint8_t *data, diag_size_t size,
-				  diag_size_t s_window, uint32_t base)
+diag_rollinghash32_new_rabin_karp(const uint8_t *data, size_t size,
+				  size_t s_window, uint32_t base)
 {
 	struct diag_rollinghash32 *rh;
 	struct rabin_karp_attr32 *attr;
@@ -144,9 +144,9 @@ void diag_rollinghash32_destroy(struct diag_rollinghash32 *rh)
 }
 
 uint32_t *diag_rollinghash32_collect(struct diag_rollinghash32 *rh,
-				     diag_size_t *length)
+				     size_t *length)
 {
-	register diag_size_t len, i;
+	register size_t len, i;
 	uint32_t *arr;
 
 	assert(rh);

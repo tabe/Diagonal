@@ -123,9 +123,9 @@ struct diag_vcdiff_vm {
 
 struct diag_vcdiff_pcode {
 	int inst;
-	diag_size_t size;
+	size_t size;
 	union {
-		diag_size_t addr;
+		size_t addr;
 		uint8_t *data;
 		uint8_t byte;
 	} attr;
@@ -133,7 +133,7 @@ struct diag_vcdiff_pcode {
 
 struct diag_vcdiff_script {
 	const uint8_t *source;
-	diag_size_t s_pcodes;
+	size_t s_pcodes;
 	struct diag_vcdiff_pcode *pcodes;
 };
 
@@ -158,7 +158,7 @@ DIAG_FUNCTION void diag_vcdiff_destroy(struct diag_vcdiff *vcdiff);
 
 DIAG_FUNCTION void diag_vcdiff_script_destroy(struct diag_vcdiff_script *script);
 
-DIAG_FUNCTION uint8_t *diag_vcdiff_expand(const struct diag_vcdiff_script *script, diag_size_t *size);
+DIAG_FUNCTION uint8_t *diag_vcdiff_expand(const struct diag_vcdiff_script *script, size_t *size);
 DIAG_FUNCTION struct diag_vcdiff_script *diag_vcdiff_contract(struct diag_rollinghash32 *rh);
 
 DIAG_C_DECL_END

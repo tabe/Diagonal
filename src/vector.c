@@ -15,7 +15,7 @@
 #include "diagonal/vector.h"
 
 struct diag_vector *
-diag_vector_new(diag_size_t length)
+diag_vector_new(size_t length)
 {
 	struct diag_vector *v;
 	size_t s;
@@ -34,7 +34,7 @@ diag_vector_destroy(struct diag_vector *v)
 }
 
 
-diag_size_t
+size_t
 diag_vector_length(struct diag_vector *v)
 {
 	assert(v);
@@ -42,7 +42,7 @@ diag_vector_length(struct diag_vector *v)
 }
 
 diag_object_t
-diag_vector_ref(struct diag_vector *v, diag_size_t k)
+diag_vector_ref(struct diag_vector *v, size_t k)
 {
 	if (k >= v->length) {
 		diag_error("exceed vector length %ld: %ld", v->length, k);
@@ -51,7 +51,7 @@ diag_vector_ref(struct diag_vector *v, diag_size_t k)
 }
 
 void
-diag_vector_set(struct diag_vector *v, diag_size_t k, diag_object_t e)
+diag_vector_set(struct diag_vector *v, size_t k, diag_object_t e)
 {
 	assert(v && e);
 	if (k >= v->length) {
@@ -63,7 +63,7 @@ diag_vector_set(struct diag_vector *v, diag_size_t k, diag_object_t e)
 void
 diag_vector_fill(struct diag_vector *v, diag_object_t fill)
 {
-	diag_size_t k;
+	size_t k;
 
 	assert(v && fill);
 	for (k = 0; k < v->length; k++) {
