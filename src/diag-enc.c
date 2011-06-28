@@ -126,15 +126,15 @@ aggregate_combinations(char **entries, size_t num_entries, diag_metric_chars_t m
 	return comb;
 }
 
-static unsigned int *
+static size_t *
 process_equivalence_relations(const struct diag_rbtree *comb, size_t num_entries, int t, unsigned int **occur)
 {
 	struct diag_rbtree_node *node;
-	unsigned int *p, i = 0;
+	size_t *p, i = 0;
 
 	if (num_entries == 0) return NULL;
-	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(*p));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(**occur));
 	node = diag_rbtree_minimum(comb);
 	do {
 		unsigned int k = (unsigned int)node->key;
@@ -199,7 +199,7 @@ encode_log(struct diag_cluster *cluster, struct diag_datum *datum)
 }
 
 static void
-process_cluster_data(struct diag_datum **data, size_t num_data, const unsigned int *parent, size_t i, struct diag_deque *d)
+process_cluster_data(struct diag_datum **data, size_t num_data, const size_t *parent, size_t i, struct diag_deque *d)
 {
 	size_t j;
 
@@ -311,11 +311,11 @@ main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	diag_metric_chars_t metric = diag_levenshtein_chars;
-	size_t len, num_entries;
+	size_t len, num_entries, *parent;
 	void *p;
 	struct diag_rbtree *tree, *comb;
 	char **entries;
-	unsigned int *parent, *occur;
+	unsigned int *occur;
 
 	if (argc < 2) {
 		usage();
