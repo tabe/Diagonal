@@ -80,11 +80,11 @@ map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 }
 
 static char **
-serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
+serialize_entries(const struct diag_rbtree *tree, size_t *num_entries)
 {
 	struct diag_rbtree_node *node;
 	char **e;
-	unsigned int i = 0;
+	size_t i = 0;
 
 	if (tree->num_nodes == 0) {
 		*num_entries = 0;
@@ -96,13 +96,13 @@ serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
 	do {
 		e[i++] = (char *)node->attr;
 	} while ( (node = diag_rbtree_successor(node)) );
-	assert(i == (unsigned int)tree->num_nodes);
+	assert(i == tree->num_nodes);
 	*num_entries = i;
 	return e;
 }
 
 static struct diag_rbtree *
-aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_chars_t metric)
+aggregate_combinations(char **entries, size_t num_entries, diag_metric_chars_t metric)
 {
 	struct diag_rbtree *comb;
 	unsigned int i, j;
@@ -127,7 +127,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_cha
 }
 
 static unsigned int *
-process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_entries, int t, unsigned int **occur)
+process_equivalence_relations(const struct diag_rbtree *comb, size_t num_entries, int t, unsigned int **occur)
 {
 	struct diag_rbtree_node *node;
 	unsigned int *p, i = 0;
@@ -199,7 +199,7 @@ encode_log(struct diag_cluster *cluster, struct diag_datum *datum)
 }
 
 static void
-process_cluster_data(struct diag_datum **data, unsigned int num_data, const unsigned int *parent, size_t i, struct diag_deque *d)
+process_cluster_data(struct diag_datum **data, size_t num_data, const unsigned int *parent, size_t i, struct diag_deque *d)
 {
 	size_t j;
 
@@ -283,19 +283,19 @@ display_codes(struct diag_analysis *analysis)
 			d = code->deltas[j];
 			switch (d->type) {
 			case DIAG_DELTA_REPLACE:
-				printf("\t[REPLACE:%d:%c]\n", d->index, *((char *)d->value));
+				printf("\t[REPLACE:%zd:%c]\n", d->index, *((char *)d->value));
 				break;
 			case DIAG_DELTA_APPEND:
 				printf("\t[APPEND:%s]\n", (char *)d->value);
 				break;
 			case DIAG_DELTA_TRIM:
-				printf("\t[TRIM:%d]\n", d->index);
+				printf("\t[TRIM:%zd]\n", d->index);
 				break;
 			case DIAG_DELTA_INSERT:
-				printf("\t[INSERT:%d]\n", d->index);
+				printf("\t[INSERT:%zd]\n", d->index);
 				break;
 			case DIAG_DELTA_DELETE:
-				printf("\t[DELETE:%d]\n", d->index);
+				printf("\t[DELETE:%zd]\n", d->index);
 				break;
 			default:
 				diag_fatal("unknown delta type: %d", d->type);
@@ -311,11 +311,11 @@ main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	diag_metric_chars_t metric = diag_levenshtein_chars;
-	size_t len;
+	size_t len, num_entries;
 	void *p;
 	struct diag_rbtree *tree, *comb;
 	char **entries;
-	unsigned int num_entries, *parent, *occur;
+	unsigned int *parent, *occur;
 
 	if (argc < 2) {
 		usage();
