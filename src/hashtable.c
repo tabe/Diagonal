@@ -12,7 +12,6 @@
 #endif
 
 #include "diagonal.h"
-#include "diagonal/object.h"
 #include "diagonal/vector.h"
 #include "diagonal/trie.h"
 #include "diagonal/hashtable.h"
@@ -41,27 +40,27 @@ diag_hashtable_size(struct diag_hashtable *ht)
 	return ht->size;
 }
 
-diag_object_t 
-diag_hashtable_ref(struct diag_hashtable *ht, diag_object_t key, diag_object_t alt)
+uintptr_t 
+diag_hashtable_ref(struct diag_hashtable *ht, uintptr_t key, uintptr_t alt)
 {
 	assert(ht && key && alt);
 	return alt;
 }
 
 void
-diag_hashtable_set(struct diag_hashtable *ht, diag_object_t key, diag_object_t value)
+diag_hashtable_set(struct diag_hashtable *ht, uintptr_t key, uintptr_t value)
 {
 	assert(ht && key && value);
 }
 
 void
-diag_hashtable_delete(struct diag_hashtable *ht, diag_object_t key)
+diag_hashtable_delete(struct diag_hashtable *ht, uintptr_t key)
 {
 	assert(ht && key);
 }
 
 int
-diag_hashtable_contains(struct diag_hashtable *ht, diag_object_t key)
+diag_hashtable_contains(struct diag_hashtable *ht, uintptr_t key)
 {
 	assert(ht && key);
 	return 0;

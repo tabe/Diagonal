@@ -16,13 +16,13 @@ DIAG_FUNCTION void diag_hashtable_destroy(struct diag_hashtable *ht);
 
 DIAG_FUNCTION size_t diag_hashtable_size(struct diag_hashtable *ht);
 
-DIAG_FUNCTION diag_object_t diag_hashtable_ref(struct diag_hashtable *ht, diag_object_t key, diag_object_t alt);
+DIAG_FUNCTION uintptr_t diag_hashtable_ref(struct diag_hashtable *ht, uintptr_t key, uintptr_t alt);
 
-DIAG_FUNCTION void diag_hashtable_set(struct diag_hashtable *ht, diag_object_t key, diag_object_t value);
+DIAG_FUNCTION void diag_hashtable_set(struct diag_hashtable *ht, uintptr_t key, uintptr_t value);
 
-DIAG_FUNCTION void diag_hashtable_delete(struct diag_hashtable *ht, diag_object_t key);
+DIAG_FUNCTION void diag_hashtable_delete(struct diag_hashtable *ht, uintptr_t key);
 
-DIAG_FUNCTION int diag_hashtable_contains(struct diag_hashtable *ht, diag_object_t key);
+DIAG_FUNCTION int diag_hashtable_contains(struct diag_hashtable *ht, uintptr_t key);
 
 DIAG_FUNCTION struct diag_hashtable *diag_hashtable_copy(struct diag_hashtable *ht, int mutable);
 
