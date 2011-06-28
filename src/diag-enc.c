@@ -222,8 +222,7 @@ analyze(char **entries, size_t num_entries, const size_t *parent)
 
 	data = diag_calloc((size_t)num_entries, sizeof(struct diag_datum *));
 	for (i = 0; i < num_entries; i++) {
-		data[i] = diag_datum_new((void *)entries[i]);
-		data[i]->id.number = i;
+		data[i] = diag_datum_create((uintptr_t)i, (void *)entries[i]);
 	}
 	analysis = diag_analysis_new(num_entries, data);
 	analysis->metric = metric_log;

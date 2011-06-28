@@ -1,5 +1,5 @@
 set(tests
-    diag_datum_t
+    diag_datum
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")

@@ -617,7 +617,7 @@ vm_new(struct diag_bytevector *source)
 }
 
 struct diag_vcdiff_vm *
-diag_vcdiff_vm_new(size_t size, uint8_t *data)
+diag_vcdiff_vm_new(uint32_t size, uint8_t *data)
 {
 	struct diag_bytevector *source;
 

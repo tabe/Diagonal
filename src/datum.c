@@ -9,14 +9,27 @@
 #include "diagonal.h"
 #include "diagonal/datum.h"
 
-struct diag_datum *
-diag_datum_new(void *value)
+struct diag_datum *diag_datum_create(uintptr_t id, void *value)
 {
 	struct diag_datum *datum;
 
-	datum = diag_malloc(sizeof(struct diag_datum));
+	datum = diag_malloc(sizeof(*datum));
+	datum->tag = 0;
+	datum->id = id;
 	datum->value = value;
-	datum->id.number = 0;
+	return datum;
+}
+
+struct diag_customized_datum *diag_customized_datum_create(uintptr_t id, void *value,
+						 diag_datum_finalizer finalize)
+{
+	struct diag_customized_datum *datum;
+
+	datum = diag_malloc(sizeof(*datum));
+	datum->tag = DIAG_TAG_CUSTOMIZED;
+	datum->id = id;
+	datum->value = value;
+	datum->finalize = finalize;
 	return datum;
 }
 
@@ -24,6 +37,11 @@ void
 diag_datum_destroy(struct diag_datum *datum)
 {
 	if (!datum) return;
-	if (DIAG_DATUM_TBFRE_P(datum)) diag_free(datum->value);
+	if (DIAG_DATUM_CUSTOMIZED_P(datum)) {
+		struct diag_customized_datum *customized_datum;
+
+		customized_datum = (struct diag_customized_datum *)datum;
+		customized_datum->finalize(datum);
+	}
 	diag_free(datum);
 }
