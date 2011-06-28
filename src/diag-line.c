@@ -30,24 +30,22 @@
 
 #define THRESHOLD 10
 
-struct metric_option_s {
+static struct metric_option {
 	char *name;
 	diag_emetric_chars_t metric;
-} METRICS[] = {
+} metrics[] = {
 	{"hamming",     diag_ehamming_chars},
 	{"levenshtein", diag_elevenshtein_chars},
 };
 
-#define NUM_METRICS (sizeof(METRICS)/sizeof(struct metric_option_s))
+#define NUM_METRICS (sizeof(metrics)/sizeof(metrics[0]))
 
-static void
-usage(void)
+static void usage(void)
 {
 	diag_printf("diag-line [-m metric] [-t threshold] [-1] [path]");
 }
 
-static void *
-map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
+static void *map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 {
 	int fd, r;
 	struct stat st;
@@ -103,38 +101,38 @@ map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 	return (void *)p;
 }
 
-static char **
-serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
+static char **serialize_entries(const struct diag_rbtree *tree,
+				unsigned int *num_entries)
 {
 	struct diag_rbtree_node *node;
-	char **e;
-	register unsigned int i = 0;
+	char **e = NULL;
+	size_t i = 0;
 
-	if (tree->num_nodes == 0) {
-		*num_entries = 0;
-		return NULL;
-	}
-	e = diag_calloc(tree->num_nodes, sizeof(char *));
+	if (tree->num_nodes == 0) goto out;
 	node = diag_rbtree_minimum(tree);
 	assert(node);
+	e = diag_calloc(tree->num_nodes, sizeof(*e));
 	do {
 		e[i++] = (char *)node->attr;
 	} while ( (node = diag_rbtree_successor(node)) );
-	assert(i == (unsigned int)tree->num_nodes);
+	assert(i == tree->num_nodes);
+ out:
 	*num_entries = i;
 	return e;
 }
 
-static unsigned int *
-single_link(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t, unsigned int **occur)
+static unsigned int *single_link(char **entries,
+				 register unsigned int num_entries,
+				 diag_emetric_chars_t metric,
+				 int t, unsigned int **occur)
 {
 	register unsigned int i, j, x, y, px, py;
 	unsigned int *p;
 	diag_sdistance_t k;
 
 	if (num_entries == 0) return NULL;
-	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(*p));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(**occur));
 	for (i = 0; i < num_entries; i++) {
 		x = px = i + 1;
 		while (p[px] > 0) px = p[px];
@@ -154,7 +152,8 @@ single_link(char **entries, register unsigned int num_entries, diag_emetric_char
 
 #if 0
 static struct diag_rbtree *
-aggregate_combinations(char **entries, register unsigned int num_entries, diag_emetric_chars_t metric, int t)
+aggregate_combinations(char **entries, register unsigned int num_entries,
+		       diag_emetric_chars_t metric, int t)
 {
 	struct diag_rbtree *comb;
 	register unsigned int i, j;
@@ -168,7 +167,7 @@ aggregate_combinations(char **entries, register unsigned int num_entries, diag_e
 		for (j = i + 1; j < num_entries; j++) {
 			k = (*metric)((char *)entries[i], (char *)entries[j], (diag_distance_t)t);
 			if (k >= 0) {
-				p = diag_calloc(2, sizeof(unsigned int));
+				p = diag_calloc(2, sizeof(*p));
 				p[0] = i + 1;
 				p[1] = j + 1;
 				node = diag_rbtree_node_new((diag_rbtree_key_t)k, (diag_rbtree_attr_t)p);
@@ -179,8 +178,8 @@ aggregate_combinations(char **entries, register unsigned int num_entries, diag_e
 	return comb;
 }
 
-static void
-display_combinations(const struct diag_rbtree *comb, register int field_width)
+static void display_combinations(const struct diag_rbtree *comb,
+				 register int field_width)
 {
 	printf("%d\n", comb->num_nodes);
 	if (comb->num_nodes > 0) {
@@ -197,15 +196,16 @@ display_combinations(const struct diag_rbtree *comb, register int field_width)
 }
 
 static unsigned int *
-process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_entries, unsigned int **occur)
+process_equivalence_relations(const struct diag_rbtree *comb,
+			      unsigned int num_entries, unsigned int **occur)
 {
 	struct diag_rbtree_node *node;
 	unsigned int *p;
 	register unsigned int x, y;
 
 	if (num_entries == 0) return NULL;
-	p = diag_calloc(num_entries + 1, sizeof(unsigned int));
-	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(unsigned int));
+	p = diag_calloc(num_entries + 1, sizeof(*p));
+	if (occur) *occur = diag_calloc(num_entries + 1, sizeof(**occur));
 	if (comb->num_nodes == 0) return p;
 	node = diag_rbtree_minimum(comb);
 	do {
@@ -219,8 +219,9 @@ process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_e
 	return p;
 }
 
-static void
-display_equivalence_relations(const unsigned int *parent, register unsigned int n, register int field_width)
+static void display_equivalence_relations(const unsigned int *parent,
+					  register unsigned int n,
+					  register int field_width)
 {
 	register unsigned int i, x;
 
@@ -232,8 +233,11 @@ display_equivalence_relations(const unsigned int *parent, register unsigned int 
 }
 #endif
 
-static void
-display_group_members(char **entries, register unsigned int num_entries, const unsigned int *parent, register unsigned int i, register int field_width)
+static void display_group_members(char **entries,
+				  register unsigned int num_entries,
+				  const unsigned int *parent,
+				  register unsigned int i,
+				  register int field_width)
 {
 	register unsigned int j;
 
@@ -245,8 +249,9 @@ display_group_members(char **entries, register unsigned int num_entries, const u
 	}
 }
 
-static void
-display_groups(char **entries, register unsigned int num_entries, const unsigned int *parent, unsigned int *occur, register int field_width)
+static void display_groups(char **entries, register unsigned int num_entries,
+			   const unsigned int *parent, unsigned int *occur,
+			   register int field_width)
 {
 	register unsigned int i, f = 0;
 
@@ -263,8 +268,7 @@ display_groups(char **entries, register unsigned int num_entries, const unsigned
 	}
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	int field_width;
@@ -293,8 +297,8 @@ main(int argc, char *argv[])
 		case 'm':
 			found = 0;
 			for (i = 0; i < NUM_METRICS; i++) {
-				if (strcmp(METRICS[i].name, optarg) == 0) {
-					metric = METRICS[i].metric;
+				if (strcmp(metrics[i].name, optarg) == 0) {
+					metric = metrics[i].metric;
 					found = 1;
 					break;
 				}
@@ -302,7 +306,7 @@ main(int argc, char *argv[])
 			if (!found) {
 				printf("available metrics:\n");
 				for (i = 0; i < NUM_METRICS; i++) {
-					printf(" %s\n", METRICS[i].name);
+					printf(" %s\n", metrics[i].name);
 				}
 				exit(EXIT_FAILURE);
 			}
@@ -344,10 +348,6 @@ main(int argc, char *argv[])
 	diag_free(occur);
 	diag_free(entries);
  done:
-	if (p == MAP_FAILED) {
-		
-	} else {
-		munmap(p, len + 1);
-	}
+	if (p != MAP_FAILED) munmap(p, len + 1);
 	return EXIT_SUCCESS;
 }
