@@ -27,7 +27,7 @@ main()
 	result = diag_rollinghash32_collect(rh, &length);
 	ASSERT_EQ_UINT32(81, length);
 	for (i = 0; i < length; i++) {
-		printf("%d: ", i);
+		printf("%zu: ", i);
 		ASSERT_EQ_UINT32(diag_hash32_rabin_karp(arr + i, 3, 101), result[i]);
 		printf("\n");
 	}

@@ -13,7 +13,7 @@ dump_pcodes(struct diag_vcdiff_script *script)
 	size_t i;
 
 	for (i = 0; i < script->s_pcodes; i++) {
-		printf("%d: ", i);
+		printf("%zu: ", i);
 		switch (script->pcodes[i].inst) {
 		case DIAG_VCD_ADD:
 			printf("ADD\t(");
@@ -25,13 +25,13 @@ dump_pcodes(struct diag_vcdiff_script *script)
 			printf("%d\t(", script->pcodes[i].inst);
 			break;
 		}
-		printf("size: %d ", script->pcodes[i].size);
+		printf("size: %zu ", script->pcodes[i].size);
 		switch (script->pcodes[i].inst) {
 		case DIAG_VCD_ADD:
 			printf("data: %s)\n", script->pcodes[i].attr.data);
 			break;
 		case DIAG_VCD_COPY:
-			printf("addr: %d)\n", script->pcodes[i].attr.addr);
+			printf("addr: %zu)\n", script->pcodes[i].attr.addr);
 			break;
 		default:
 			printf(")\n");

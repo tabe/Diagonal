@@ -14,12 +14,12 @@ dump(struct diag_trie *trie)
 {
 	ssize_t i, b, c;
 
-	printf("-- size %d\n", trie->size);
+	printf("-- size %zd\n", trie->size);
 	for (i = 0; i < trie->size; i++) {
 		b = trie->bc[i].base;
 		c = trie->bc[i].check;
 		if ((b|c) != 0) {
-			printf("%03d: %03d|%03d\n", i, b, c);
+			printf("%03zd: %03zd|%03zd\n", i, b, c);
 		}
 	}
 }

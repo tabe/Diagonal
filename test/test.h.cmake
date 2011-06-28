@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -52,8 +53,8 @@
 #define ASSERT_EQ_UINT8(expected, expr)   ASSERT_EQ_(uint8_t, "%u", expected, expr)
 #define ASSERT_EQ_UINT32(expected, expr)  ASSERT_EQ_(uint32_t, "%u", expected, expr)
 #define ASSERT_EQ_UINT64(expected, expr)  ASSERT_EQ_(uint64_t, "%llu", expected, expr)
-#define ASSERT_EQ_UINTPTR(expected, expr) ASSERT_EQ_(uintptr_t, "%u", expected, expr)
-#define ASSERT_EQ_SIZE(expected, expr)    ASSERT_EQ_(size_t, "%u", expected, expr)
+#define ASSERT_EQ_UINTPTR(expected, expr) ASSERT_EQ_(uintptr_t, "%" PRIuPTR, expected, expr)
+#define ASSERT_EQ_SIZE(expected, expr)    ASSERT_EQ_(size_t, "%zu", expected, expr)
 
 #define ASSERT_EQ_STRING(expected, expr) do {							\
 		char *actual = (char *)(expr);									\
