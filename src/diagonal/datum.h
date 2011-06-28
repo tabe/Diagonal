@@ -10,7 +10,7 @@
  * - id, and
  * - value.
  * The `tag' contains information to deal with the resource of the datum.
- * The `id' assure the uniqueness in the domain of data.
+ * The `id' assures the uniqueness in the domain of data.
  * The `value' is an opaque pointer referring to the data's main body.
  *
  * For example, in the domain of a local filesystem, a regular file has
