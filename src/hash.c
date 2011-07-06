@@ -154,7 +154,7 @@ uint32_t *diag_rollinghash32_collect(struct diag_rollinghash32 *rh,
 	assert(rh->size >= rh->s_window);
 	*length = len = rh->size - rh->s_window + 1;
 	assert(len > 0);
-	arr = diag_calloc((size_t)len, sizeof(uint32_t));
+	arr = diag_calloc((size_t)len, sizeof(*arr));
 	arr[0] = rh->init(rh);
 	for (i = 1; i < len; i++) {
 		arr[i] = rh->roll(rh);
