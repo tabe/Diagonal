@@ -20,15 +20,15 @@
 
 #define CODE(b) (((ssize_t)(b))+2)
 
-struct diag_trie_children {
+struct trie_children {
 	ssize_t base;
 	struct diag_deque *deque;
 };
 
-struct diag_trie_child {
+struct trie_child {
 	ssize_t code;
 	ssize_t dst;
-	struct diag_trie_children *children;
+	struct trie_children *children;
 };
 
 #define SET_BASE(trie, s, b)  (trie)->bc[s].base = (b)
@@ -80,20 +80,20 @@ fetch_check(struct diag_trie *trie, ssize_t s, ssize_t *checkp)
 	return trie;
 }
 
-static struct diag_trie_children *
+static struct trie_children *
 transitions(struct diag_trie *trie, ssize_t s)
 {
 	ssize_t t, c;
-	struct diag_trie_children *children;
-	struct diag_trie_child *child;
+	struct trie_children *children;
+	struct trie_child *child;
 
 	assert(trie && s < trie->size);
-	children = diag_malloc(sizeof(struct diag_trie_children));
+	children = diag_malloc(sizeof(*children));
 	children->deque = diag_deque_new();
 	children->base = GET_BASE(trie, s);
 	for (c = CODE_EOF; c <= CODE_MAX && ( (t = children->base + c) < trie->size); c++) {
 		if (GET_CHECK(trie, t) == s) {
-			child = diag_malloc(sizeof(struct diag_trie_child));
+			child = diag_malloc(sizeof(*child));
 			child->dst  = t;
 			child->code = c;
 			child->children = NULL;
@@ -106,22 +106,22 @@ transitions(struct diag_trie *trie, ssize_t s)
 static struct diag_trie *
 relocate(struct diag_trie *trie, ssize_t s, ssize_t b)
 {
-	struct diag_trie_children *children;
-	struct diag_trie_child *child, *gchild;
+	struct trie_children *children;
+	struct trie_child *child, *gchild;
 	struct diag_deque_elem *e_child, *e_gchild;
 
 	assert(trie && s < trie->size);
 	children = transitions(trie, s);
 	DIAG_DEQUE_FOR_EACH(children->deque, e_child) {
-		child = (struct diag_trie_child *)e_child->attr;
+		child = (struct trie_child *)e_child->attr;
 		child->children = transitions(trie, child->dst);
 	}
 	DIAG_DEQUE_FOR_EACH(children->deque, e_child) {
-		child = (struct diag_trie_child *)e_child->attr;
+		child = (struct trie_child *)e_child->attr;
 		trie = set_check(trie, b + child->code, s);
 		SET_BASE(trie, b + child->code, child->children->base);
 		DIAG_DEQUE_FOR_EACH(child->children->deque, e_gchild) {
-			gchild = (struct diag_trie_child *)e_gchild->attr;
+			gchild = (struct trie_child *)e_gchild->attr;
 			SET_CHECK(trie, gchild->dst, b + child->code);
 			diag_free(gchild);
 		}
