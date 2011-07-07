@@ -26,8 +26,7 @@
 #cmakedefine DIAGONAL_TEST_DIR "@DIAGONAL_TEST_DIR@"
 
 #define ASSERT_TRUE(expr) do {											\
-		int result = (int)(expr);										\
-		if (result) break;												\
+		if (expr) break;												\
 		printf("%s:%d: " #expr " is expected to be true, but false\n", __FILE__, __LINE__); \
 		exit(EXIT_FAILURE);												\
 	} while (0)
@@ -35,8 +34,7 @@
 #define ASSERT_FALSE(expr) ASSERT_TRUE(!(expr))
 
 #define ASSERT_NOT_NULL(expr) do {										\
-		void *result = (void *)(expr);									\
-		if (result != NULL) break;										\
+		if ((void *)(expr) != NULL) break;										\
 		printf("%s:%d: expected " #expr " != NULL, but NULL\n", __FILE__, __LINE__); \
 		exit(EXIT_FAILURE);												\
 	} while (0)
