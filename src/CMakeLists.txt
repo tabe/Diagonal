@@ -2,6 +2,7 @@ add_library(diagonal SHARED
             bytevector.c
             cluster.c
             code.c
+            dataset.c
             datum.c
             deque.c
             diagonal.c
