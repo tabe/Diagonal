@@ -9,12 +9,6 @@
 typedef uintptr_t (*diag_metric_t)(const struct diag_datum *,
 				  const struct diag_datum *);
 
-struct diag_proximity_entry {
-	uintptr_t d;    /* distance */
-	uintptr_t id1; /* id of 1st one */
-	uintptr_t id2; /* id of 2nd one */
-};
-
 struct diag_pair {
 	uintptr_t car;
 	uintptr_t cdr;
