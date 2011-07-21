@@ -10,6 +10,7 @@ set(subdirectories
     port
     hamming
     levenshtein
+    singlelinkage
     line
     vcdiff
     imf
