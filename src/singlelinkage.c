@@ -18,11 +18,6 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-static int cmp(uintptr_t x, uintptr_t y)
-{
-	return (x > y) - (x < y);
-}
-
 /* API */
 
 struct diag_singlelinkage *diag_singlelinkage_create(struct diag_dataset *ds,
@@ -56,7 +51,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	} else if (n == 1) {
 		return -1;
 	}
-	sl->m = diag_rbtree_new(cmp);
+	sl->m = diag_rbtree_new(NULL);
 	/* calculate metric for each pair of data */
 	for (i = 0; i < n - 1; i++) {
 		for (j = i + 1; j < n; j++) {
@@ -80,7 +75,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		j = p->cdr;
 		nxt_node = diag_rbtree_successor(cur_node);
 		if (!nxt_node) goto push;
-		tree = diag_rbtree_new(cmp);
+		tree = diag_rbtree_new(NULL);
 		do {
 			struct diag_rbtree_node *tmp_node = nxt_node;
 			p = (struct diag_pair *)tmp_node->attr;
