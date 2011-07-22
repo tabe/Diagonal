@@ -12,10 +12,10 @@
 #include "diagonal.h"
 #include "diagonal/metric.h"
 
-diag_distance_t
+uintptr_t
 diag_hamming_chars(const char *x, const char *y)
 {
-	register diag_distance_t d = 0;
+	register uintptr_t d = 0;
 
 	assert(x && y);
 	if (x == y) return 0;
@@ -33,11 +33,11 @@ diag_hamming_chars(const char *x, const char *y)
 	return d;
 }
 
-diag_sdistance_t
-diag_ehamming_chars(const char *x, const char *y, diag_distance_t e)
+intptr_t
+diag_ehamming_chars(const char *x, const char *y, uintptr_t e)
 {
 	size_t lx, ly, dxy;
-	register diag_distance_t d;
+	register uintptr_t d;
 
 	assert(x && y);
 	if (e == 0) return -1;
@@ -46,7 +46,7 @@ diag_ehamming_chars(const char *x, const char *y, diag_distance_t e)
 	ly = strlen(y);
 	dxy = (lx < ly) ? ly - lx : lx - ly;
 	if (dxy >= (size_t)e) return -1;
-	d = (diag_distance_t)dxy;
+	d = (uintptr_t)dxy;
 	do {
 		if (*x == '\0' || *y == '\0') return d;
 		if (*x++ != *y++) d++;

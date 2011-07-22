@@ -164,10 +164,10 @@ diag_imf_destroy(struct diag_imf *imf)
 	}
 }
 
-diag_distance_t
+uintptr_t
 diag_hamming_imf(const struct diag_imf *x, const struct diag_imf *y)
 {
-	diag_distance_t d = 0;
+	uintptr_t d = 0;
 	unsigned int i = 0;
 
 	assert(x && y);

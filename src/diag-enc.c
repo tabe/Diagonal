@@ -182,7 +182,7 @@ display_clusters(struct diag_analysis *analysis, int one)
 }
 #endif
 
-static diag_distance_t
+static uintptr_t
 metric_log(const struct diag_datum *d1, const struct diag_datum *d2)
 {
 	return diag_hamming_chars((const char *)d1->value, (const char *)d2->value);

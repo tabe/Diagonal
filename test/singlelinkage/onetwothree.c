@@ -5,6 +5,7 @@
 #include "diagonal/dataset.h"
 #include "diagonal/datum.h"
 #include "diagonal/deque.h"
+#include "diagonal/metric.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 

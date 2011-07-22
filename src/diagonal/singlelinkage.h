@@ -6,9 +6,6 @@
  * Single-linkage method
  */
 
-typedef uintptr_t (*diag_metric_t)(const struct diag_datum *,
-				  const struct diag_datum *);
-
 struct diag_pair {
 	uintptr_t car;
 	uintptr_t cdr;

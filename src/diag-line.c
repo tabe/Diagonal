@@ -128,7 +128,7 @@ static unsigned int *single_link(char **entries,
 {
 	register unsigned int i, j, x, y, px, py;
 	unsigned int *p;
-	diag_sdistance_t k;
+	intptr_t k;
 
 	if (num_entries == 0) return NULL;
 	p = diag_calloc(num_entries + 1, sizeof(*p));
@@ -140,7 +140,7 @@ static unsigned int *single_link(char **entries,
 			y = py = j + 1;
 			while (p[py] > 0) py = p[py];
 			if (px == py) continue; /* already connected */
-			k = (*metric)((char *)entries[i], (char *)entries[j], (diag_distance_t)t);
+			k = (*metric)((char *)entries[i], (char *)entries[j], (uintptr_t)t);
 			if (k < 0) continue; /* disconnected */
 			if (occur) (*occur)[x] = (*occur)[y] = 1;
 			p[px] = py;
@@ -158,14 +158,14 @@ aggregate_combinations(char **entries, register unsigned int num_entries,
 	struct diag_rbtree *comb;
 	register unsigned int i, j;
 	struct diag_rbtree_node *node;
-	diag_sdistance_t k;
+	intptr_t k;
 	unsigned int *p;
 
 	if (num_entries == 0) return NULL;
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
-			k = (*metric)((char *)entries[i], (char *)entries[j], (diag_distance_t)t);
+			k = (*metric)((char *)entries[i], (char *)entries[j], (uintptr_t)t);
 			if (k >= 0) {
 				p = diag_calloc(2, sizeof(*p));
 				p[0] = i + 1;

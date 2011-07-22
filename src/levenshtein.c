@@ -12,10 +12,10 @@
 #include "diagonal.h"
 #include "diagonal/metric.h"
 
-diag_distance_t
+uintptr_t
 diag_levenshtein_chars(const char *x, const char *y)
 {
-	register diag_distance_t d = 0;
+	register uintptr_t d = 0;
 	register unsigned int i, j;
 	register unsigned int lx, ly;
 	size_t *cur, *new, *tmp;
@@ -61,11 +61,11 @@ diag_levenshtein_chars(const char *x, const char *y)
 	return d;
 }
 
-diag_sdistance_t
-diag_elevenshtein_chars(const char *x, const char *y, diag_distance_t e)
+intptr_t
+diag_elevenshtein_chars(const char *x, const char *y, uintptr_t e)
 {
 	size_t lx, ly, dxy;
-	register diag_distance_t d;
+	register uintptr_t d;
 
 	assert(x && y);
 	if (e == 0) return -1;
@@ -75,5 +75,5 @@ diag_elevenshtein_chars(const char *x, const char *y, diag_distance_t e)
 	dxy = (lx < ly) ? ly - lx : lx - ly;
 	if (dxy >= (size_t)e) return -1;
 	d = diag_levenshtein_chars(x, y);
-	return (d < e) ? (diag_sdistance_t)d : -1;
+	return (d < e) ? (intptr_t)d : -1;
 }
