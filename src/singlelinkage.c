@@ -55,8 +55,8 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	sl->m = diag_rbtree_new(NULL);
 	/* calculate metric for each pair of data */
 	for (i = 0; i < n - 1; i++) {
+		di = sl->ds->data[i];
 		for (j = i + 1; j < n; j++) {
-			di = sl->ds->data[i];
 			dj = sl->ds->data[j];
 			x = sl->f((intptr_t)di, (intptr_t)dj);
 			p = diag_malloc(sizeof(*p));
