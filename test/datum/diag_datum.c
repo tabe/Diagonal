@@ -6,7 +6,7 @@
 
 static void finalize(struct diag_datum *datum)
 {
-	diag_free(datum->value);
+	diag_free((void *)datum->value);
 }
 
 int main()
@@ -16,13 +16,14 @@ int main()
 
 #define VALUE "struct diag_datum"
 
-	datum = diag_datum_create(1, VALUE);
+	datum = diag_datum_create(1, (intptr_t)VALUE);
 	assert(!DIAG_DATUM_CUSTOMIZED_P(datum));
 	diag_datum_destroy(datum);
 
 	value = diag_malloc(sizeof(VALUE));
 	strcpy(value, VALUE);
-	datum = (struct diag_datum *)diag_customized_datum_create(2, value, finalize);
+	datum = (struct diag_datum *)
+		diag_customized_datum_create(2, (intptr_t)value, finalize);
 	assert(DIAG_DATUM_CUSTOMIZED_P(datum));
 	diag_datum_destroy(datum);
 

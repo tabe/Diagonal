@@ -5,17 +5,19 @@
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
 
-int
-main()
+#define DIAG_LEVENSHTEIN_CHARS(x, y) \
+	diag_levenshtein_chars((intptr_t)x, (intptr_t)y)
+
+int main()
 {
-	assert(0 == diag_levenshtein_chars("", ""));
-	assert(0 == diag_levenshtein_chars("The metric", "The metric"));
-	assert(3 == diag_levenshtein_chars("foo", ""));
-	assert(3 == diag_levenshtein_chars("", "bar"));
-	assert(3 == diag_levenshtein_chars("foo", "foobar"));
-	assert(3 == diag_levenshtein_chars("foobar", "bar"));
-	assert(3 == diag_levenshtein_chars("Monday", "Friday"));
-	assert(5 == diag_levenshtein_chars("Wednesday", "Sunday"));
-	assert(3 == diag_levenshtein_chars("kitten", "sitting"));
+	assert(0 == DIAG_LEVENSHTEIN_CHARS("", ""));
+	assert(0 == DIAG_LEVENSHTEIN_CHARS("The metric", "The metric"));
+	assert(3 == DIAG_LEVENSHTEIN_CHARS("foo", ""));
+	assert(3 == DIAG_LEVENSHTEIN_CHARS("", "bar"));
+	assert(3 == DIAG_LEVENSHTEIN_CHARS("foo", "foobar"));
+	assert(3 == DIAG_LEVENSHTEIN_CHARS("foobar", "bar"));
+	assert(3 == DIAG_LEVENSHTEIN_CHARS("Monday", "Friday"));
+	assert(5 == DIAG_LEVENSHTEIN_CHARS("Wednesday", "Sunday"));
+	assert(3 == DIAG_LEVENSHTEIN_CHARS("kitten", "sitting"));
 	return EXIT_SUCCESS;
 }

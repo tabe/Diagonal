@@ -35,7 +35,7 @@
 
 struct metric_option_s {
 	char *name;
-	diag_metric_chars_t metric;
+	diag_metric_t metric;
 } METRICS[] = {
 	{"hamming",     diag_hamming_chars},
 	{"levenshtein", diag_levenshtein_chars},
@@ -103,7 +103,7 @@ serialize_entries(const struct diag_rbtree *tree, size_t *num_entries)
 }
 
 static struct diag_rbtree *
-aggregate_combinations(char **entries, size_t num_entries, diag_metric_chars_t metric)
+aggregate_combinations(char **entries, size_t num_entries, diag_metric_t metric)
 {
 	struct diag_rbtree *comb;
 	unsigned int i, j;
@@ -119,7 +119,7 @@ aggregate_combinations(char **entries, size_t num_entries, diag_metric_chars_t m
 			p = diag_calloc(2, sizeof(unsigned int));
 			p[0] = i + 1;
 			p[1] = j + 1;
-			k = (uintptr_t)(*metric)((char *)entries[i], (char *)entries[j]);
+			k = metric((intptr_t)entries[i], (intptr_t)entries[j]);
 			node = diag_rbtree_node_new(k, (uintptr_t)p);
 			diag_rbtree_insert(comb, node);
 		}
@@ -183,10 +183,12 @@ display_clusters(struct diag_analysis *analysis, int one)
 }
 #endif
 
-static uintptr_t
-metric_log(const struct diag_datum *d1, const struct diag_datum *d2)
+static uintptr_t metric_log(intptr_t x, intptr_t y)
 {
-	return diag_hamming_chars((const char *)d1->value, (const char *)d2->value);
+	const struct diag_datum *d1, *d2;
+	d1 = (const struct diag_datum *)x;
+	d2 = (const struct diag_datum *)y;
+	return diag_hamming_chars(d1->value, d2->value);
 }
 
 static struct diag_code *
@@ -223,7 +225,7 @@ analyze(char **entries, size_t num_entries, const size_t *parent)
 
 	data = diag_calloc((size_t)num_entries, sizeof(struct diag_datum *));
 	for (i = 0; i < num_entries; i++) {
-		data[i] = diag_datum_create((uintptr_t)i, (void *)entries[i]);
+		data[i] = diag_datum_create((uintptr_t)i, (intptr_t)entries[i]);
 	}
 	analysis = diag_analysis_new(num_entries, data);
 	analysis->metric = metric_log;
@@ -311,7 +313,7 @@ int
 main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
-	diag_metric_chars_t metric = diag_levenshtein_chars;
+	diag_metric_t metric = diag_levenshtein_chars;
 	size_t len, num_entries, *parent;
 	void *p;
 	struct diag_rbtree *tree, *comb;

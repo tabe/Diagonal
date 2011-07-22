@@ -34,7 +34,7 @@
 
 static struct metric_option {
 	char *name;
-	diag_emetric_chars_t metric;
+	diag_emetric_t metric;
 } metrics[] = {
 	{"hamming",     diag_ehamming_chars},
 	{"levenshtein", diag_elevenshtein_chars},
@@ -125,7 +125,7 @@ static char **serialize_entries(const struct diag_rbtree *tree,
 
 static unsigned int *single_link(char **entries,
 				 register unsigned int num_entries,
-				 diag_emetric_chars_t metric,
+				 diag_emetric_t metric,
 				 int t, unsigned int **occur)
 {
 	register unsigned int i, j, x, y, px, py;
@@ -142,7 +142,7 @@ static unsigned int *single_link(char **entries,
 			y = py = j + 1;
 			while (p[py] > 0) py = p[py];
 			if (px == py) continue; /* already connected */
-			k = (*metric)((char *)entries[i], (char *)entries[j], (uintptr_t)t);
+			k = metric((intptr_t)entries[i], (intptr_t)entries[j], (uintptr_t)t);
 			if (k < 0) continue; /* disconnected */
 			if (occur) (*occur)[x] = (*occur)[y] = 1;
 			p[px] = py;
@@ -155,7 +155,7 @@ static unsigned int *single_link(char **entries,
 #if 0
 static struct diag_rbtree *
 aggregate_combinations(char **entries, register unsigned int num_entries,
-		       diag_emetric_chars_t metric, int t)
+		       diag_emetric_t metric, int t)
 {
 	struct diag_rbtree *comb;
 	register unsigned int i, j;
@@ -167,7 +167,7 @@ aggregate_combinations(char **entries, register unsigned int num_entries,
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
-			k = (*metric)((char *)entries[i], (char *)entries[j], (uintptr_t)t);
+			k = metric((intptr_t)entries[i], (intptr_t)entries[j], (uintptr_t)t);
 			if (k >= 0) {
 				p = diag_calloc(2, sizeof(*p));
 				p[0] = i + 1;
@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	int field_width;
-	diag_emetric_chars_t metric = diag_ehamming_chars;
+	diag_emetric_t metric = diag_ehamming_chars;
 	size_t len;
 	void *p;
 #if 1

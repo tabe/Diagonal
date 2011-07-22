@@ -165,12 +165,14 @@ diag_imf_destroy(struct diag_imf *imf)
 	}
 }
 
-uintptr_t
-diag_hamming_imf(const struct diag_imf *x, const struct diag_imf *y)
+uintptr_t diag_hamming_imf(intptr_t a, intptr_t b)
 {
+	const struct diag_imf *x, *y;
 	uintptr_t d = 0;
 	unsigned int i = 0;
 
+	x = (const struct diag_imf *)a;
+	y = (const struct diag_imf *)b;
 	assert(x && y);
 	if (x == y) return 0;
 	for (;;) {
@@ -189,7 +191,8 @@ diag_hamming_imf(const struct diag_imf *x, const struct diag_imf *y)
 			break;
 		}
 		if (strcmp(x->header_fields[i]->name, y->header_fields[i]->name) == 0) {
-			d += diag_hamming_chars(x->header_fields[i]->body, y->header_fields[i]->body);
+			d += diag_hamming_chars((intptr_t)x->header_fields[i]->body,
+						(intptr_t)y->header_fields[i]->body);
 		} else {
 			d += strlen(x->header_fields[i]->body);
 			d += strlen(y->header_fields[i]->body);

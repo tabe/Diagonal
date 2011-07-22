@@ -32,7 +32,7 @@ enum {
 #define DIAG_DATUM_HEAD				\
 	uint64_t tag;				\
 	uintptr_t id;				\
-	void *value
+	intptr_t value
 
 struct diag_datum {
 	DIAG_DATUM_HEAD;
@@ -47,10 +47,10 @@ typedef void (*diag_datum_finalizer)(struct diag_datum *);
 
 #define DIAG_DATUM_CUSTOMIZED_P(datum) ((datum)->tag & DIAG_TAG_CUSTOMIZED)
 
-DIAG_FUNCTION struct diag_datum *diag_datum_create(uintptr_t, void *);
+DIAG_FUNCTION struct diag_datum *diag_datum_create(uintptr_t, intptr_t);
 
 DIAG_FUNCTION struct diag_customized_datum *
-diag_customized_datum_create(uintptr_t, void *, diag_datum_finalizer);
+diag_customized_datum_create(uintptr_t, intptr_t, diag_datum_finalizer);
 
 DIAG_FUNCTION void diag_datum_destroy(struct diag_datum *datum);
 

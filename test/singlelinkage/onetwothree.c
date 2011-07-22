@@ -9,16 +9,18 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-static uintptr_t f(const struct diag_datum *x,
-		   const struct diag_datum *y)
+static uintptr_t f(intptr_t a, intptr_t b)
 {
+	const struct diag_datum *x, *y;
+	x = (const struct diag_datum *)a;
+	y = (const struct diag_datum *)b;
 	return (intptr_t)x->value - (intptr_t)y->value;
 }
 
 static struct diag_datum d[] = {
-	{0, (uintptr_t)'a', (void *)1},
-	{0, (uintptr_t)'b', (void *)2},
-	{0, (uintptr_t)'c', (void *)3}
+	{0, (uintptr_t)'a', (intptr_t)1},
+	{0, (uintptr_t)'b', (intptr_t)2},
+	{0, (uintptr_t)'c', (intptr_t)3}
 };
 
 int main(void)

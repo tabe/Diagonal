@@ -37,9 +37,9 @@
 
 struct metric_option_s {
 	char *name;
-	diag_metric_imf_t metric;
+	diag_metric_t metric;
 } METRICS[] = {
-	{"hamming",     diag_hamming_imf},
+	{"hamming", diag_hamming_imf},
 };
 
 #define NUM_METRICS (sizeof(METRICS)/sizeof(struct metric_option_s))
@@ -180,7 +180,7 @@ serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
 	} while (0)
 
 static struct diag_rbtree *
-aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf_t metric)
+aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_t metric)
 {
 	struct diag_rbtree *comb;
 	unsigned int i, j;
@@ -213,7 +213,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 				if (diag_imf_parse(py, &imfy, 1) < 0) {
 					k = (uintptr_t)(lx + ly);
 				} else {
-					k = (uintptr_t)(*metric)(imfx, imfy);
+					k = metric((intptr_t)imfx, (intptr_t)imfy);
 					diag_imf_destroy(imfy);
 				}
 				munmap(py, ly);
@@ -321,7 +321,7 @@ int
 main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
-	diag_metric_imf_t metric = diag_hamming_imf;
+	diag_metric_t metric = diag_hamming_imf;
 	struct diag_rbtree *tree, *comb;
 	char **entries;
 	unsigned int i, num_entries, *parent, *occur;

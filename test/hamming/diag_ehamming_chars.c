@@ -5,21 +5,23 @@
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
 
-int
-main()
+#define DIAG_EHAMMING_CHARS(x, y, e) \
+	diag_ehamming_chars((intptr_t)x, (intptr_t)y, e)
+
+int main()
 {
-	assert(-1 == diag_ehamming_chars("", "", 0));
-	assert(0 == diag_ehamming_chars("", "", 1));
-	assert(0 == diag_ehamming_chars("The metric", "The metric", 1));
-	assert(3 == diag_ehamming_chars("foo", "", 4));
-	assert(-1 == diag_ehamming_chars("foo", "", 2));
-	assert(3 == diag_ehamming_chars("", "bar", 5));
-	assert(-1 == diag_ehamming_chars("", "bar", 1));
-	assert(3 == diag_ehamming_chars("Monday", "Friday", 4));
-	assert(-1 == diag_ehamming_chars("Monday", "Friday", 2));
-	assert(9 == diag_ehamming_chars("Wednesday", "Sunday", 100));
-	assert(-1 == diag_ehamming_chars("Wednesday", "Sunday", 9));
-	assert(3 == diag_ehamming_chars("kitten", "sitting", 19));
-	assert(-1 == diag_ehamming_chars("kitten", "sitting", 1));
+	assert(-1 == DIAG_EHAMMING_CHARS("", "", 0));
+	assert(0 == DIAG_EHAMMING_CHARS("", "", 1));
+	assert(0 == DIAG_EHAMMING_CHARS("The metric", "The metric", 1));
+	assert(3 == DIAG_EHAMMING_CHARS("foo", "", 4));
+	assert(-1 == DIAG_EHAMMING_CHARS("foo", "", 2));
+	assert(3 == DIAG_EHAMMING_CHARS("", "bar", 5));
+	assert(-1 == DIAG_EHAMMING_CHARS("", "bar", 1));
+	assert(3 == DIAG_EHAMMING_CHARS("Monday", "Friday", 4));
+	assert(-1 == DIAG_EHAMMING_CHARS("Monday", "Friday", 2));
+	assert(9 == DIAG_EHAMMING_CHARS("Wednesday", "Sunday", 100));
+	assert(-1 == DIAG_EHAMMING_CHARS("Wednesday", "Sunday", 9));
+	assert(3 == DIAG_EHAMMING_CHARS("kitten", "sitting", 19));
+	assert(-1 == DIAG_EHAMMING_CHARS("kitten", "sitting", 1));
 	return EXIT_SUCCESS;
 }

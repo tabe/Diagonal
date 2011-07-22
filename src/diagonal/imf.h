@@ -32,15 +32,13 @@ enum diag_imf_option {
 
 DIAG_C_DECL_BEGIN
 
-typedef uintptr_t (*diag_metric_imf_t)(const struct diag_imf *x, const struct diag_imf *y);
-
 DIAG_FUNCTION void diag_imf_raise_error(enum diag_imf_error e);
 
 DIAG_FUNCTION int diag_imf_parse(char *s, struct diag_imf **imfp, unsigned int option);
 
 DIAG_FUNCTION void diag_imf_destroy(struct diag_imf *imf);
 
-DIAG_FUNCTION uintptr_t diag_hamming_imf(const struct diag_imf *x, const struct diag_imf *y);
+DIAG_FUNCTION uintptr_t diag_hamming_imf(intptr_t, intptr_t);
 
 DIAG_C_DECL_END
 

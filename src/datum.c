@@ -9,7 +9,7 @@
 #include "diagonal.h"
 #include "diagonal/datum.h"
 
-struct diag_datum *diag_datum_create(uintptr_t id, void *value)
+struct diag_datum *diag_datum_create(uintptr_t id, intptr_t value)
 {
 	struct diag_datum *datum;
 
@@ -20,8 +20,9 @@ struct diag_datum *diag_datum_create(uintptr_t id, void *value)
 	return datum;
 }
 
-struct diag_customized_datum *diag_customized_datum_create(uintptr_t id, void *value,
-						 diag_datum_finalizer finalize)
+struct diag_customized_datum *
+diag_customized_datum_create(uintptr_t id, intptr_t value,
+			     diag_datum_finalizer finalize)
 {
 	struct diag_customized_datum *datum;
 

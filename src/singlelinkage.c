@@ -58,7 +58,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		for (j = i + 1; j < n; j++) {
 			di = sl->ds->data[i];
 			dj = sl->ds->data[j];
-			x = sl->f(di, dj);
+			x = sl->f((intptr_t)di, (intptr_t)dj);
 			p = diag_malloc(sizeof(*p));
 			p->car = (uintptr_t)i;
 			p->cdr = (uintptr_t)j;

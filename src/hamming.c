@@ -13,11 +13,13 @@
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
 
-uintptr_t
-diag_hamming_chars(const char *x, const char *y)
+uintptr_t diag_hamming_chars(intptr_t a, intptr_t b)
 {
+	const char *x, *y;
 	register uintptr_t d = 0;
 
+	x = (const char *)a;
+	y = (const char *)b;
 	assert(x && y);
 	if (x == y) return 0;
 	for (;;) {
@@ -34,12 +36,14 @@ diag_hamming_chars(const char *x, const char *y)
 	return d;
 }
 
-intptr_t
-diag_ehamming_chars(const char *x, const char *y, uintptr_t e)
+intptr_t diag_ehamming_chars(intptr_t a, intptr_t b, uintptr_t e)
 {
+	const char *x, *y;
 	size_t lx, ly, dxy;
 	register uintptr_t d;
 
+	x = (const char *)a;
+	y = (const char *)b;
 	assert(x && y);
 	if (e == 0) return -1;
 	if (x == y) return 0;
