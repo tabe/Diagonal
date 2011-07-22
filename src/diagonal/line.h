@@ -2,8 +2,6 @@
 #ifndef DIAGONAL_LINE_H
 #define DIAGONAL_LINE_H
 
-#include <diagonal/port.h>
-
 #define DIAG_LINE_BUFSIZE 8192
 
 enum diag_line_error_e {

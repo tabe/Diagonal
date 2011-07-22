@@ -15,6 +15,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/port.h"
 #include "diagonal/line.h"
 
 struct diag_line_context *

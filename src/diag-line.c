@@ -26,6 +26,7 @@
 #include "diagonal.h"
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
+#include "diagonal/port.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/line.h"
 

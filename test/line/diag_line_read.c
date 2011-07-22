@@ -2,6 +2,7 @@
 #include "test.h"
 
 #include "diagonal.h"
+#include "diagonal/port.h"
 #include "diagonal/line.h"
 
 #define ASSERT_NO_ERROR(context)					\
