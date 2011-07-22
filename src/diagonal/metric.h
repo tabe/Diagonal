@@ -2,8 +2,6 @@
 #ifndef DIAGONAL_METRIC_H
 #define DIAGONAL_METRIC_H
 
-#include <diagonal/datum.h>
-
 typedef uintptr_t (*diag_metric_t)(const struct diag_datum *,
 				   const struct diag_datum *);
 typedef uintptr_t (*diag_metric_chars_t)(const char *x, const char *y);

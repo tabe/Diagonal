@@ -24,6 +24,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/datum.h"
 #include "diagonal/deque.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/metric.h"

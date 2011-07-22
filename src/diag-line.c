@@ -24,8 +24,9 @@
 #endif
 
 #include "diagonal.h"
-#include "diagonal/rbtree.h"
+#include "diagonal/datum.h"
 #include "diagonal/metric.h"
+#include "diagonal/rbtree.h"
 #include "diagonal/line.h"
 
 #define THRESHOLD 10

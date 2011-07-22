@@ -28,8 +28,9 @@
 #endif
 
 #include "diagonal.h"
-#include "diagonal/rbtree.h"
+#include "diagonal/datum.h"
 #include "diagonal/metric.h"
+#include "diagonal/rbtree.h"
 #include "diagonal/imf.h"
 
 #define THRESHOLD 100

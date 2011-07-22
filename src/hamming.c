@@ -10,6 +10,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/datum.h"
 #include "diagonal/metric.h"
 
 uintptr_t

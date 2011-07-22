@@ -2,6 +2,7 @@
 #include "test.h"
 
 #include "diagonal.h"
+#include "diagonal/datum.h"
 #include "diagonal/metric.h"
 #include "diagonal/imf.h"
 

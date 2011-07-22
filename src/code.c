@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "diagonal.h"
+#include "diagonal/datum.h"
 #include "diagonal/metric.h"
 #include "diagonal/cluster.h"
 
