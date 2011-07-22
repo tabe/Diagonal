@@ -12,13 +12,19 @@
  */
 
 struct diag_dataset {
-	size_t num_data;
-	struct diag_datum *data[];
+	size_t size;
+	struct diag_datum *(*at)(size_t, struct diag_dataset *);
+	intptr_t attic;
 };
+
+typedef struct diag_datum *(*diag_dataset_at_t)(size_t, struct diag_dataset *);
 
 DIAG_C_DECL_BEGIN
 
-DIAG_FUNCTION struct diag_dataset *diag_dataset_create(size_t);
+DIAG_FUNCTION struct diag_dataset *diag_dataset_create(diag_dataset_at_t,
+						       intptr_t);
+
+DIAG_FUNCTION struct diag_datum *diag_dataset_at(struct diag_dataset *, size_t);
 
 DIAG_FUNCTION void diag_dataset_destroy(struct diag_dataset *);
 

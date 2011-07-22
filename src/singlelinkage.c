@@ -46,7 +46,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	int r = 0;
 
 	assert(sl);
-	n = sl->ds->num_data;
+	n = sl->ds->size;
 	if (n == 0) {
 		return -1;
 	} else if (n == 1) {
@@ -55,9 +55,9 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	sl->m = diag_rbtree_new(NULL);
 	/* calculate metric for each pair of data */
 	for (i = 0; i < n - 1; i++) {
-		di = sl->ds->data[i];
+		di = diag_dataset_at(sl->ds, i);
 		for (j = i + 1; j < n; j++) {
-			dj = sl->ds->data[j];
+			dj = diag_dataset_at(sl->ds, j);
 			x = sl->f((intptr_t)di, (intptr_t)dj);
 			p = diag_malloc(sizeof(*p));
 			p->car = (uintptr_t)i;

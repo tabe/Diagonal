@@ -10,15 +10,22 @@
 #include "diagonal/datum.h"
 #include "diagonal/dataset.h"
 
-struct diag_dataset *diag_dataset_create(size_t num_data)
+struct diag_dataset *diag_dataset_create(diag_dataset_at_t at, intptr_t attic)
 {
 	struct diag_dataset *ds;
 	size_t s;
 
-	s = sizeof(*ds) + num_data * sizeof(struct diag_datum *);
+	s = sizeof(*ds);
 	ds = diag_malloc(s);
-	ds->num_data = num_data;
+	ds->at = at;
+	ds->attic = attic;
 	return ds;
+}
+
+struct diag_datum *diag_dataset_at(struct diag_dataset *ds, size_t i)
+{
+	assert(ds);
+	return ds->at(i, ds);
 }
 
 void diag_dataset_destroy(struct diag_dataset *ds)
