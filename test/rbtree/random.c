@@ -23,7 +23,7 @@ main()
 	printf("initial number of nodes: %d\n", n);
 
 	for (i=0; i<n; i++) {
-		node = diag_rbtree_node_new((diag_rbtree_key_t)i, (diag_rbtree_attr_t)NULL);
+		node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)NULL);
 		s = diag_rbtree_insert(tree, node);
 		assert((int)s == i+1);
 	}
@@ -31,11 +31,11 @@ main()
 	/* delete or insert some of nodes */
 	for (i=0; i<n; i++) {
 		if (rand()%2 == 0) {
-			r = diag_rbtree_search(tree, (diag_rbtree_key_t)i, &node);
+			r = diag_rbtree_search(tree, (uintptr_t)i, &node);
 			assert(r == DIAG_SUCCESS);
 			diag_rbtree_delete(tree, node);
 		} else {
-			node = diag_rbtree_node_new((diag_rbtree_key_t)rand(), (diag_rbtree_attr_t)NULL);
+			node = diag_rbtree_node_new((uintptr_t)rand(), (uintptr_t)NULL);
 			diag_rbtree_insert(tree, node);
 		}
 	}

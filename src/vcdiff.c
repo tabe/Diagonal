@@ -997,7 +997,7 @@ lookback(struct diag_rollinghash32 *rh, uint32_t *arr, size_t i, uint32_t h, str
 				}
 
 				p = pcode_copy_new(tail - head - 1, head - m + 1);
-				node = diag_rbtree_node_new((diag_rbtree_key_t)head + 1, (diag_rbtree_attr_t)p);
+				node = diag_rbtree_node_new((uintptr_t)head + 1, (uintptr_t)p);
 				diag_rbtree_insert(tree, node);
 
 				while (++i < tail - rh->s_window + 1) {
@@ -1048,7 +1048,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 
 		if (a < b) {
 			p = pcode_add_new(b - a, rh->data + a);
-			n = diag_rbtree_node_new((diag_rbtree_key_t)a, (diag_rbtree_attr_t)p);
+			n = diag_rbtree_node_new((uintptr_t)a, (uintptr_t)p);
 			diag_rbtree_insert(tree, n);
 		}
 		p = (struct diag_vcdiff_pcode *)node->attr;
@@ -1057,7 +1057,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 	}
 	if (a < rh->size) {
 		p = pcode_add_new(rh->size - a, rh->data + a);
-		n = diag_rbtree_node_new((diag_rbtree_key_t)a, (diag_rbtree_attr_t)p);
+		n = diag_rbtree_node_new((uintptr_t)a, (uintptr_t)p);
 		diag_rbtree_insert(tree, n);
 	}
 

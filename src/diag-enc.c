@@ -67,7 +67,7 @@ map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 	close(fd);
 	*(p + len) = '\0';
 	while (q < p + len) {
-		struct diag_rbtree_node *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
+		struct diag_rbtree_node *node = diag_rbtree_node_new((uintptr_t)(q - p), (uintptr_t)q);
 		diag_rbtree_insert(tree, node);
 		do {
 			if (*q == '\n') {
@@ -112,14 +112,14 @@ aggregate_combinations(char **entries, size_t num_entries, diag_metric_chars_t m
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
 			struct diag_rbtree_node *node;
-			diag_rbtree_key_t k;
+			uintptr_t k;
 			unsigned int *p;
 
 			p = diag_calloc(2, sizeof(unsigned int));
 			p[0] = i + 1;
 			p[1] = j + 1;
-			k = (diag_rbtree_key_t)(*metric)((char *)entries[i], (char *)entries[j]);
-			node = diag_rbtree_node_new(k, (diag_rbtree_attr_t)p);
+			k = (uintptr_t)(*metric)((char *)entries[i], (char *)entries[j]);
+			node = diag_rbtree_node_new(k, (uintptr_t)p);
 			diag_rbtree_insert(comb, node);
 		}
 	}

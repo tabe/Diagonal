@@ -404,7 +404,7 @@ main(int argc, char *argv[])
 				_Exit(EXIT_FAILURE);
 			}
 		} else {
-			pnode = diag_rbtree_node_new((diag_rbtree_key_t)pid, (diag_rbtree_attr_t)i);
+			pnode = diag_rbtree_node_new((uintptr_t)pid, (uintptr_t)i);
 			diag_rbtree_insert(ptree, pnode);
 			BUILD_PATHS();
 		}
@@ -421,7 +421,7 @@ main(int argc, char *argv[])
 		}
 
 #define DETERMINE_STATUS() do {						\
-			if (diag_rbtree_search(ptree, (diag_rbtree_key_t)pid, &pnode)) { \
+			if (diag_rbtree_search(ptree, (uintptr_t)pid, &pnode)) { \
 				i = (int)pnode->attr;			\
 				diag_rbtree_delete(ptree, pnode);	\
 				stable[i] = status;			\

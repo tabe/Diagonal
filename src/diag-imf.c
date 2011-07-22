@@ -89,7 +89,7 @@ scan_directory(struct diag_rbtree *tree, int i, const char *path)
 				break;
 			default:
 				{
-					struct diag_rbtree_node *node = diag_rbtree_node_new((diag_rbtree_key_t)i, (diag_rbtree_attr_t)name);
+					struct diag_rbtree_node *node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)name);
 					diag_rbtree_insert(tree, node);
 				}
 				break;
@@ -131,7 +131,7 @@ map_paths(char **paths)
 			if (scan_directory(tree, 1, path) == -1) FAIL(tree);
 		} else {
 			if ( (name = strdup(path)) == NULL) FAIL(tree);
-			node = diag_rbtree_node_new((diag_rbtree_key_t)0, (diag_rbtree_attr_t)name);
+			node = diag_rbtree_node_new((uintptr_t)0, (uintptr_t)name);
 			diag_rbtree_insert(tree, node);
 			break;
 		}
@@ -196,7 +196,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 		r = diag_imf_parse(px, &imfx, 1);
 		for (j = i + 1; j < num_entries; j++) {
 			struct diag_rbtree_node *node;
-			diag_rbtree_key_t k;
+			uintptr_t k;
 			unsigned int *pair;
 			char *py;
 			size_t ly;
@@ -206,18 +206,18 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_imf
 			pair[0] = i + 1;
 			pair[1] = j + 1;
 			if (r < 0) {
-				k = (diag_rbtree_key_t)(lx + ly);
+				k = (uintptr_t)(lx + ly);
 			} else {
 				MMAP_IMF((char *)entries[j], py, ly);
 				if (diag_imf_parse(py, &imfy, 1) < 0) {
-					k = (diag_rbtree_key_t)(lx + ly);
+					k = (uintptr_t)(lx + ly);
 				} else {
-					k = (diag_rbtree_key_t)(*metric)(imfx, imfy);
+					k = (uintptr_t)(*metric)(imfx, imfy);
 					diag_imf_destroy(imfy);
 				}
 				munmap(py, ly);
 			}
-			node = diag_rbtree_node_new(k, (diag_rbtree_attr_t)pair);
+			node = diag_rbtree_node_new(k, (uintptr_t)pair);
 			diag_rbtree_insert(comb, node);
 		}
 		if (r >= 0) diag_imf_destroy(imfx);

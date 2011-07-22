@@ -22,7 +22,7 @@ main()
 
 	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < 100; i++) {
-		node = diag_rbtree_node_new((diag_rbtree_key_t)i, i);
+		node = diag_rbtree_node_new(i, i);
 		diag_rbtree_insert(tree, node);
 	}
 	diag_rbtree_for_each_attr(tree, count);

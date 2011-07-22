@@ -23,7 +23,7 @@
 #define SIBLING(n) (LEFTP(n) ? n->parent->right : n->parent->left)
 
 static int
-compare(diag_rbtree_key_t x, diag_rbtree_key_t y)
+compare(uintptr_t x, uintptr_t y)
 {
 	return (x > y) - (x < y);
 }
@@ -368,7 +368,7 @@ diag_rbtree_destroy(struct diag_rbtree *tree)
 }
 
 struct diag_rbtree_node *
-diag_rbtree_node_new(diag_rbtree_key_t key, diag_rbtree_attr_t attr)
+diag_rbtree_node_new(uintptr_t key, uintptr_t attr)
 {
 	struct diag_rbtree_node *node;
 	node = diag_malloc(sizeof(struct diag_rbtree_node));
@@ -459,7 +459,7 @@ diag_rbtree_delete(struct diag_rbtree *tree, struct diag_rbtree_node *node)
 }
 
 int
-diag_rbtree_search(struct diag_rbtree *tree, diag_rbtree_key_t key, struct diag_rbtree_node **found)
+diag_rbtree_search(struct diag_rbtree *tree, uintptr_t key, struct diag_rbtree_node **found)
 {
 	struct diag_rbtree_node *n;
 

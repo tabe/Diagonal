@@ -78,7 +78,7 @@ static void *map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 		for (;;) {
 			context = diag_line_read(context, NULL, &q);
 			if (DIAG_LINE_HAS_ERROR(context)) break;
-			node = diag_rbtree_node_new((diag_rbtree_key_t)n++, (diag_rbtree_attr_t)q);
+			node = diag_rbtree_node_new((uintptr_t)n++, (uintptr_t)q);
 			diag_rbtree_insert(tree, node);
 		}
 		diag_line_context_destroy(context);
@@ -88,7 +88,7 @@ static void *map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
 		close(fd);
 		*(p + len) = '\0';
 		while (q < p + len) {
-			struct diag_rbtree_node *node = diag_rbtree_node_new((diag_rbtree_key_t)(q - p), (diag_rbtree_attr_t)q);
+			struct diag_rbtree_node *node = diag_rbtree_node_new((uintptr_t)(q - p), (uintptr_t)q);
 			diag_rbtree_insert(tree, node);
 			do {
 				if (*q == '\n') {
@@ -170,7 +170,7 @@ aggregate_combinations(char **entries, register unsigned int num_entries,
 				p = diag_calloc(2, sizeof(*p));
 				p[0] = i + 1;
 				p[1] = j + 1;
-				node = diag_rbtree_node_new((diag_rbtree_key_t)k, (diag_rbtree_attr_t)p);
+				node = diag_rbtree_node_new((uintptr_t)k, (uintptr_t)p);
 				diag_rbtree_insert(comb, node);
 			}
 		}
