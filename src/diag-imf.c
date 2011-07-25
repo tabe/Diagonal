@@ -32,6 +32,7 @@
 #include "diagonal/metric.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/imf.h"
+#include "diagonal/private/filesystem.h"
 
 #define THRESHOLD 100
 
@@ -48,120 +49,6 @@ static void
 usage(void)
 {
 	diag_printf("diag-imf [-m metric] [-t threshold] [-1] path ...");
-}
-
-static int
-scan_directory(struct diag_rbtree *tree, int i, const char *path)
-{
-	int result;
-	DIR *dir;
-
-	assert(tree && path);
-	if ( (dir = opendir(path)) == NULL) return -1;
-	for (;;) {
-		struct dirent *ent = readdir(dir);
-		if (ent) {
-			char *name;
-			size_t len;
-			int slen;
-
-			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0) {
-				continue;
-			}
-#ifdef NAME_MAX
-			len = strlen(path) + NAME_MAX + 2;
-#else
-			len = strlen(path) + MAXNAMLEN + 2;
-#endif
-			name = diag_calloc(len, sizeof(char));
-			slen = snprintf(name, len, "%s/%s", path, ent->d_name);
-			if (slen < 0 || (int)len <= slen)  {
-				diag_free(name);
-				result = -1;
-				goto done;
-			}
-			switch (ent->d_type) {
-			case DT_DIR:
-				if (scan_directory(tree, i + 1, name) == -1) {
-					diag_free(name);
-					result = -1;
-					goto done;
-				}
-				break;
-			default:
-				{
-					struct diag_rbtree_node *node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)name);
-					diag_rbtree_insert(tree, node);
-				}
-				break;
-			}
-		} else if (errno) {
-			result = -1;
-			goto done;
-		} else {
-			result = 0;
-			goto done;
-		}
-	}
- done:
-	closedir(dir);
-	return result;
-}
-
-static struct diag_rbtree *
-map_paths(char **paths)
-{
-	struct diag_rbtree *tree;
-	unsigned int i = 0;
-
-	assert(paths);
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
-#define FAIL(tree) {				\
-		/* TODO */			\
-		diag_rbtree_destroy(tree);	\
-		return NULL;			\
-	}
-	while (paths[i]) {
-		const char *path = paths[i];
-		char *name;
-		struct stat st;
-		struct diag_rbtree_node *node;
-
-		if (stat(path, &st) == -1) FAIL(tree);
-		if (S_ISDIR(st.st_mode)) {
-			if (scan_directory(tree, 1, path) == -1) FAIL(tree);
-		} else {
-			if ( (name = strdup(path)) == NULL) FAIL(tree);
-			node = diag_rbtree_node_new((uintptr_t)0, (uintptr_t)name);
-			diag_rbtree_insert(tree, node);
-			break;
-		}
-		i++;
-	}
-	return tree;
-}
-
-static char **
-serialize_entries(const struct diag_rbtree *tree, unsigned int *num_entries)
-{
-	struct diag_rbtree_node *node;
-	char **e;
-	unsigned int i = 0;
-
-	assert(tree);
-	if (tree->num_nodes == 0) {
-		*num_entries = 0;
-		return NULL;
-	}
-	e = diag_calloc(tree->num_nodes, sizeof(char *));
-	node = diag_rbtree_minimum(tree);
-	assert(node);
-	do {
-		e[i++] = (char *)node->attr;
-	} while ( (node = diag_rbtree_successor(node)) );
-	assert(i == (unsigned int)tree->num_nodes);
-	*num_entries = i;
-	return e;
 }
 
 #define MMAP_IMF(path, p, len) do {					\
@@ -322,7 +209,7 @@ main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	diag_metric_t metric = diag_hamming_imf;
-	struct diag_rbtree *tree, *comb;
+	struct diag_rbtree *comb;
 	char **entries;
 	unsigned int i, num_entries, *parent, *occur;
 
@@ -371,12 +258,7 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	tree = map_paths(&argv[optind]);
-	if (!tree) {
-		exit(EXIT_FAILURE);
-	}
-	entries = serialize_entries(tree, &num_entries);
-	diag_rbtree_destroy(tree);
+	entries = diag_paths(&argv[optind], &num_entries);
 	if (!entries) {
 		exit(EXIT_FAILURE);
 	}

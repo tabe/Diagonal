@@ -8,20 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_DIRENT_H
-#include <dirent.h>
-#endif
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -32,9 +20,9 @@
 #include "diagonal/dataset.h"
 #include "diagonal/deque.h"
 #include "diagonal/metric.h"
-#include "diagonal/rbtree.h"
 #include "diagonal/set.h"
 #include "diagonal/singlelinkage.h"
+#include "diagonal/private/filesystem.h"
 
 static uintptr_t hamming(intptr_t a, intptr_t b)
 {
@@ -118,121 +106,6 @@ static void usage(void)
 	diag_printf("diag-file [-m metric] [-i intial] [-f final] path [...]");
 }
 
-static int scan_directory(struct diag_rbtree *tree, int i, const char *path)
-{
-	struct diag_rbtree_node *node;
-	int result, slen;
-	DIR *dir;
-	char *name;
-	size_t len;
-
-	assert(tree && path);
-	if ( (dir = opendir(path)) == NULL) return -1;
-	for (;;) {
-		struct dirent *ent = readdir(dir);
-		if (!ent) {
-			result = (errno) ? -1 : 0;
-			break;
-		}
-		if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0) {
-			continue;
-		}
-#ifdef NAME_MAX
-		len = strlen(path) + NAME_MAX + 2;
-#else
-		len = strlen(path) + MAXNAMLEN + 2;
-#endif
-		name = diag_calloc(len, sizeof(*name));
-		slen = snprintf(name, len, "%s/%s", path, ent->d_name);
-		if (slen < 0 || (int)len <= slen)  {
-			diag_free(name);
-			result = -1;
-			break;
-		}
-		if (ent->d_type == DT_DIR) {
-			if (scan_directory(tree, i + 1, name) == -1) {
-				diag_free(name);
-				result = -1;
-				break;
-			}
-			continue;
-		}
-		node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)name);
-		diag_rbtree_insert(tree, node);
-	}
-	closedir(dir);
-	return result;
-}
-
-static struct diag_rbtree *map_paths(char **paths)
-{
-	struct diag_rbtree *tree;
-	struct diag_rbtree_node *node;
-	const char *path;
-	struct stat st;
-	char *name;
-	size_t i = 0;
-
-	assert(paths);
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
-	while ( (path = paths[i++]) ) {
-		if (stat(path, &st) == -1) goto fail;
-		if (S_ISDIR(st.st_mode)) {
-			if (scan_directory(tree, 1, path) == -1) goto fail;
-			continue;
-		}
-		if ( (name = strdup(path)) == NULL) goto fail;
-		node = diag_rbtree_node_new((uintptr_t)0, (uintptr_t)name);
-		diag_rbtree_insert(tree, node);
-	}
-	return tree;
- fail:
-	diag_rbtree_destroy(tree);
-	return NULL;
-}
-
-static char **serialize_entries(const struct diag_rbtree *tree,
-				size_t *num_entries)
-{
-	struct diag_rbtree_node *node;
-	char **e = NULL;
-	size_t i = 0;
-
-	assert(tree);
-	if (tree->num_nodes == 0) goto done;
-	e = diag_calloc(tree->num_nodes, sizeof(*e));
-	node = diag_rbtree_minimum(tree);
-	assert(node);
-	do {
-		e[i++] = (char *)node->attr;
-	} while ( (node = diag_rbtree_successor(node)) );
-	assert(i == tree->num_nodes);
- done:
-	*num_entries = i;
-	return e;
-}
-
-static size_t mmap_file(const char *path, char **p) {
-	int fd;
-	struct stat st;
-	size_t len;
-
-	if ( (fd = open(path, O_RDONLY)) < 0) diag_fatal("could not open file");
-	if (fstat(fd, &st) < 0) {
-		close(fd);
-		diag_fatal("could not stat file");
-	}
-	if ( (len = st.st_size) == 0) {
-		close(fd);
-		goto done;
-	}
-	*p = (char *)mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
-	close(fd);
-	if (*p == MAP_FAILED) diag_fatal("could not map file: %s", strerror(errno));
- done:
-	return len;
-}
-
 static void finalize(struct diag_datum *d)
 {
 	size_t len;
@@ -248,7 +121,7 @@ static struct diag_datum *at(size_t i, struct diag_dataset *ds)
 	size_t len;
 
 	entries = (char **)ds->attic;
-	len = mmap_file(entries[i], &p);
+	len = diag_mmap_file(entries[i], &p);
 	d = diag_customized_datum_create((uintptr_t)entries[i],
 					 (intptr_t)p,
 					 finalize);
@@ -260,7 +133,6 @@ int main(int argc, char *argv[])
 {
 	int c, initial = 0, final = 0;
 	diag_metric_t metric = hamming;
-	struct diag_rbtree *tree;
 	struct diag_dataset *ds;
 	struct diag_singlelinkage *sl;
 	struct diag_deque_elem *elem;
@@ -321,11 +193,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	tree = map_paths(&argv[optind]);
-	if (!tree) {
-		exit(EXIT_FAILURE);
-	}
-	entries = serialize_entries(tree, &num_entries);
+	entries = diag_paths(&argv[optind], &num_entries);
 	if (!entries) {
 		exit(EXIT_FAILURE);
 	}
@@ -376,7 +244,6 @@ int main(int argc, char *argv[])
 	diag_set_destroy(clusters);
 	diag_singlelinkage_destroy(sl);
 	diag_dataset_destroy(ds);
-	diag_rbtree_destroy(tree);
 	for (i = 0; i < num_entries; i++) {
 		free(entries[i]); /* free memory given by strdup() */
 	}

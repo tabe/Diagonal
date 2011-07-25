@@ -1,0 +1,162 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+#include "config.h"
+
+#include <assert.h>
+#include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+#ifdef HAVE_DIRENT_H
+#include <dirent.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#include "diagonal.h"
+#include "diagonal/rbtree.h"
+#include "diagonal/private/filesystem.h"
+
+static int scan_directory(struct diag_rbtree *tree, int i, const char *path)
+{
+	struct diag_rbtree_node *node;
+	int result, slen;
+	DIR *dir;
+	char *name;
+	size_t len;
+
+	assert(tree && path);
+	if ( (dir = opendir(path)) == NULL) return -1;
+	for (;;) {
+		struct dirent *ent = readdir(dir);
+		if (!ent) {
+			result = (errno) ? -1 : 0;
+			break;
+		}
+		if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0) {
+			continue;
+		}
+#ifdef NAME_MAX
+		len = strlen(path) + NAME_MAX + 2;
+#else
+		len = strlen(path) + MAXNAMLEN + 2;
+#endif
+		name = diag_calloc(len, sizeof(*name));
+		slen = snprintf(name, len, "%s/%s", path, ent->d_name);
+		if (slen < 0 || (int)len <= slen)  {
+			diag_free(name);
+			result = -1;
+			break;
+		}
+		if (ent->d_type == DT_DIR) {
+			if (scan_directory(tree, i + 1, name) == -1) {
+				diag_free(name);
+				result = -1;
+				break;
+			}
+			continue;
+		}
+		node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)name);
+		diag_rbtree_insert(tree, node);
+	}
+	closedir(dir);
+	return result;
+}
+
+static struct diag_rbtree *map_paths(char **paths)
+{
+	struct diag_rbtree *tree;
+	struct diag_rbtree_node *node;
+	const char *path;
+	struct stat st;
+	char *name;
+	size_t i = 0;
+
+	assert(paths);
+	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	while ( (path = paths[i++]) ) {
+		if (stat(path, &st) == -1) goto fail;
+		if (S_ISDIR(st.st_mode)) {
+			if (scan_directory(tree, 1, path) == -1) goto fail;
+			continue;
+		}
+		if ( (name = strdup(path)) == NULL) goto fail;
+		node = diag_rbtree_node_new((uintptr_t)0, (uintptr_t)name);
+		diag_rbtree_insert(tree, node);
+	}
+	return tree;
+ fail:
+	diag_rbtree_destroy(tree);
+	return NULL;
+}
+
+static char **serialize_entries(const struct diag_rbtree *tree,
+				size_t *num_entries)
+{
+	struct diag_rbtree_node *node;
+	char **e = NULL;
+	size_t i = 0;
+
+	assert(tree);
+	if (tree->num_nodes == 0) goto done;
+	e = diag_calloc(tree->num_nodes, sizeof(*e));
+	node = diag_rbtree_minimum(tree);
+	assert(node);
+	do {
+		e[i++] = (char *)node->attr;
+	} while ( (node = diag_rbtree_successor(node)) );
+	assert(i == tree->num_nodes);
+ done:
+	*num_entries = i;
+	return e;
+}
+
+/* API */
+
+char **diag_paths(char **paths, size_t *num_entries)
+{
+	struct diag_rbtree *tree;
+	char **entries;
+
+	tree = map_paths(paths);
+	if (!tree) return NULL;
+	entries = serialize_entries(tree, num_entries);
+	diag_rbtree_destroy(tree);
+	return entries;
+}
+
+size_t diag_mmap_file(const char *path, char **p)
+{
+	int fd;
+	struct stat st;
+	size_t len;
+
+	if ( (fd = open(path, O_RDONLY)) < 0) diag_fatal("could not open file");
+	if (fstat(fd, &st) < 0) {
+		close(fd);
+		diag_fatal("could not stat file");
+	}
+	if ( (len = st.st_size) == 0) {
+		close(fd);
+		goto done;
+	}
+	*p = (char *)mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
+	close(fd);
+	if (*p == MAP_FAILED) diag_fatal("could not map file: %s", strerror(errno));
+ done:
+	return len;
+}

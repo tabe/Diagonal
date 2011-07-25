@@ -6,6 +6,7 @@ add_library(diagonal SHARED
             datum.c
             deque.c
             diagonal.c
+            filesystem.c
             hamming.c
             hash.c
             hashtable.c
