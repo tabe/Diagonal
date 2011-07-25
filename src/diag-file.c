@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 	if (!entries) {
 		exit(EXIT_FAILURE);
 	}
-	printf("number of entries: %d\n", num_entries);
+	printf("number of entries: %zd\n", num_entries);
 	ds = diag_dataset_create(at, (intptr_t)entries);
 	ds->size = num_entries;
 	sl = diag_singlelinkage_create(ds, metric);
@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
 		diag_free(elem);
 	}
 	for (i = 0; i < clusters->size; i++) {
-		printf("= cluster %d:\n", i);
+		printf("= cluster %zd:\n", i);
 		cluster = (struct diag_set *)clusters->arr[i];
 		for (j = 0; j < cluster->size; j++) {
 			size_t k = (size_t)cluster->arr[j];
