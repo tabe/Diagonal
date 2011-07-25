@@ -3,6 +3,7 @@ set(subdirectories
     datum
     deque
     rbtree
+    set
     vector
     trie
     hash

@@ -14,6 +14,7 @@ add_library(diagonal SHARED
             line.c
             port.c
             rbtree.c
+            set.c
             singlelinkage.c
             trie.c
             vcdiff.c
