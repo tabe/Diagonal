@@ -7,13 +7,17 @@
  */
 
 struct diag_pair {
+	size_t i;
 	uintptr_t car;
+	size_t j;
 	uintptr_t cdr;
 };
 
 struct diag_singlelinkage {
 	struct diag_dataset *ds;
 	diag_metric_t f;
+	size_t initial;
+	size_t final;
 	struct diag_rbtree *m;
 	struct diag_deque *t;
 };
@@ -30,4 +34,3 @@ DIAG_FUNCTION void diag_singlelinkage_destroy(struct diag_singlelinkage *);
 DIAG_C_DECL_END
 
 #endif
-

@@ -20,7 +20,9 @@ static uintptr_t f(intptr_t a, intptr_t b)
 static struct diag_datum *at(size_t i, struct diag_dataset *ds)
 {
 	struct diag_datum *arr = (struct diag_datum *)ds->attic;
-	return arr + i;
+	struct diag_datum *d = diag_malloc(sizeof(*d));
+	memcpy(d, arr + i, sizeof(*d));
+	return d;
 }
 
 static struct diag_datum d[] = {
