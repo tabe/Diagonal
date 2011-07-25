@@ -270,7 +270,7 @@ main(int argc, char *argv[])
 	diag_free(parent);
 	diag_free(occur);
 	for (i = 0; i < num_entries; i++) {
-		diag_free(entries[i]);
+		free(entries[i]); /* free memory given by strdup() */
 	}
 	diag_free(entries);
 	return EXIT_SUCCESS;
