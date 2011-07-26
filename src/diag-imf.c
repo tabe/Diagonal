@@ -151,7 +151,7 @@ display_imf(size_t i, char *path)
 	size_t len;
 	struct diag_imf *imf;
 
-	printf("%03d| %s\n", i, path);
+	printf("%03zd| %s\n", i, path);
 	MMAP_IMF(path, p, len);
 	if (diag_imf_parse(p, &imf, 1) < 0) {
 		printf("--- (parse error)\n");
