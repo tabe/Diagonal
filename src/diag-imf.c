@@ -67,10 +67,10 @@ usage(void)
 	} while (0)
 
 static struct diag_rbtree *
-aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_t metric)
+aggregate_combinations(char **entries, size_t num_entries, diag_metric_t metric)
 {
 	struct diag_rbtree *comb;
-	unsigned int i, j;
+	size_t i, j;
 
 	if (num_entries == 0) return NULL;
 	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
@@ -115,7 +115,7 @@ aggregate_combinations(char **entries, unsigned int num_entries, diag_metric_t m
 }
 
 static unsigned int *
-process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_entries, int t, unsigned int **occur)
+process_equivalence_relations(const struct diag_rbtree *comb, size_t num_entries, int t, unsigned int **occur)
 {
 	struct diag_rbtree_node *node;
 	unsigned int *p, i = 0;
@@ -145,7 +145,7 @@ process_equivalence_relations(const struct diag_rbtree *comb, unsigned int num_e
 }
 
 static void
-display_imf(unsigned int i, char *path)
+display_imf(size_t i, char *path)
 {
 	char *p;
 	size_t len;
@@ -178,9 +178,9 @@ display_imf(unsigned int i, char *path)
 }
 
 static void
-display_group_members(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int i)
+display_group_members(char **entries, size_t num_entries, const unsigned int *parent, size_t i)
 {
-	unsigned int j;
+	size_t j;
 
 	for (j = 1; j <= num_entries; j++) {
 		if (j != i && parent[j] == i) {
@@ -191,9 +191,9 @@ display_group_members(char **entries, unsigned int num_entries, const unsigned i
 }
 
 static void
-display_groups(char **entries, unsigned int num_entries, const unsigned int *parent, unsigned int *occur)
+display_groups(char **entries, size_t num_entries, const unsigned int *parent, unsigned int *occur)
 {
-	unsigned int i;
+	size_t i;
 
 	for (i = 1; i <= num_entries; i++) {
 		if ((!occur || occur[i]) && parent[i] == 0) {
@@ -211,7 +211,8 @@ main(int argc, char *argv[])
 	diag_metric_t metric = diag_hamming_imf;
 	struct diag_rbtree *comb;
 	char **entries;
-	unsigned int i, num_entries, *parent, *occur;
+	unsigned int *parent, *occur;
+	size_t i, num_entries;
 
 	if (argc < 2) {
 		usage();
