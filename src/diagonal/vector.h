@@ -17,9 +17,9 @@ DIAG_FUNCTION struct diag_vector *diag_vector_create(size_t length);
 
 DIAG_FUNCTION void diag_vector_destroy(struct diag_vector *v);
 
-DIAG_FUNCTION size_t diag_vector_length(struct diag_vector *v);
+DIAG_FUNCTION size_t diag_vector_length(const struct diag_vector *v);
 
-DIAG_FUNCTION intptr_t diag_vector_ref(struct diag_vector *v, size_t k);
+DIAG_FUNCTION intptr_t diag_vector_ref(const struct diag_vector *v, size_t k);
 
 DIAG_FUNCTION void diag_vector_set(struct diag_vector *v, size_t k, intptr_t e);
 

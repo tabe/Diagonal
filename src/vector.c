@@ -34,14 +34,14 @@ diag_vector_destroy(struct diag_vector *v)
 
 
 size_t
-diag_vector_length(struct diag_vector *v)
+diag_vector_length(const struct diag_vector *v)
 {
 	assert(v);
 	return v->length;
 }
 
 intptr_t
-diag_vector_ref(struct diag_vector *v, size_t k)
+diag_vector_ref(const struct diag_vector *v, size_t k)
 {
 	if (k >= v->length) {
 		diag_error("exceed vector length %ld: %ld", v->length, k);
