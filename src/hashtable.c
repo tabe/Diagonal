@@ -93,7 +93,7 @@ diag_hashtable_keys(struct diag_hashtable *ht)
 	struct diag_vector *v;
 
 	assert(ht);
-	v = diag_vector_new(ht->size);
+	v = diag_vector_create(ht->size);
 	return v;
 }
 
@@ -103,8 +103,8 @@ diag_hashtable_entries(struct diag_hashtable *ht, struct diag_vector **keys, str
 	struct diag_vector *kv, *vv;
 
 	assert(ht && keys && values);
-	kv = diag_vector_new(ht->size);
-	vv = diag_vector_new(ht->size);
+	kv = diag_vector_create(ht->size);
+	vv = diag_vector_create(ht->size);
 	*keys   = kv;
 	*values = vv;
 }

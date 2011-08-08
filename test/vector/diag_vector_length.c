@@ -9,7 +9,7 @@ main()
 {
 	struct diag_vector *ht;
 
-	ht = diag_vector_new(0);
+	ht = diag_vector_create(0);
 	assert(diag_vector_length(ht) == 0);
 	diag_vector_destroy(ht);
 	return EXIT_SUCCESS;

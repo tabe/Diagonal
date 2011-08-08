@@ -9,7 +9,7 @@ struct diag_vector {
 
 DIAG_C_DECL_BEGIN
 
-DIAG_FUNCTION struct diag_vector *diag_vector_new(size_t length);
+DIAG_FUNCTION struct diag_vector *diag_vector_create(size_t length);
 
 DIAG_FUNCTION void diag_vector_destroy(struct diag_vector *v);
 

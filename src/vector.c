@@ -14,7 +14,7 @@
 #include "diagonal/vector.h"
 
 struct diag_vector *
-diag_vector_new(size_t length)
+diag_vector_create(size_t length)
 {
 	struct diag_vector *v;
 	size_t s;
