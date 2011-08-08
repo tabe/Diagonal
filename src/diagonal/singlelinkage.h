@@ -6,7 +6,7 @@
  * Single-linkage method
  */
 
-struct diag_pair {
+struct diag_couple {
 	size_t i;
 	uintptr_t car;
 	size_t j;

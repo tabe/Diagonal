@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 	clusters = diag_set_create(NULL);
 	while ( (elem = diag_deque_pop(sl->t)) ) {
 		int found = 0;
-		struct diag_pair *p = (struct diag_pair *)elem->attr;
+		struct diag_couple *p = (struct diag_couple *)elem->attr;
 		for (i = 0; i < clusters->size; i++) {
 			cluster = (struct diag_set *)clusters->arr[i];
 			if (diag_set_contains(cluster, p->j)) {

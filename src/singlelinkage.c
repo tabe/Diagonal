@@ -19,9 +19,9 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-void free_pair(uintptr_t attr)
+void free_couple(uintptr_t attr)
 {
-	struct diag_pair *p = (struct diag_pair *)attr;
+	struct diag_couple *p = (struct diag_couple *)attr;
 	diag_free(p);
 }
 
@@ -47,7 +47,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	struct diag_datum *di, *dj;
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *cur_node, *nxt_node, *tmp_node, *node;
-	struct diag_pair *p;
+	struct diag_couple *p;
 	size_t i, j, k, n, initial = 0, final;
 	uintptr_t x, car, cdr;
 	int r = 0;
@@ -60,7 +60,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		return -1;
 	}
 	sl->m = diag_rbtree_new(NULL);
-	/* calculate metric for each pair of data */
+	/* calculate metric for each couple of data */
 	for (i = 0; i < n - 1; i++) {
 		di = diag_dataset_at(sl->ds, i);
 		for (j = i + 1; j < n; j++) {
@@ -82,7 +82,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	do {
 		cur_node = diag_rbtree_minimum(sl->m);
 		assert(cur_node);
-		p = (struct diag_pair *)cur_node->attr;
+		p = (struct diag_couple *)cur_node->attr;
 		i = p->i;
 		j = p->j;
 		car = p->car;
@@ -92,7 +92,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		tree = diag_rbtree_new(NULL);
 		do {
 			struct diag_rbtree_node *tmp_node = nxt_node;
-			p = (struct diag_pair *)tmp_node->attr;
+			p = (struct diag_couple *)tmp_node->attr;
 			if (p->i == i || p->i == j) {
 				k = p->j;
 				if (diag_rbtree_search(tree, (uintptr_t)k, &node)) {
@@ -141,9 +141,9 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		n++;
 		if (sl->initial > 0 && sl->initial == ++initial) break;
 		if (sl->final > 0 && sl->final == --final) break;
-		free_pair(cur_node->attr);
+		free_couple(cur_node->attr);
 	} while ( diag_rbtree_delete(sl->m, cur_node) > 0 );
-	diag_rbtree_for_each_attr(sl->m, free_pair);
+	diag_rbtree_for_each_attr(sl->m, free_couple);
 	diag_rbtree_destroy(sl->m);
 	sl->m = NULL;
 	return r;
