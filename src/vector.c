@@ -19,7 +19,7 @@ diag_vector_create(size_t length)
 	struct diag_vector *v;
 	size_t s;
 
-	s = sizeof(struct diag_vector) + sizeof(uintptr_t) * (size_t)length;
+	s = sizeof(*v) + sizeof(intptr_t) * (size_t)length;
 	/* TODO: check the overflow */
 	v = diag_malloc(s);
 	v->length = length;
@@ -40,7 +40,7 @@ diag_vector_length(struct diag_vector *v)
 	return v->length;
 }
 
-uintptr_t
+intptr_t
 diag_vector_ref(struct diag_vector *v, size_t k)
 {
 	if (k >= v->length) {
@@ -50,7 +50,7 @@ diag_vector_ref(struct diag_vector *v, size_t k)
 }
 
 void
-diag_vector_set(struct diag_vector *v, size_t k, uintptr_t e)
+diag_vector_set(struct diag_vector *v, size_t k, intptr_t e)
 {
 	assert(v && e);
 	if (k >= v->length) {
@@ -60,7 +60,7 @@ diag_vector_set(struct diag_vector *v, size_t k, uintptr_t e)
 }
 
 void
-diag_vector_fill(struct diag_vector *v, uintptr_t fill)
+diag_vector_fill(struct diag_vector *v, intptr_t fill)
 {
 	size_t k;
 

@@ -2,9 +2,13 @@
 #ifndef DIAGONAL_VECTOR_H
 #define DIAGONAL_VECTOR_H
 
+/*
+ * The vector structure
+ * This is for representing fixed-length vectors.
+ */
 struct diag_vector {
 	size_t length;
-	uintptr_t elements[];
+	intptr_t elements[];
 };
 
 DIAG_C_DECL_BEGIN
@@ -15,11 +19,11 @@ DIAG_FUNCTION void diag_vector_destroy(struct diag_vector *v);
 
 DIAG_FUNCTION size_t diag_vector_length(struct diag_vector *v);
 
-DIAG_FUNCTION uintptr_t diag_vector_ref(struct diag_vector *v, size_t k);
+DIAG_FUNCTION intptr_t diag_vector_ref(struct diag_vector *v, size_t k);
 
-DIAG_FUNCTION void diag_vector_set(struct diag_vector *v, size_t k, uintptr_t e);
+DIAG_FUNCTION void diag_vector_set(struct diag_vector *v, size_t k, intptr_t e);
 
-DIAG_FUNCTION void diag_vector_fill(struct diag_vector *v, uintptr_t fill);
+DIAG_FUNCTION void diag_vector_fill(struct diag_vector *v, intptr_t fill);
 
 DIAG_C_DECL_END
 
