@@ -43,6 +43,7 @@ diag_vector_length(const struct diag_vector *v)
 intptr_t
 diag_vector_ref(const struct diag_vector *v, size_t k)
 {
+	assert(v);
 	if (k >= v->length) {
 		diag_error("exceed vector length %ld: %ld", v->length, k);
 	}
@@ -52,7 +53,7 @@ diag_vector_ref(const struct diag_vector *v, size_t k)
 void
 diag_vector_set(struct diag_vector *v, size_t k, intptr_t e)
 {
-	assert(v && e);
+	assert(v);
 	if (k >= v->length) {
 		diag_error("exceed vector length %ld: %ld", v->length, k);
 	}
@@ -64,7 +65,7 @@ diag_vector_fill(struct diag_vector *v, intptr_t fill)
 {
 	size_t k;
 
-	assert(v && fill);
+	assert(v);
 	for (k = 0; k < v->length; k++) {
 		v->elements[k] = fill;
 	}
