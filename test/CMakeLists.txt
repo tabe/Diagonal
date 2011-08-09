@@ -13,6 +13,7 @@ set(subdirectories
     levenshtein
     singlelinkage
     line
+    list
     vcdiff
     imf
     diag-avg

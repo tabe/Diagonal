@@ -13,6 +13,8 @@ add_library(diagonal SHARED
             imf.c
             levenshtein.c
             line.c
+            list.c
+            pair.c
             port.c
             rbtree.c
             set.c

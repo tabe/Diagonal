@@ -46,6 +46,7 @@
 		exit(EXIT_FAILURE);												\
 	} while (0)
 
+#define ASSERT_EQ_CHAR(expected, expr)    ASSERT_EQ_(char, "%c", expected, expr)
 #define ASSERT_EQ_INT(expected, expr)     ASSERT_EQ_(int, "%d", expected, expr)
 #define ASSERT_EQ_UINT(expected, expr)    ASSERT_EQ_(unsigned int, "%u", expected, expr)
 #define ASSERT_EQ_UINT8(expected, expr)   ASSERT_EQ_(uint8_t, "%u", expected, expr)
