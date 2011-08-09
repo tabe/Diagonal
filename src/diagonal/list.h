@@ -16,6 +16,8 @@ DIAG_FUNCTION intptr_t diag_list_ref(const struct diag_pair *, size_t);
 
 DIAG_FUNCTION struct diag_pair *diag_list_reverse(struct diag_pair *);
 
+DIAG_FUNCTION struct diag_vector *diag_list_to_vector(struct diag_pair *);
+
 DIAG_C_DECL_END
 
 #endif /* DIAGONAL_LIST_H */

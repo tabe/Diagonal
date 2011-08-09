@@ -1,6 +1,7 @@
 set(tests
     diag_list_length
     diag_list_reverse
+    diag_list_to_vector
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")

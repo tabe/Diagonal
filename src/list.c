@@ -7,6 +7,7 @@
 
 #include "diagonal.h"
 #include "diagonal/pair.h"
+#include "diagonal/vector.h"
 #include "diagonal/list.h"
 
 /* API */
@@ -53,4 +54,21 @@ struct diag_pair *diag_list_reverse(struct diag_pair *list)
 		list = tmp;
 	}
 	return p;
+}
+
+struct diag_vector *diag_list_to_vector(struct diag_pair *list)
+{
+	struct diag_vector *v;
+	struct diag_pair *p;
+	size_t length, i;
+
+	length = diag_list_length(list);
+	v = diag_vector_create(length);
+	for (i = 0; list; i++) {
+		diag_vector_set(v, i, list->car);
+		p = (struct diag_pair *)list->cdr;
+		diag_pair_destroy(list);
+		list = p;
+	}
+	return v;
 }
