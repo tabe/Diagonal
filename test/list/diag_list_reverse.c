@@ -9,17 +9,18 @@
 
 int main()
 {
-	struct diag_pair *list = NULL;
+	struct diag_pair *list = NULL, *r;
 
 	ASSERT_FALSE(diag_list_reverse(list));
 	list = CONS('a', list);
 	list = CONS('b', list);
 	list = CONS('c', list);
-	list = diag_list_reverse(list);
-	ASSERT_EQ_SIZE(3, diag_list_length(list));
-	ASSERT_EQ_CHAR('a', diag_list_ref(list, 0));
-	ASSERT_EQ_CHAR('b', diag_list_ref(list, 1));
-	ASSERT_EQ_CHAR('c', diag_list_ref(list, 2));
+	r = diag_list_reverse(list);
 	diag_list_destroy(list);
+	ASSERT_EQ_SIZE(3, diag_list_length(r));
+	ASSERT_EQ_CHAR('a', diag_list_ref(r, 0));
+	ASSERT_EQ_CHAR('b', diag_list_ref(r, 1));
+	ASSERT_EQ_CHAR('c', diag_list_ref(r, 2));
+	diag_list_destroy(r);
 	return EXIT_SUCCESS;
 }

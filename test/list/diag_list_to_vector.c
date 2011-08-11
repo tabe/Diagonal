@@ -18,6 +18,7 @@ int main()
 	list = CONS('b', list);
 	list = CONS('a', list);
 	v = diag_list_to_vector(list);
+	diag_list_destroy(list);
 	ASSERT_EQ_SIZE(3, diag_vector_length(v));
 	ASSERT_EQ_CHAR('a', diag_vector_ref(v, 0));
 	ASSERT_EQ_CHAR('b', diag_vector_ref(v, 1));

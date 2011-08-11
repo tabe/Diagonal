@@ -43,32 +43,27 @@ intptr_t diag_list_ref(const struct diag_pair *list, size_t i)
 	return list->car;
 }
 
-struct diag_pair *diag_list_reverse(struct diag_pair *list)
+struct diag_pair *diag_list_reverse(const struct diag_pair *list)
 {
-	struct diag_pair *p = NULL, *tmp;
+	struct diag_pair *p = NULL;
 
 	while (list) {
 		p = diag_pair_create(list->car, (intptr_t)p);
-		tmp = (struct diag_pair *)list->cdr;
-		diag_pair_destroy(list);
-		list = tmp;
+		list = (struct diag_pair *)list->cdr;
 	}
 	return p;
 }
 
-struct diag_vector *diag_list_to_vector(struct diag_pair *list)
+struct diag_vector *diag_list_to_vector(const struct diag_pair *list)
 {
 	struct diag_vector *v;
-	struct diag_pair *p;
 	size_t length, i;
 
 	length = diag_list_length(list);
 	v = diag_vector_create(length);
 	for (i = 0; list; i++) {
 		diag_vector_set(v, i, list->car);
-		p = (struct diag_pair *)list->cdr;
-		diag_pair_destroy(list);
-		list = p;
+		list = (struct diag_pair *)list->cdr;
 	}
 	return v;
 }
