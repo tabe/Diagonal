@@ -10,6 +10,7 @@ set(subdirectories
     hashtable
     port
     hamming
+    lcs
     levenshtein
     singlelinkage
     line

@@ -12,6 +12,7 @@ add_library(diagonal SHARED
             hashtable.c
             imf.c
             levenshtein.c
+            lcs.c
             line.c
             list.c
             pair.c
