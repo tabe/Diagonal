@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -19,7 +20,7 @@ diag_vector_create(size_t length)
 	struct diag_vector *v;
 	size_t s;
 
-	s = sizeof(*v) + sizeof(intptr_t) * (size_t)length;
+	s = sizeof(*v) + sizeof(*v->elements) * length;
 	/* TODO: check the overflow */
 	v = diag_malloc(s);
 	v->length = length;
@@ -69,4 +70,30 @@ diag_vector_fill(struct diag_vector *v, intptr_t fill)
 	for (k = 0; k < v->length; k++) {
 		v->elements[k] = fill;
 	}
+}
+
+struct diag_vector *diag_vector_copy(const struct diag_vector *v)
+{
+	struct diag_vector *w;
+	size_t length;
+
+	length = v->length;
+	w = diag_vector_create(length);
+	if (length == 0) return w;
+	memcpy(w->elements, v->elements, sizeof(*v->elements) * length);
+	return w;
+}
+
+struct diag_vector *diag_vector_copy_from(const struct diag_vector *v,
+					  size_t start)
+{
+	struct diag_vector *w;
+	size_t s;
+
+	if (start > v->length) return NULL;
+	s = v->length - start;
+	w = diag_vector_create(s);
+	if (s == 0) return w;
+	memcpy(w->elements, v->elements + start, sizeof(*v->elements) * s);
+	return w;
 }

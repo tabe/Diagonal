@@ -25,6 +25,11 @@ DIAG_FUNCTION void diag_vector_set(struct diag_vector *v, size_t k, intptr_t e);
 
 DIAG_FUNCTION void diag_vector_fill(struct diag_vector *v, intptr_t fill);
 
+DIAG_FUNCTION struct diag_vector *diag_vector_copy(const struct diag_vector *v);
+
+DIAG_FUNCTION struct diag_vector *
+diag_vector_copy_from(const struct diag_vector *v, size_t start);
+
 DIAG_C_DECL_END
 
 #endif /* DIAGONAL_VECTOR_H */

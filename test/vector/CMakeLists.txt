@@ -1,5 +1,7 @@
 set(tests
     diag_vector_length
+    diag_vector_copy
+    diag_vector_copy_from
 )
 foreach(test ${tests})
   add_executable(${test} "${test}.c")
