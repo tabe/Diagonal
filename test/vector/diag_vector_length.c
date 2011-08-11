@@ -4,13 +4,12 @@
 #include "diagonal.h"
 #include "diagonal/vector.h"
 
-int
-main()
+int main()
 {
-	struct diag_vector *ht;
+	struct diag_vector *v;
 
-	ht = diag_vector_create(0);
-	assert(diag_vector_length(ht) == 0);
-	diag_vector_destroy(ht);
+	v = diag_vector_create(0);
+	assert(diag_vector_length(v) == 0);
+	diag_vector_destroy(v);
 	return EXIT_SUCCESS;
 }
