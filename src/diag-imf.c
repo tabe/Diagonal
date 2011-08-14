@@ -28,6 +28,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/cmp.h"
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
 #include "diagonal/rbtree.h"
@@ -73,7 +74,7 @@ aggregate_combinations(char **entries, size_t num_entries, diag_metric_t metric)
 	size_t i, j;
 
 	if (num_entries == 0) return NULL;
-	comb = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
+	comb = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		char *px;
 		size_t lx;

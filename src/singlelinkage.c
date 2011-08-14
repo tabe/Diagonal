@@ -12,6 +12,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/cmp.h"
 #include "diagonal/dataset.h"
 #include "diagonal/datum.h"
 #include "diagonal/deque.h"

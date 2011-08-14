@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include "diagonal.h"
+#include "diagonal/cmp.h"
 #include "diagonal/rbtree.h"
 
 int
@@ -14,7 +15,7 @@ main()
 	int n, i, r;
 
 	srand((int)time(NULL));
-	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 
 	/* determine the initial number */
 	do {

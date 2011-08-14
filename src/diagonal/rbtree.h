@@ -2,12 +2,8 @@
 #ifndef DIAGONAL_RBTREE_H
 #define DIAGONAL_RBTREE_H
 
-typedef int (*diag_rbtree_cmp_t)(uintptr_t x, uintptr_t y);
-
 typedef void (*diag_rbtree_callback_t)(uintptr_t key, uintptr_t attr);
 typedef void (*diag_rbtree_callback_attr_t)(uintptr_t attr);
-
-#define DIAG_RBTREE_IMMEDIATE ((diag_rbtree_cmp_t)NULL)
 
 struct diag_rbtree_node {
 	uintptr_t key;
@@ -20,13 +16,13 @@ struct diag_rbtree_node {
 
 struct diag_rbtree {
 	struct diag_rbtree_node *root;
-	diag_rbtree_cmp_t cmp;
+	diag_cmp_t cmp;
 	size_t num_nodes;
 };
 
 DIAG_C_DECL_BEGIN
 
-DIAG_FUNCTION struct diag_rbtree *diag_rbtree_create(diag_rbtree_cmp_t cmp);
+DIAG_FUNCTION struct diag_rbtree *diag_rbtree_create(diag_cmp_t cmp);
 
 DIAG_FUNCTION void diag_rbtree_destroy(struct diag_rbtree *tree);
 

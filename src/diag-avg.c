@@ -21,6 +21,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/cmp.h"
 #include "diagonal/deque.h"
 #include "diagonal/port.h"
 #include "diagonal/rbtree.h"
@@ -346,7 +347,7 @@ main(int argc, char *argv[])
 	}
 
 	assert(n > 0);
-	ptree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
+	ptree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 	opaths = diag_calloc(n << 1, sizeof(char *));
 	epaths = opaths + n;
 	if (!dir) {

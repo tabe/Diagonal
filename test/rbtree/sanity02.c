@@ -2,6 +2,7 @@
 #include "test.h"
 
 #include "diagonal.h"
+#include "diagonal/cmp.h"
 #include "diagonal/rbtree.h"
 
 int
@@ -12,7 +13,7 @@ main()
 	size_t s;
 	int r;
 
-	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 	assert(!tree->root);
 	assert(tree->num_nodes == 0);
 
