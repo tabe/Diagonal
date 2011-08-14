@@ -14,7 +14,7 @@ main()
 	int n, i, r;
 
 	srand((int)time(NULL));
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 
 	/* determine the initial number */
 	do {

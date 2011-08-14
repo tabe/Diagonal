@@ -1030,7 +1030,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 		return NULL;
 	}
 
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	arr = diag_calloc((size_t)s, sizeof(uint32_t));
 	arr[0] = rh->init(rh);
 	for (i = 1; i < rh->size - rh->s_window + 1; i = lookback(rh, arr, i, h, tree)) {

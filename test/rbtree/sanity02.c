@@ -12,7 +12,7 @@ main()
 	size_t s;
 	int r;
 
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	assert(!tree->root);
 	assert(tree->num_nodes == 0);
 

@@ -26,7 +26,7 @@ struct diag_rbtree {
 
 DIAG_C_DECL_BEGIN
 
-DIAG_FUNCTION struct diag_rbtree *diag_rbtree_new(diag_rbtree_cmp_t cmp);
+DIAG_FUNCTION struct diag_rbtree *diag_rbtree_create(diag_rbtree_cmp_t cmp);
 
 DIAG_FUNCTION void diag_rbtree_destroy(struct diag_rbtree *tree);
 

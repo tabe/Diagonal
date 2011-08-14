@@ -87,7 +87,7 @@ static struct diag_rbtree *map_paths(char **paths)
 	size_t i = 0;
 
 	assert(paths);
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	while ( (path = paths[i++]) ) {
 		if (stat(path, &st) == -1) goto fail;
 		if (S_ISDIR(st.st_mode)) {

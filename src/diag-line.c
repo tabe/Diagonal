@@ -164,7 +164,7 @@ aggregate_combinations(char **entries, register unsigned int num_entries,
 	unsigned int *p;
 
 	if (num_entries == 0) return NULL;
-	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	comb = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
 			k = metric((intptr_t)entries[i], (intptr_t)entries[j], (uintptr_t)t);
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	p = map_file(argv[optind], tree, &len);
 	entries = serialize_entries(tree, &num_entries);
 	diag_rbtree_destroy(tree);

@@ -12,7 +12,7 @@ main()
 	uintptr_t keys[] = {1, 6, 8, 11, 13, 15, 17, 22, 25, 27, 0};
 	int i, r;
 
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; keys[i] > 0; i++) {
 		node = diag_rbtree_node_new(keys[i], (uintptr_t)NULL);
 		diag_rbtree_insert(tree, node);

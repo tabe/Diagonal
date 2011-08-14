@@ -109,7 +109,7 @@ aggregate_combinations(char **entries, size_t num_entries, diag_metric_t metric)
 	unsigned int i, j;
 
 	if (num_entries == 0) return NULL;
-	comb = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	comb = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
 			struct diag_rbtree_node *node;
@@ -367,7 +367,7 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	p = map_file(argv[optind], tree, &len);
 	entries = serialize_entries(tree, &num_entries);
 	diag_rbtree_destroy(tree);

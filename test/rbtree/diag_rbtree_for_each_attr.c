@@ -20,7 +20,7 @@ main()
 	struct diag_rbtree_node *node;
 	uintptr_t i;
 
-	tree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	tree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	for (i = 0; i < 100; i++) {
 		node = diag_rbtree_node_new(i, i);
 		diag_rbtree_insert(tree, node);

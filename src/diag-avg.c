@@ -346,7 +346,7 @@ main(int argc, char *argv[])
 	}
 
 	assert(n > 0);
-	ptree = diag_rbtree_new(DIAG_RBTREE_IMMEDIATE);
+	ptree = diag_rbtree_create(DIAG_RBTREE_IMMEDIATE);
 	opaths = diag_calloc(n << 1, sizeof(char *));
 	epaths = opaths + n;
 	if (!dir) {

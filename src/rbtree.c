@@ -347,7 +347,7 @@ delete6(struct diag_rbtree *t, struct diag_rbtree_node *n)
 /* Public API */
 
 struct diag_rbtree *
-diag_rbtree_new(diag_rbtree_cmp_t cmp)
+diag_rbtree_create(diag_rbtree_cmp_t cmp)
 {
 	struct diag_rbtree *tree;
 	tree = diag_malloc(sizeof(struct diag_rbtree));
