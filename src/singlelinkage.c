@@ -29,7 +29,8 @@ void free_couple(uintptr_t attr)
 /* API */
 
 struct diag_singlelinkage *diag_singlelinkage_create(struct diag_dataset *ds,
-						     diag_metric_t f)
+						     diag_metric_t f,
+						     diag_cmp_t cmp)
 {
 	struct diag_singlelinkage *sl;
 
@@ -37,6 +38,7 @@ struct diag_singlelinkage *diag_singlelinkage_create(struct diag_dataset *ds,
 	sl = diag_malloc(sizeof(*sl));
 	sl->ds = ds;
 	sl->f = f;
+	sl->cmp = cmp;
 	sl->initial = sl->final = 0;
 	sl->m = NULL;
 	sl->t = NULL;
@@ -60,7 +62,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	} else if (n == 1) {
 		return -1;
 	}
-	sl->m = diag_rbtree_create(NULL);
+	sl->m = diag_rbtree_create(sl->cmp);
 	/* calculate metric for each couple of data */
 	for (i = 0; i < n - 1; i++) {
 		di = diag_dataset_at(sl->ds, i);
@@ -90,7 +92,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		cdr = p->cdr;
 		nxt_node = diag_rbtree_successor(cur_node);
 		if (!nxt_node) goto push;
-		tree = diag_rbtree_create(NULL);
+		tree = diag_rbtree_create(sl->cmp);
 		do {
 			struct diag_rbtree_node *tmp_node = nxt_node;
 			p = (struct diag_couple *)tmp_node->attr;

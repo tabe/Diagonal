@@ -41,20 +41,20 @@ int main(void)
 	ds = diag_dataset_create(at, (intptr_t)d);
 
 	ds->size = 1;
-	sl = diag_singlelinkage_create(ds, f);
+	sl = diag_singlelinkage_create(ds, f, DIAG_CMP_IMMEDIATE);
 	r = diag_singlelinkage_analyze(sl);
 	ASSERT_EQ_INT(-1, r);
 	diag_singlelinkage_destroy(sl);
 
 	ds->size = 2;
-	sl = diag_singlelinkage_create(ds, f);
+	sl = diag_singlelinkage_create(ds, f, DIAG_CMP_IMMEDIATE);
 	r = diag_singlelinkage_analyze(sl);
 	ASSERT_EQ_INT(0, r);
 	ASSERT_EQ_SIZE(2, sl->t->length);
 	diag_singlelinkage_destroy(sl);
 
 	ds->size = 3;
-	sl = diag_singlelinkage_create(ds, f);
+	sl = diag_singlelinkage_create(ds, f, DIAG_CMP_IMMEDIATE);
 	r = diag_singlelinkage_analyze(sl);
 	ASSERT_EQ_INT(0, r);
 	ASSERT_EQ_SIZE(4, sl->t->length);

@@ -16,6 +16,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/cmp.h"
 #include "diagonal/datum.h"
 #include "diagonal/dataset.h"
 #include "diagonal/deque.h"
@@ -94,9 +95,10 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 static struct {
 	char *name;
 	diag_metric_t metric;
+	diag_cmp_t cmp;
 } metrics[] = {
-	{"hamming",     hamming},
-	{"levenshtein", levenshtein}
+	{"hamming",     hamming,     DIAG_CMP_IMMEDIATE},
+	{"levenshtein", levenshtein, DIAG_CMP_IMMEDIATE}
 };
 
 #define NUM_METRICS (sizeof(metrics)/sizeof(metrics[0]))
@@ -133,6 +135,7 @@ int main(int argc, char *argv[])
 {
 	int c, initial = 0, final = 0;
 	diag_metric_t metric = hamming;
+	diag_cmp_t cmp = DIAG_CMP_IMMEDIATE;
 	struct diag_dataset *ds;
 	struct diag_singlelinkage *sl;
 	struct diag_deque_elem *elem;
@@ -174,6 +177,7 @@ int main(int argc, char *argv[])
 			for (i = 0; i < NUM_METRICS; i++) {
 				if (strcmp(metrics[i].name, optarg) == 0) {
 					metric = metrics[i].metric;
+					cmp = metrics[i].cmp;
 					found = 1;
 					break;
 				}
@@ -200,7 +204,7 @@ int main(int argc, char *argv[])
 	printf("number of entries: %zd\n", num_entries);
 	ds = diag_dataset_create(at, (intptr_t)entries);
 	ds->size = num_entries;
-	sl = diag_singlelinkage_create(ds, metric);
+	sl = diag_singlelinkage_create(ds, metric, cmp);
 	sl->initial = (size_t)initial;
 	sl->final = (size_t)final;
 	if (diag_singlelinkage_analyze(sl) != 0) {
