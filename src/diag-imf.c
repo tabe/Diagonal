@@ -38,7 +38,7 @@
 #define THRESHOLD 100
 
 struct metric_option_s {
-	char *name;
+	const char *name;
 	diag_metric_t metric;
 } METRICS[] = {
 	{"hamming", diag_hamming_imf},

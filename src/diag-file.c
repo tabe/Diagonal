@@ -93,7 +93,7 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 }
 
 static struct {
-	char *name;
+	const char *name;
 	diag_metric_t metric;
 	diag_cmp_t cmp;
 } metrics[] = {

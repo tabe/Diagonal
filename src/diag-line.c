@@ -34,7 +34,7 @@
 #define THRESHOLD 10
 
 static struct metric_option {
-	char *name;
+	const char *name;
 	diag_emetric_t metric;
 } metrics[] = {
 	{"hamming",     diag_ehamming_chars},
