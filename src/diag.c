@@ -24,6 +24,7 @@ enum diag_command_index_e {
 	DIAG_COMMAND_ENC,
 	DIAG_COMMAND_FILE,
 	DIAG_COMMAND_FIX,
+	DIAG_COMMAND_HASH,
 	DIAG_COMMAND_IMF,
 	DIAG_COMMAND_LINE,
 };
@@ -34,6 +35,7 @@ static const char *commands[] = {
 	"enc",
 	"file",
 	"fix",
+	"hash",
 	"imf",
 	"line",
 };
@@ -52,6 +54,7 @@ struct diag_command_variation {
 	{DIAG_COMMAND_ENC, "encode"},
 	{DIAG_COMMAND_FILE, "file"},
 	{DIAG_COMMAND_FIX, "fix"},
+	{DIAG_COMMAND_HASH, "hash"},
 	{DIAG_COMMAND_IMF, "imf"},
 	{DIAG_COMMAND_LINE, "line"},
 };

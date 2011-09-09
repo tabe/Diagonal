@@ -9,6 +9,7 @@ available commands are:
   encode  (enc)
   file
   fix
+  hash
   imf
   line
 EOF
