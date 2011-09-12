@@ -43,8 +43,10 @@ add_executable(diag-imf diag-imf.c)
 target_link_libraries(diag-imf diagonal)
 add_executable(diag-line diag-line.c)
 target_link_libraries(diag-line diagonal)
+add_executable(diag-uniq diag-uniq.c)
+target_link_libraries(diag-uniq diagonal)
 
-install(TARGETS diagonal diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-imf diag-line
+install(TARGETS diagonal diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-imf diag-line diag-uniq
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)

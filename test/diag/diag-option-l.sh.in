@@ -12,4 +12,5 @@ available commands are:
   hash
   imf
   line
+  uniq
 EOF

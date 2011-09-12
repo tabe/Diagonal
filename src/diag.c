@@ -27,6 +27,7 @@ enum diag_command_index_e {
 	DIAG_COMMAND_HASH,
 	DIAG_COMMAND_IMF,
 	DIAG_COMMAND_LINE,
+	DIAG_COMMAND_UNIQ
 };
 
 static const char *commands[] = {
@@ -38,6 +39,7 @@ static const char *commands[] = {
 	"hash",
 	"imf",
 	"line",
+	"uniq"
 };
 
 #define NUM_OF_COMMANDS (sizeof(commands)/sizeof(commands[0]))
@@ -57,6 +59,7 @@ struct diag_command_variation {
 	{DIAG_COMMAND_HASH, "hash"},
 	{DIAG_COMMAND_IMF, "imf"},
 	{DIAG_COMMAND_LINE, "line"},
+	{DIAG_COMMAND_UNIQ, "uniq"}
 };
 
 #define NUM_OF_COMMAND_VARIATIONS (sizeof(command_variations)/sizeof(command_variations[0]))
