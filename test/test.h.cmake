@@ -50,8 +50,8 @@
 #define ASSERT_EQ_INT(expected, expr)     ASSERT_EQ_(int, "%d", expected, expr)
 #define ASSERT_EQ_UINT(expected, expr)    ASSERT_EQ_(unsigned int, "%u", expected, expr)
 #define ASSERT_EQ_UINT8(expected, expr)   ASSERT_EQ_(uint8_t, "%u", expected, expr)
-#define ASSERT_EQ_UINT32(expected, expr)  ASSERT_EQ_(uint32_t, "%u", expected, expr)
-#define ASSERT_EQ_UINT64(expected, expr)  ASSERT_EQ_(uint64_t, "%llu", expected, expr)
+#define ASSERT_EQ_UINT32(expected, expr)  ASSERT_EQ_(uint32_t, "%" PRIu32, expected, expr)
+#define ASSERT_EQ_UINT64(expected, expr)  ASSERT_EQ_(uint64_t, "%" PRIu64, expected, expr)
 #define ASSERT_EQ_UINTPTR(expected, expr) ASSERT_EQ_(uintptr_t, "%" PRIuPTR, expected, expr)
 #define ASSERT_EQ_SIZE(expected, expr)    ASSERT_EQ_(size_t, "%zu", expected, expr)
 
