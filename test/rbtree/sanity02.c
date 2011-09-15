@@ -37,7 +37,7 @@ main()
 	r = diag_rbtree_search(tree, (uintptr_t)2, &node);
 	assert(r == DIAG_SUCCESS);
 	assert(node == tree->root->right);
-	r = diag_rbtree_search(tree, (uintptr_t)1024, (uintptr_t)NULL);
+	r = diag_rbtree_search(tree, (uintptr_t)1024, (struct diag_rbtree_node **)NULL);
 	assert(r == DIAG_FAILURE);
 
 	s = diag_rbtree_delete(tree, tree->root);
