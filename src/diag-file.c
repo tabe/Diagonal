@@ -105,7 +105,7 @@ static struct {
 
 static void usage(void)
 {
-	diag_printf("diag-file [-m metric] [-i intial] [-f final] path [...]");
+	diag_printf("diag-file [-m metric] [-i intial] [-f final] [-1] path [...]");
 }
 
 static void finalize(struct diag_datum *d)
@@ -133,7 +133,7 @@ static struct diag_datum *at(size_t i, struct diag_dataset *ds)
 
 int main(int argc, char *argv[])
 {
-	int c, initial = 0, final = 0;
+	int c, initial = 0, final = 0, one = 0;
 	diag_metric_t metric = hamming;
 	diag_cmp_t cmp = DIAG_CMP_IMMEDIATE;
 	struct diag_dataset *ds;
@@ -141,13 +141,13 @@ int main(int argc, char *argv[])
 	struct diag_deque_elem *elem;
 	struct diag_set *clusters, *cluster;
 	char **entries;
-	size_t i, j, num_entries;
+	size_t i, j, num_entries, *num_leaves;
 
 	if (argc < 2) {
 		usage();
 		exit(EXIT_FAILURE);
 	}
-	while ( (c = getopt(argc, argv, "Vf:hi:m:t:1")) >= 0) {
+	while ( (c = getopt(argc, argv, "Vf:hi:m:1")) >= 0) {
 		unsigned int found;
 		switch (c) {
 		case 'V':
@@ -189,6 +189,9 @@ int main(int argc, char *argv[])
 				}
 				exit(EXIT_FAILURE);
 			}
+			break;
+		case '1':
+			one = 1;
 			break;
 		}
 	}
@@ -236,15 +239,31 @@ int main(int argc, char *argv[])
 		diag_free(p);
 		diag_free(elem);
 	}
+	/* count leaves for each cluster */
+	if (!one) {
+		num_leaves = diag_calloc(clusters->size, sizeof(size_t));
+		for (i = 0; i < clusters->size; i++) {
+			cluster = (struct diag_set *)clusters->arr[i];
+			for (j = 0; j < cluster->size; j++) {
+				size_t k = (size_t)cluster->arr[j];
+				if (k < ds->size && ++num_leaves[i] > 1) {
+					break;
+				}
+			}
+		}
+	}
 	for (i = 0; i < clusters->size; i++) {
-		printf("= cluster %zd:\n", i);
 		cluster = (struct diag_set *)clusters->arr[i];
-		for (j = 0; j < cluster->size; j++) {
-			size_t k = (size_t)cluster->arr[j];
-			if (k < ds->size) printf("%s\n", entries[k]);
+		if (one || num_leaves[i] > 1) {
+			printf("= cluster %zd:\n", i);
+			for (j = 0; j < cluster->size; j++) {
+				size_t k = (size_t)cluster->arr[j];
+				if (k < ds->size) printf("%s\n", entries[k]);
+			}
 		}
 		diag_set_destroy(cluster);
 	}
+	if (!one) diag_free(num_leaves);
 	diag_set_destroy(clusters);
 	diag_singlelinkage_destroy(sl);
 	diag_dataset_destroy(ds);
