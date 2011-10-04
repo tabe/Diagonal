@@ -8,6 +8,9 @@ DIAG_FUNCTION char **diag_paths(char **paths, size_t *);
 
 DIAG_FUNCTION size_t diag_mmap_file(const char *, char **);
 
+DIAG_FUNCTION size_t diag_file_to_lines(const char *path,
+					char **dst, char ***lines);
+
 DIAG_C_DECL_END
 
 #endif

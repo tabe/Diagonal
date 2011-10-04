@@ -15,6 +15,7 @@ add_library(diagonal SHARED
             lcs.c
             line.c
             list.c
+            memory.c
             pair.c
             port.c
             rbtree.c

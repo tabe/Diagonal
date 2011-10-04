@@ -105,7 +105,8 @@ static struct {
 
 static void usage(void)
 {
-	diag_printf("diag-file [-m metric] [-i intial] [-f final] [-1] path [...]");
+	diag_printf("diag-file [-m metric] [-I intial] [-F final] [-1] path [...]");
+	diag_printf("diag-file [-m metric] [-I intial] [-F final] [-1] -i input");
 }
 
 static void finalize(struct diag_datum *d)
@@ -134,43 +135,47 @@ static struct diag_datum *at(size_t i, struct diag_dataset *ds)
 int main(int argc, char *argv[])
 {
 	int c, initial = 0, final = 0, one = 0;
+	char *input = NULL;
 	diag_metric_t metric = hamming;
 	diag_cmp_t cmp = DIAG_CMP_IMMEDIATE;
 	struct diag_dataset *ds;
 	struct diag_singlelinkage *sl;
 	struct diag_deque_elem *elem;
 	struct diag_set *clusters, *cluster;
-	char **entries;
+	char **args = NULL, **entries, *dst = NULL;
 	size_t i, j, num_entries, *num_leaves;
 
 	if (argc < 2) {
 		usage();
 		exit(EXIT_FAILURE);
 	}
-	while ( (c = getopt(argc, argv, "Vf:hi:m:1")) >= 0) {
+	while ( (c = getopt(argc, argv, "F:I:Vhi:m:1")) >= 0) {
 		unsigned int found;
 		switch (c) {
-		case 'V':
-			diag_print_version();
-			exit(EXIT_SUCCESS);
-			break;
-		case 'f':
+		case 'F':
 			final = atoi(optarg);
 			if (final <= 0) {
 				usage();
 				exit(EXIT_FAILURE);
 			}
 			break;
-		case 'h':
-			usage();
-			exit(EXIT_SUCCESS);
-			break;
-		case 'i':
+		case 'I':
 			initial = atoi(optarg);
 			if (initial <= 0) {
 				usage();
 				exit(EXIT_FAILURE);
 			}
+			break;
+		case 'V':
+			diag_print_version();
+			exit(EXIT_SUCCESS);
+			break;
+		case 'h':
+			usage();
+			exit(EXIT_SUCCESS);
+			break;
+		case 'i':
+			input = optarg;
 			break;
 		case 'm':
 			found = 0;
@@ -195,16 +200,26 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-	if (!argv[optind]) {
-		usage();
-		exit(EXIT_FAILURE);
-	}
 
-	entries = diag_paths(&argv[optind], &num_entries);
+	if (input) {
+		size_t nl;
+		nl = diag_file_to_lines(input, &dst, &args);
+		if (!nl) {
+			diag_fatal("no path listed in %s", input);
+		}
+	} else {
+		    if (!argv[optind]) {
+			    usage();
+			    exit(EXIT_FAILURE);
+		    }
+		    args = &argv[optind];
+	}
+	entries = diag_paths(args, &num_entries);
 	if (!entries) {
 		exit(EXIT_FAILURE);
 	}
 	printf("number of entries: %zd\n", num_entries);
+	fflush(stdout);
 	ds = diag_dataset_create(at, (intptr_t)entries);
 	ds->size = num_entries;
 	sl = diag_singlelinkage_create(ds, metric, cmp);
@@ -271,5 +286,9 @@ int main(int argc, char *argv[])
 		free(entries[i]); /* free memory given by strdup() */
 	}
 	diag_free(entries);
+	if (input) {
+		diag_free(args);
+		diag_free(dst);
+	}
 	return EXIT_SUCCESS;
 }

@@ -30,6 +30,7 @@
 #include "diagonal.h"
 #include "diagonal/cmp.h"
 #include "diagonal/rbtree.h"
+#include "diagonal/private/memory.h"
 #include "diagonal/private/filesystem.h"
 
 static int scan_directory(struct diag_rbtree *tree, int i, const char *path)
@@ -160,4 +161,19 @@ size_t diag_mmap_file(const char *path, char **p)
 	if (*p == MAP_FAILED) diag_fatal("could not map file: %s", strerror(errno));
  done:
 	return len;
+}
+
+size_t diag_file_to_lines(const char *path, char **dst, char ***lines)
+{
+	size_t is, nl;
+	char *ip;
+
+	assert(path);
+	is = diag_mmap_file(path, &ip);
+	if (!is) {
+		diag_fatal("could not map file: %s", path);
+	}
+	nl = diag_memory_to_lines(is, ip, dst, lines);
+	munmap(ip, is);
+	return nl;
 }
