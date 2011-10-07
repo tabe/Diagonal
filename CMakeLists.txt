@@ -60,7 +60,6 @@ include(CheckTypeSize)
 include(FindThreads)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-include(FindICU)
 
 include_directories(BEFORE "${DIAGONAL_BINARY_DIR}")
 configure_file("${DIAGONAL_SOURCE_DIR}/config.h.cmake" "${DIAGONAL_BINARY_DIR}/config.h")
