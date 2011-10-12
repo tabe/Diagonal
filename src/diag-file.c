@@ -92,13 +92,74 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 	return d;
 }
 
+static uintptr_t hash32(intptr_t a, intptr_t b)
+{
+	const struct diag_datum *x, *y;
+	size_t lx, ly;
+	uint32_t *p, *pe, *q, *qe;
+	uintptr_t d = 0;
+
+	x = (const struct diag_datum *)a;
+	y = (const struct diag_datum *)b;
+	lx = (size_t)x->tag>>3;
+	ly = (size_t)y->tag>>3;
+	p = (uint32_t *)x->value;
+	pe = p + lx;
+	q = (uint32_t *)y->value;
+	qe = q + ly;
+	while (p < pe && q < qe) {
+		if (*p < *q) {
+			p++, d++;
+		} else if (*p > *q) {
+			q++, d++;
+		} else {
+			p++, q++;
+		}
+	}
+	return d;
+}
+
+static uintptr_t hash32_rev(intptr_t a, intptr_t b)
+{
+	const struct diag_datum *x, *y;
+	size_t lx, ly;
+	uint32_t *p, *pe, *q, *qe;
+	uintptr_t d = 0;
+
+	x = (const struct diag_datum *)a;
+	y = (const struct diag_datum *)b;
+	lx = (size_t)x->tag>>3;
+	ly = (size_t)y->tag>>3;
+	p = (uint32_t *)x->value;
+	pe = p + lx;
+	q = (uint32_t *)y->value;
+	qe = q + ly;
+	while (p < pe && q < qe) {
+		if (*p < *q) {
+			p++;
+		} else if (*p > *q) {
+			q++;
+		} else {
+			p++, q++, d++;
+		}
+	}
+	return d;
+}
+
+static int cmp_imm_rev(uintptr_t x, uintptr_t y)
+{
+	return (x < y) - (x > y);
+}
+
 static struct {
 	const char *name;
 	diag_metric_t metric;
 	diag_cmp_t cmp;
 } metrics[] = {
 	{"hamming",     hamming,     DIAG_CMP_IMMEDIATE},
-	{"levenshtein", levenshtein, DIAG_CMP_IMMEDIATE}
+	{"levenshtein", levenshtein, DIAG_CMP_IMMEDIATE},
+	{"hash32",      hash32,      DIAG_CMP_IMMEDIATE},
+	{"hash32_rev",  hash32_rev,  cmp_imm_rev}
 };
 
 #define NUM_METRICS (sizeof(metrics)/sizeof(metrics[0]))
