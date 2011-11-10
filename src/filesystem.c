@@ -147,10 +147,10 @@ size_t diag_mmap_file(const char *path, char **p)
 	struct stat st;
 	size_t len;
 
-	if ( (fd = open(path, O_RDONLY)) < 0) diag_fatal("could not open file");
+	if ( (fd = open(path, O_RDONLY)) < 0) diag_fatal("could not open file: %s", path);
 	if (fstat(fd, &st) < 0) {
 		close(fd);
-		diag_fatal("could not stat file");
+		diag_fatal("could not stat file: %s", path);
 	}
 	if ( (len = st.st_size) == 0) {
 		close(fd);
