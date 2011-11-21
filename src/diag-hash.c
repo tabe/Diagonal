@@ -77,10 +77,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	size = diag_mmap_file(argv[optind], &buf);
-	if (size == 0) {
-		diag_fatal("file is empty: %s", argv[optind]);
-		exit(EXIT_FAILURE);
-	}
+	if (size == 0) diag_fatal("file is empty: %s", argv[optind]);
 	rh = diag_rollinghash32_new_rabin_karp((const uint8_t *)buf, size, s_window, base);
 	result = diag_rollinghash32_collect(rh, &len);
 	if (ordered) {
