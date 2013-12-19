@@ -45,7 +45,7 @@ static void
 bytevector_munmap(struct diag_bytevector *bv)
 {
 	assert(bv);
-	(void)munmap((void *)bv->data, (size_t)bv->size);
+	(void)munmap((void *)bv->data, bv->size);
 }
 
 struct diag_bytevector *
@@ -79,8 +79,8 @@ diag_bytevector_to_asciz(const struct diag_bytevector *bv)
 	char *s;
 
 	assert(bv);
-	s = diag_malloc((size_t)bv->size + 1);
-	(void)memcpy(s, bv->data, (size_t)bv->size);
+	s = diag_malloc(bv->size + 1);
+	(void)memcpy(s, bv->data, bv->size);
 	s[bv->size] = '\0';
 	return s;
 }
