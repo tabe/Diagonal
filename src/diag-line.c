@@ -45,7 +45,7 @@ static struct metric_option {
 
 static void usage(void)
 {
-	diag_printf("diag-line [-m metric] [-t threshold] [-1] [path]");
+	diag_printf("diag-line [-m metric] [-t threshold] [-1] [file]");
 }
 
 static void *map_file(const char *path, struct diag_rbtree *tree, size_t *plen)

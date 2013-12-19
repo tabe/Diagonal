@@ -28,7 +28,7 @@
 static void
 usage(void)
 {
-	diag_printf("diag-dec [-s source] [-t target] [path]");
+	diag_printf("diag-dec [-s source] [-t target] [file]");
 }
 
 int

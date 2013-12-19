@@ -166,7 +166,7 @@ static struct {
 
 static void usage(void)
 {
-	diag_printf("diag-file [-m metric] [-I intial] [-F final] [-1] path [...]");
+	diag_printf("diag-file [-m metric] [-I intial] [-F final] [-1] file [...]");
 	diag_printf("diag-file [-m metric] [-I intial] [-F final] [-1] -i input");
 }
 

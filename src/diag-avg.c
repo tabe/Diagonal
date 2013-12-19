@@ -35,7 +35,7 @@
 static void
 usage(void)
 {
-	diag_printf("diag-avg [-n num_of_trials] [-o path] command [operand ...]");
+	diag_printf("diag-avg [-n num_of_trials] [-o output] command [operand ...]");
 }
 
 enum diag_avg_param_type {
