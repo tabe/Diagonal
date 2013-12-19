@@ -1,0 +1,6 @@
+We suppose C99 and respect Linux kernel coding style [1].
+
+Every C source file should start with the following mode line:
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+
+[1] https://www.kernel.org/doc/Documentation/CodingStyle
