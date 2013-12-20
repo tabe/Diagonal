@@ -33,7 +33,16 @@
 #include "diagonal/private/memory.h"
 #include "diagonal/private/filesystem.h"
 
-static int scan_directory(struct diag_rbtree *tree, int i, const char *path)
+static size_t trim_trailing_slashes(char *path)
+{
+	size_t len = strlen(path);
+	while (len > 1 && path[len-1] == '/') {
+		path[--len] = '\0';
+	}
+	return len;
+}
+
+static int scan_directory(struct diag_rbtree *tree, int i, char *path)
 {
 	struct diag_rbtree_node *node;
 	int result, slen;
@@ -43,6 +52,12 @@ static int scan_directory(struct diag_rbtree *tree, int i, const char *path)
 
 	assert(tree && path);
 	if ( (dir = opendir(path)) == NULL) return -1;
+	size_t path_len;
+	if (i == 1) { /* top */
+		path_len = trim_trailing_slashes(path);
+	} else {
+		path_len = strlen(path);
+	}
 	for (;;) {
 		struct dirent *ent = readdir(dir);
 		if (!ent) {
@@ -53,9 +68,9 @@ static int scan_directory(struct diag_rbtree *tree, int i, const char *path)
 			continue;
 		}
 #ifdef NAME_MAX
-		len = strlen(path) + NAME_MAX + 2;
+		len = path_len + NAME_MAX + 2;
 #else
-		len = strlen(path) + MAXNAMLEN + 2;
+		len = path_len + MAXNAMLEN + 2;
 #endif
 		name = diag_calloc(len, sizeof(*name));
 		slen = snprintf(name, len, "%s/%s", path, ent->d_name);
@@ -83,7 +98,7 @@ static struct diag_rbtree *map_paths(char **paths)
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;
-	const char *path;
+	char *path;
 	struct stat st;
 	char *name;
 	size_t i = 0;
