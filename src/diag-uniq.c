@@ -26,7 +26,7 @@ static void usage(void)
 
 int main(int argc, char *argv[])
 {
-	int c, count, i, n, r;
+	int c, count = 0, i, n, r;
 	size_t size;
 	const char *output = NULL;
 	div_t d;
@@ -59,6 +59,9 @@ int main(int argc, char *argv[])
 	if (!argv[optind]) {
 		usage();
 		exit(EXIT_FAILURE);
+	}
+	if (count == 0) {
+		diag_fatal("please specify the count with the -c option");
 	}
 	size = diag_mmap_file(argv[optind], &buf);
 	if (output) {
