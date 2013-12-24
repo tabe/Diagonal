@@ -16,7 +16,6 @@ set(subdirectories
     line
     list
     vcdiff
-    imf
     diag-avg
     diag-fix
     diag

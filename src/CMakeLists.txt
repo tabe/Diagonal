@@ -10,7 +10,6 @@ add_library(diagonal SHARED
             hamming.c
             hash.c
             hashtable.c
-            imf.c
             levenshtein.c
             lcs.c
             line.c
@@ -40,18 +39,16 @@ add_executable(diag-fix diag-fix.c)
 target_link_libraries(diag-fix diagonal)
 add_executable(diag-hash diag-hash.c)
 target_link_libraries(diag-hash diagonal)
-add_executable(diag-imf diag-imf.c)
-target_link_libraries(diag-imf diagonal)
 add_executable(diag-line diag-line.c)
 target_link_libraries(diag-line diagonal)
 add_executable(diag-uniq diag-uniq.c)
 target_link_libraries(diag-uniq diagonal)
 
 # set RPATH for each executable, cf. http://www.cmake.org/Wiki/CMake_RPATH_handling
-set_target_properties(diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-imf diag-line diag-uniq
+set_target_properties(diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-line diag-uniq
   PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
-install(TARGETS diagonal diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-imf diag-line diag-uniq
+install(TARGETS diagonal diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-line diag-uniq
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)

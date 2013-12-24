@@ -10,7 +10,6 @@ available commands are:
   file
   fix
   hash
-  imf
   line
   uniq
 EOF

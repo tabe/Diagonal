@@ -29,7 +29,6 @@
 #include "diagonal/deque.h"
 #include "diagonal/rbtree.h"
 #include "diagonal/metric.h"
-#include "diagonal/imf.h"
 #include "diagonal/cluster.h"
 
 #define THRESHOLD 10
