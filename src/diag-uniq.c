@@ -26,10 +26,10 @@ static void usage(void)
 
 int main(int argc, char *argv[])
 {
-	int c, count = 0, i, n, r;
+	int c;
+	long long count = 0;
 	size_t size;
 	const char *output = NULL;
-	div_t d;
 	char *buf, *p, *q;
 	struct diag_port *port;
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 			exit(EXIT_SUCCESS);
 			break;
 		case 'c':
-			count = atoi(optarg);
+			count = atoll(optarg);
 			if (count <= 0) diag_fatal("count should be positive");
 			break;
 		case 'h':
@@ -75,12 +75,13 @@ int main(int argc, char *argv[])
 		port->write_bytes(port, size, (const uint8_t *)buf);
 		goto done;
 	}
-	d = div((int)size, count);
-	n = d.quot;
-	r = d.rem;
+	lldiv_t d = lldiv((long long)size, count);
+	long long n = d.quot;
+	long long r = d.rem;
 	port->write_bytes(port, (size_t)count, (const uint8_t *)buf);
 	p = buf;
 	q = buf + count;
+	long long i;
 	for (i = 1; i < n; i++) {
 		if (memcmp((const void *)p, (const void *)q, (size_t)count) != 0) {
 			port->write_bytes(port, (size_t)count, (const uint8_t *)q);
