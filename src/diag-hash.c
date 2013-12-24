@@ -22,7 +22,7 @@
 
 static void usage(void)
 {
-	diag_printf("diag-hash [-b base] [-o output] [-s] [-w window] path");
+	diag_printf("diag-hash [-b base] [-o output] [-s] [-w window] file");
 }
 
 static int cmp(const void *x, const void *y)

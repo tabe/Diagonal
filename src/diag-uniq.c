@@ -21,7 +21,7 @@
 
 static void usage(void)
 {
-	diag_printf("diag-uniq [-c count] [-o output] path");
+	diag_printf("diag-uniq [-c count] [-o output] file");
 }
 
 int main(int argc, char *argv[])
