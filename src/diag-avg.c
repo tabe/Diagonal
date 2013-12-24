@@ -414,7 +414,11 @@ main(int argc, char *argv[])
 
 	stable = diag_calloc(n, sizeof(int));
 	do {
-		pid = waitpid((pid_t)-1, &status, WCONTINUED|WNOHANG|WUNTRACED);
+		pid = waitpid((pid_t)-1, &status,
+#ifdef WCONTINUED
+			      WCONTINUED|
+#endif
+			      WNOHANG|WUNTRACED);
 		if (pid == (pid_t)0) {
 			continue;
 		} else if (pid == (pid_t)-1) {
@@ -437,8 +441,10 @@ main(int argc, char *argv[])
 			DETERMINE_STATUS();
 		} else if (WIFSTOPPED(status)) {
 
+#ifdef WIFCONTINUED
 		} else if (WIFCONTINUED(status)) {
 
+#endif
 		}
 	} while (diag_rbtree_minimum(ptree));
 
