@@ -2,6 +2,7 @@
 #include "config.h"
 
 #include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef HAVE_UNISTD_H
