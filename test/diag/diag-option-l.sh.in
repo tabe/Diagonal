@@ -5,10 +5,10 @@ trap 'rm -f diag-option-l.stdout' EXIT
 diff -u - diag-option-l.stdout <<EOF
 available commands are:
   average (avg)
+  cycle
   decode  (dec)
   encode  (enc)
   file
-  fix
   hash
   line
   uniq

@@ -17,7 +17,7 @@ set(subdirectories
     list
     vcdiff
     diag-avg
-    diag-fix
+    diag-cycle
     diag
 )
 set(DIAGONAL_TEST_DIR "${DIAGONAL_SOURCE_DIR}/test")

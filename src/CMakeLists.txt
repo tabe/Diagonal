@@ -29,14 +29,14 @@ add_executable(diag diag.c)
 target_link_libraries(diag diagonal)
 add_executable(diag-avg diag-avg.c)
 target_link_libraries(diag-avg diagonal)
+add_executable(diag-cycle diag-cycle.c)
+target_link_libraries(diag-cycle diagonal)
 add_executable(diag-dec diag-dec.c)
 target_link_libraries(diag-dec diagonal)
 add_executable(diag-enc diag-enc.c)
 target_link_libraries(diag-enc diagonal)
 add_executable(diag-file diag-file.c)
 target_link_libraries(diag-file diagonal)
-add_executable(diag-fix diag-fix.c)
-target_link_libraries(diag-fix diagonal)
 add_executable(diag-hash diag-hash.c)
 target_link_libraries(diag-hash diagonal)
 add_executable(diag-line diag-line.c)
@@ -45,10 +45,10 @@ add_executable(diag-uniq diag-uniq.c)
 target_link_libraries(diag-uniq diagonal)
 
 # set RPATH for each executable, cf. http://www.cmake.org/Wiki/CMake_RPATH_handling
-set_target_properties(diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-line diag-uniq
+set_target_properties(diag diag-avg diag-cycle diag-dec diag-enc diag-file diag-hash diag-line diag-uniq
   PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
-install(TARGETS diagonal diag diag-avg diag-dec diag-enc diag-file diag-fix diag-hash diag-line diag-uniq
+install(TARGETS diagonal diag diag-avg diag-cycle diag-dec diag-enc diag-file diag-hash diag-line diag-uniq
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)

@@ -1,5 +1,0 @@
-#!/bin/sh
-
-FILE=@DIAGONAL_BINARY_DIR@/test/diag-fix/diag-fix-cat.sh
-
-cat $FILE | @DIAG_FIX@ cat | diff -c $FILE -

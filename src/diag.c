@@ -20,10 +20,10 @@
 
 enum diag_command_index_e {
 	DIAG_COMMAND_AVG,
+	DIAG_COMMAND_CYCLE,
 	DIAG_COMMAND_DEC,
 	DIAG_COMMAND_ENC,
 	DIAG_COMMAND_FILE,
-	DIAG_COMMAND_FIX,
 	DIAG_COMMAND_HASH,
 	DIAG_COMMAND_LINE,
 	DIAG_COMMAND_UNIQ
@@ -31,10 +31,10 @@ enum diag_command_index_e {
 
 static const char *commands[] = {
 	"avg",
+	"cycle",
 	"dec",
 	"enc",
 	"file",
-	"fix",
 	"hash",
 	"line",
 	"uniq"
@@ -48,12 +48,12 @@ struct diag_command_variation {
 } command_variations[] = {
 	{DIAG_COMMAND_AVG, "average"},
 	{DIAG_COMMAND_AVG, "avg"},
+	{DIAG_COMMAND_CYCLE, "cycle"},
 	{DIAG_COMMAND_DEC, "dec"},
 	{DIAG_COMMAND_DEC, "decode"},
 	{DIAG_COMMAND_ENC, "enc"},
 	{DIAG_COMMAND_ENC, "encode"},
 	{DIAG_COMMAND_FILE, "file"},
-	{DIAG_COMMAND_FIX, "fix"},
 	{DIAG_COMMAND_HASH, "hash"},
 	{DIAG_COMMAND_LINE, "line"},
 	{DIAG_COMMAND_UNIQ, "uniq"}

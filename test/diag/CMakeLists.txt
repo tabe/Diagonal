@@ -2,7 +2,7 @@ set(tests
     diag-option-l
     diag-command-average
     diag-command-avg
-    diag-command-fix
+    diag-command-cycle
 )
 get_target_property(diag-path diag LOCATION)
 set(DIAG_COMMAND ${diag-path})

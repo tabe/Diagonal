@@ -1,0 +1,5 @@
+#!/bin/sh
+
+FILE=@DIAGONAL_BINARY_DIR@/test/diag-cycle/diag-cycle-cat.sh
+
+cat $FILE | @DIAG_CYCLE@ cat | diff -c $FILE -
