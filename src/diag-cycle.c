@@ -39,7 +39,9 @@ int main(int argc, char *argv[])
 			usage();
 			exit(EXIT_SUCCESS);
 			break;
-		default:
+		case '?':
+			usage();
+			exit(EXIT_FAILURE);
 			break;
 		}
 	}

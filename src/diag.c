@@ -122,7 +122,7 @@ main(int argc, char *argv[])
 			print_commands();
 			exit(EXIT_SUCCESS);
 			break;
-		default:
+		case '?':
 			usage();
 			exit(EXIT_FAILURE);
 			break;

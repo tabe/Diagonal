@@ -324,7 +324,10 @@ main(int argc, char *argv[])
 			dir = diag_strdup(optarg);
 			CHECK_DIR();
 			break;
-		default:
+		case ':':
+		case '?':
+			usage();
+			exit(EXIT_FAILURE);
 			break;
 		}
 	}

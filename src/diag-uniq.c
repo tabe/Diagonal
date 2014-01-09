@@ -53,6 +53,10 @@ int main(int argc, char *argv[])
 		case 'o':
 			output = optarg;
 			break;
+		case '?':
+			usage();
+			exit(EXIT_FAILURE);
+			break;
 		}
 	}
 	if (!argv[optind]) {

@@ -68,6 +68,11 @@ int main(int argc, char *argv[])
 		case 'w':
 			s_window = (size_t)atoi(optarg);
 			break;
+		case ':':
+		case '?':
+			usage();
+			exit(EXIT_FAILURE);
+			break;
 		}
 	}
 	if (!argv[optind]) {

@@ -259,6 +259,11 @@ int main(int argc, char *argv[])
 		case '1':
 			one = 1;
 			break;
+		case ':':
+		case '?':
+			usage();
+			exit(EXIT_FAILURE);
+			break;
 		}
 	}
 

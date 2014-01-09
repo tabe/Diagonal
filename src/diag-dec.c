@@ -59,7 +59,10 @@ main(int argc, char *argv[])
 		case 't':
 			path_target = optarg;
 			break;
-		default:
+		case ':':
+		case '?':
+			usage();
+			exit(EXIT_FAILURE);
 			break;
 		}
 	}
