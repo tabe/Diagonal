@@ -25,8 +25,8 @@ static void usage(void)
 static int cmp(const void *x, const void *y)
 {
 	const uint32_t *a, *b;
-	a = (const uint32_t *)x;
-	b = (const uint32_t *)y;
+	a = x;
+	b = y;
 	return *a - *b;
 }
 

@@ -64,8 +64,8 @@ struct diag_command_variation {
 static int
 cmpcmd(const void *x, const void *y)
 {
-	struct diag_command_variation *cx = (struct diag_command_variation *)x;
-	struct diag_command_variation *cy = (struct diag_command_variation *)y;
+	const struct diag_command_variation *cx = x;
+	const struct diag_command_variation *cy = y;
 	return strcmp(cx->name, cy->name);
 }
 
@@ -134,7 +134,8 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	cv.name = argv[optind];
-	found = (struct diag_command_variation *)bsearch(&cv, (const void *)command_variations, NUM_OF_COMMAND_VARIATIONS, sizeof(struct diag_command_variation), cmpcmd);
+	found = bsearch(&cv, command_variations, NUM_OF_COMMAND_VARIATIONS,
+			sizeof(struct diag_command_variation), cmpcmd);
 	if (!found) {
 		usage();
 		exit(EXIT_FAILURE);

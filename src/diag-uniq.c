@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	q = buf + count;
 	long long i;
 	for (i = 1; i < n; i++) {
-		if (memcmp((const void *)p, (const void *)q, (size_t)count) != 0) {
+		if (memcmp(p, q, (size_t)count) != 0) {
 			port->write_bytes(port, (size_t)count, (const uint8_t *)q);
 		}
 		p = q;
