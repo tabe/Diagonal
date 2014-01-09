@@ -22,6 +22,10 @@
 #endif
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#elif defined(_WIN32) && defined(__MINGW32__)
+#include <windows.h>
+#else
+#error "no memory-mapped file"
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -32,6 +36,14 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/private/memory.h"
 #include "diagonal/private/filesystem.h"
+
+#if defined(_WIN32) && defined(__MINGW32__)
+struct diag_mmap_ex {
+	DIAG_MMAP_HEAD;
+	/* extensions */
+	HANDLE fh;
+};
+#endif
 
 static size_t trim_trailing_slashes(char *path)
 {
@@ -69,6 +81,8 @@ static int scan_directory(struct diag_rbtree *tree, int i, char *path)
 		}
 #ifdef NAME_MAX
 		len = path_len + NAME_MAX + 2;
+#elif defined(MAX_PATH) /* Win32 */
+		len = path_len + MAX_PATH + 2;
 #else
 		len = path_len + MAXNAMLEN + 2;
 #endif
@@ -79,6 +93,7 @@ static int scan_directory(struct diag_rbtree *tree, int i, char *path)
 			result = -1;
 			break;
 		}
+#ifdef _BSD_SOURCE
 		if (ent->d_type == DT_DIR) {
 			if (scan_directory(tree, i + 1, name) == -1) {
 				diag_free(name);
@@ -87,6 +102,9 @@ static int scan_directory(struct diag_rbtree *tree, int i, char *path)
 			}
 			continue;
 		}
+#elif defined(_WIN32) && defined(__MINGW32__)
+		/* TODO */
+#endif
 		node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)name);
 		diag_rbtree_insert(tree, node);
 	}
@@ -111,7 +129,7 @@ static struct diag_rbtree *map_paths(char **paths)
 			if (scan_directory(tree, 1, path) == -1) goto fail;
 			continue;
 		}
-		if ( (name = strdup(path)) == NULL) goto fail;
+		if ( (name = diag_strdup(path)) == NULL) goto fail;
 		node = diag_rbtree_node_new((uintptr_t)0, (uintptr_t)name);
 		diag_rbtree_insert(tree, node);
 	}
@@ -156,39 +174,117 @@ char **diag_paths(char **paths, size_t *num_entries)
 	return entries;
 }
 
-size_t diag_mmap_file(const char *path, char **p)
+struct diag_mmap *diag_mmap_file(const char *path, enum diag_mmap_mode mode)
 {
+#ifdef HAVE_SYS_MMAN_H
 	int fd;
-	struct stat st;
-	size_t len;
-
-	if ( (fd = open(path, O_RDONLY)) < 0) diag_fatal("could not open file: %s", path);
-	if (fstat(fd, &st) < 0) {
-		close(fd);
-		diag_fatal("could not stat file: %s", path);
+	if ( (fd = open(path, O_RDONLY)) < 0) {
+		perror(path);
+		return NULL;
 	}
-	if ( (len = st.st_size) == 0) {
+	struct stat st;
+	if (fstat(fd, &st) < 0) {
+		perror(path);
 		close(fd);
+		return NULL;
+	}
+	void *addr = NULL;
+	size_t size;
+	if ( (size = st.st_size) == 0) {
 		goto done;
 	}
-	*p = (char *)mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
-	close(fd);
-	if (*p == MAP_FAILED) diag_fatal("could not map file: %s", strerror(errno));
+	int prot = PROT_READ;
+	if (mode == DIAG_MMAP_COW) prot |= PROT_WRITE;
+	addr = mmap(NULL, size, prot, MAP_PRIVATE, fd, 0);
+	if (addr == MAP_FAILED) {
+		perror(path);
+		close(fd);
+		return NULL;
+	}
+
  done:
-	return len;
+	close(fd);
+	struct diag_mmap *mm = diag_malloc(sizeof(*mm));
+	mm->addr = addr;
+	mm->size = size;
+	return mm;
+#elif defined(_WIN32) && defined(__MINGW32__)
+	HANDLE fh = CreateFile(path,
+			       GENERIC_READ,
+			       FILE_SHARE_READ,
+			       NULL,
+			       OPEN_EXISTING,
+			       0,
+			       NULL);
+	if (fh == INVALID_HANDLE_VALUE) return NULL;
+	DWORD ls = GetFileSize(fh, NULL);
+	if (ls == INVALID_FILE_SIZE) {
+		(void)CloseHandle(fh);
+		return NULL;
+	}
+	if (ls == 0) {
+		(void)CloseHandle(fh);
+		struct diag_mmap *mm = diag_malloc(sizeof(*mm));
+		mm->addr = NULL;
+		mm->size = 0;
+		return mm;
+	}
+	HANDLE fmo = CreateFileMapping(fh,
+				       NULL,
+				       PAGE_READONLY,
+				       0,
+				       0,
+				       NULL);
+	if (!fmo) {
+		(void)CloseHandle(fh);
+		return NULL;
+	}
+	DWORD access = (mode == DIAG_MMAP_RO) ? FILE_MAP_READ : FILE_MAP_COPY;
+	void *vof = MapViewOfFile(fmo,
+				  access,
+				  0,
+				  0,
+				  0);
+	/* Note that CreateHandle() with a return value of CreateFileMapping()
+	   can be called before UnmapViewOfFile() with the one of
+	   CreateFileMapping(). */
+	(void)CloseHandle(fmo);
+	if (!vof) {
+		(void)CloseHandle(fh);
+		return NULL;
+	}
+	struct diag_mmap_ex *mme = diag_malloc(sizeof(*mme));
+	mme->addr = vof;
+	mme->size = ls;
+	mme->fh = fh;
+	return (struct diag_mmap *)mme;
+#endif
+}
+
+void diag_munmap(struct diag_mmap *mm)
+{
+	if (mm->size > 0) {
+#ifdef HAVE_SYS_MMAN_H
+		(void)munmap(mm->addr, mm->size);
+#elif defined(_WIN32) && defined(__MINGW32__)
+		struct diag_mmap_ex *mme = (struct diag_mmap_ex *)mm;
+		(void)UnmapViewOfFile(mme->addr);
+		(void)CloseHandle(mme->fh);
+#endif
+	}
+	diag_free(mm);
 }
 
 size_t diag_file_to_lines(const char *path, char **dst, char ***lines)
 {
-	size_t is, nl;
-	char *ip;
-
 	assert(path);
-	is = diag_mmap_file(path, &ip);
-	if (!is) {
-		diag_fatal("could not map file: %s", path);
+	struct diag_mmap *mm = diag_mmap_file(path, DIAG_MMAP_RO);
+	if (!mm) diag_fatal("could not map file: %s", path);
+	if (mm->size == 0) {
+		diag_munmap(mm);
+		return 0;
 	}
-	nl = diag_memory_to_lines(is, ip, dst, lines);
-	munmap(ip, is);
+	size_t nl = diag_memory_to_lines(mm->size, (char *)mm->addr, dst, lines);
+	diag_munmap(mm);
 	return nl;
 }

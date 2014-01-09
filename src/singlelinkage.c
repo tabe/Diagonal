@@ -20,8 +20,9 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-void free_couple(uintptr_t attr)
+void free_couple(uintptr_t attr, void *data)
 {
+	(void)data;
 	struct diag_couple *p = (struct diag_couple *)attr;
 	diag_free(p);
 }
@@ -144,9 +145,9 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		n++;
 		if (sl->initial > 0 && sl->initial == ++initial) break;
 		if (sl->final > 0 && sl->final == --final) break;
-		free_couple(cur_node->attr);
+		free_couple(cur_node->attr, NULL);
 	} while ( diag_rbtree_delete(sl->m, cur_node) > 0 );
-	diag_rbtree_for_each_attr(sl->m, free_couple);
+	diag_rbtree_for_each_attr(sl->m, free_couple, NULL);
 	diag_rbtree_destroy(sl->m);
 	sl->m = NULL;
 	return r;

@@ -23,6 +23,8 @@
 
 DIAG_C_DECL_BEGIN
 
+DIAG_FUNCTION void diag_init(void);
+
 DIAG_FUNCTION void diag_print_version(void);
 
 DIAG_FUNCTION void diag_fatal(const char *message, ...);
@@ -43,6 +45,8 @@ DIAG_FUNCTION void *diag_realloc(void *ptr, size_t size);
  * Do nothing if `ptr' is NULL.
  */
 DIAG_FUNCTION void diag_free(void *ptr);
+
+DIAG_FUNCTION char *diag_strdup(const char *s);
 
 DIAG_C_DECL_END
 

@@ -2,13 +2,16 @@
 #ifndef DIAGONAL_BYTEVECTOR_H
 #define DIAGONAL_BYTEVECTOR_H
 
+#define DIAG_BYTEVECTOR_HEAD						\
+	/* number of bytes in vector */					\
+	size_t size;							\
+	/* array of bytes */						\
+	uint8_t *data;							\
+	/* callback invoked with this bytevector itself for finalization */ \
+	void (*finalize)(struct diag_bytevector *)
+
 struct diag_bytevector {
-	/* number of bytes in vector */
-	size_t size;
-	/* array of bytes */
-	uint8_t *data;
-	/* callback invoked with this bytevector itself for finalization */
-	void (*finalize)(struct diag_bytevector *);
+	DIAG_BYTEVECTOR_HEAD;
 };
 
 typedef void (*diag_bytevector_finalizer_t)(struct diag_bytevector *);

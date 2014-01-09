@@ -6,21 +6,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
 #include "diagonal.h"
 #include "diagonal/bytevector.h"
+#include "diagonal/private/filesystem.h"
+
+struct diag_bytevector_ex {
+	DIAG_BYTEVECTOR_HEAD;
+	/* extensions */
+	struct diag_mmap *mm;
+};
 
 static void
 bytevector_free(struct diag_bytevector *bv)
@@ -45,32 +39,22 @@ static void
 bytevector_munmap(struct diag_bytevector *bv)
 {
 	assert(bv);
-	(void)munmap((void *)bv->data, bv->size);
+	struct diag_bytevector_ex *bve = (struct diag_bytevector_ex *)bv;
+	diag_munmap(bve->mm);
 }
 
 struct diag_bytevector *
 diag_bytevector_new_path(const char *path)
 {
-	struct diag_bytevector *bv;
-	int fd, r;
-	struct stat st;
-	size_t size;
-	uint8_t *data;
-
 	assert(path);
-	fd = open(path, O_RDONLY);
-	if (fd < 0) return NULL;
-	r = fstat(fd, &st);
-	if (r < 0) return NULL;
-	size = st.st_size;
-	data = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	close(fd);
-	if (data == MAP_FAILED) return NULL;
-	bv = diag_malloc(sizeof(struct diag_bytevector));
-	bv->size = size;
-	bv->data = data;
-	bv->finalize = bytevector_munmap;
-	return bv;
+	struct diag_mmap *mm = diag_mmap_file(path, DIAG_MMAP_RO);
+	if (!mm) return NULL;
+	struct diag_bytevector_ex *bve = diag_malloc(sizeof(*bve));
+	bve->size = mm->size;
+	bve->data = mm->addr;
+	bve->finalize = bytevector_munmap;
+	bve->mm = mm;
+	return (struct diag_bytevector *)bve;
 }
 
 char *

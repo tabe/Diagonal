@@ -7,18 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -27,8 +15,10 @@
 #include "diagonal/cmp.h"
 #include "diagonal/datum.h"
 #include "diagonal/deque.h"
-#include "diagonal/rbtree.h"
+#include "diagonal/line.h"
 #include "diagonal/metric.h"
+#include "diagonal/port.h"
+#include "diagonal/rbtree.h"
 #include "diagonal/cluster.h"
 
 #define THRESHOLD 10
@@ -49,35 +39,29 @@ usage(void)
 	diag_printf("diag-enc [-m metric] [-t threshold] [-1] file");
 }
 
-static void *
-map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
+static void map_file(const char *path, struct diag_rbtree *tree)
 {
-	int fd, r;
-	struct stat st;
-	size_t len;
-	char *p, *q;
+	struct diag_port *port;
+	char *p;
 
-	assert(path && tree);
-	fd = open(path, O_RDONLY);
-	if (fd < 0) diag_fatal("could not open file");
-	r = fstat(fd, &st);
-	if (r < 0) diag_fatal("could not stat file");
-	*plen = len = st.st_size;
-	p = q = (char *)mmap(NULL, len + 1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-	if (p == MAP_FAILED) diag_fatal("could not map file");
-	close(fd);
-	*(p + len) = '\0';
-	while (q < p + len) {
-		struct diag_rbtree_node *node = diag_rbtree_node_new((uintptr_t)(q - p), (uintptr_t)q);
-		diag_rbtree_insert(tree, node);
-		do {
-			if (*q == '\n') {
-				*q++ = '\0';
-				break;
-			}
-		} while (++q < p + len);
+	assert(tree);
+	if (path) {
+		port = diag_port_new_path(path, "r");
+		if (!port) diag_fatal("could not open file: %s", path);
+	} else {
+		port = diag_port_new_fp(stdin, DIAG_PORT_INPUT);
 	}
-	return (void *)p;
+	size_t n = 0;
+	struct diag_line_context *context = diag_line_context_new(port);
+	struct diag_rbtree_node *node;
+	for (;;) {
+		context = diag_line_read(context, NULL, &p);
+		if (DIAG_LINE_HAS_ERROR(context)) break;
+		node = diag_rbtree_node_new((uintptr_t)n++, (uintptr_t)p);
+		diag_rbtree_insert(tree, node);
+	}
+	diag_line_context_destroy(context);
+	diag_port_destroy(port);
 }
 
 static char **
@@ -286,19 +270,19 @@ display_codes(struct diag_analysis *analysis)
 			d = code->deltas[j];
 			switch (d->type) {
 			case DIAG_DELTA_REPLACE:
-				printf("\t[REPLACE:%zd:%c]\n", d->index, *((char *)d->value));
+				printf("\t[REPLACE:%ld:%c]\n", (long int)d->index, *((char *)d->value));
 				break;
 			case DIAG_DELTA_APPEND:
 				printf("\t[APPEND:%s]\n", (char *)d->value);
 				break;
 			case DIAG_DELTA_TRIM:
-				printf("\t[TRIM:%zd]\n", d->index);
+				printf("\t[TRIM:%ld]\n", (long int)d->index);
 				break;
 			case DIAG_DELTA_INSERT:
-				printf("\t[INSERT:%zd]\n", d->index);
+				printf("\t[INSERT:%ld]\n", (long int)d->index);
 				break;
 			case DIAG_DELTA_DELETE:
-				printf("\t[DELETE:%zd]\n", d->index);
+				printf("\t[DELETE:%ld]\n", (long int)d->index);
 				break;
 			default:
 				diag_fatal("unknown delta type: %d", d->type);
@@ -309,16 +293,23 @@ display_codes(struct diag_analysis *analysis)
 	}
 }
 
+static void free_attr(uintptr_t attr, void *data)
+{
+	(void)data;
+	diag_free((void *)attr);
+}
+
 int
 main(int argc, char *argv[])
 {
 	int c, t = THRESHOLD, one = 0;
 	diag_metric_t metric = diag_levenshtein_chars;
-	size_t len, num_entries, *parent;
-	void *p;
+	size_t num_entries, *parent;
 	struct diag_rbtree *tree, *comb;
 	char **entries;
 	unsigned int *occur;
+
+	diag_init();
 
 	if (argc < 2) {
 		usage();
@@ -368,13 +359,13 @@ main(int argc, char *argv[])
 	}
 
 	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
-	p = map_file(argv[optind], tree, &len);
+	map_file(argv[optind], tree);
 	entries = serialize_entries(tree, &num_entries);
 	diag_rbtree_destroy(tree);
 
 	comb = aggregate_combinations(entries, num_entries, metric);
 	parent = process_equivalence_relations(comb, num_entries, t, (one) ? NULL : &occur);
-	diag_rbtree_for_each_attr(comb, (diag_rbtree_callback_attr_t)diag_free);
+	diag_rbtree_for_each_attr(comb, free_attr, NULL);
 	diag_rbtree_destroy(comb);
 	if (parent) {
 		struct diag_analysis *analysis;
@@ -390,6 +381,5 @@ main(int argc, char *argv[])
 	diag_free(parent);
 	diag_free(occur);
 	diag_free(entries);
-	munmap(p, len + 1);
 	return EXIT_SUCCESS;
 }

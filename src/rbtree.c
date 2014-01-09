@@ -505,25 +505,25 @@ diag_rbtree_successor(const struct diag_rbtree_node *node)
 }
 
 void
-diag_rbtree_for_each(const struct diag_rbtree *tree, diag_rbtree_callback_t callback)
+diag_rbtree_for_each(const struct diag_rbtree *tree, diag_rbtree_callback_t callback, void *data)
 {
 	struct diag_rbtree_node *node;
 
 	node = diag_rbtree_minimum(tree);
 	if (!node) return;
 	do {
-		callback(node->key, node->attr);
+		callback(node->key, node->attr, data);
 	} while ( (node = diag_rbtree_successor(node)) );
 }
 
 void
-diag_rbtree_for_each_attr(const struct diag_rbtree *tree, diag_rbtree_callback_attr_t callback)
+diag_rbtree_for_each_attr(const struct diag_rbtree *tree, diag_rbtree_callback_attr_t callback, void *data)
 {
 	struct diag_rbtree_node *node;
 
 	node = diag_rbtree_minimum(tree);
 	if (!node) return;
 	do {
-		callback(node->attr);
+		callback(node->attr, data);
 	} while ( (node = diag_rbtree_successor(node)) );
 }

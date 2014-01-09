@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -37,12 +34,13 @@ int main(int argc, char *argv[])
 {
 	int c, ordered = 0;
 	uint32_t base = 107;
-	size_t len, size, s_window = 10;
+	size_t len, s_window = 10;
 	const char *output = NULL;
-	char *buf;
 	struct diag_port *port;
 	struct diag_rollinghash32 *rh;
 	uint32_t *result;
+
+	diag_init();
 
 	if (argc < 2) {
 		usage();
@@ -76,9 +74,13 @@ int main(int argc, char *argv[])
 		usage();
 		exit(EXIT_FAILURE);
 	}
-	size = diag_mmap_file(argv[optind], &buf);
-	if (size == 0) diag_fatal("file is empty: %s", argv[optind]);
-	rh = diag_rollinghash32_new_rabin_karp((const uint8_t *)buf, size, s_window, base);
+	struct diag_mmap *mm = diag_mmap_file(argv[optind], DIAG_MMAP_RO);
+	if (!mm) diag_fatal("could not map file: %s", argv[optind]);
+	if (mm->size == 0) {
+		diag_munmap(mm);
+		diag_fatal("file is empty: %s", argv[optind]);
+	}
+	rh = diag_rollinghash32_new_rabin_karp((const uint8_t *)mm->addr, mm->size, s_window, base);
 	result = diag_rollinghash32_collect(rh, &len);
 	if (ordered) {
 		qsort(result, len, sizeof(*result), cmp);
@@ -92,6 +94,6 @@ int main(int argc, char *argv[])
 	diag_port_destroy(port);
 	diag_free(result);
 	diag_rollinghash32_destroy(rh);
-	munmap(buf, size);
+	diag_munmap(mm);
 	return EXIT_SUCCESS;
 }

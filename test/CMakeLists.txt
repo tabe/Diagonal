@@ -13,6 +13,7 @@ set(subdirectories
     lcs
     levenshtein
     singlelinkage
+    system
     line
     list
     vcdiff

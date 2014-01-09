@@ -27,12 +27,14 @@ diag_line_context_new(struct diag_port *port)
 	context = diag_malloc(sizeof(struct diag_line_context));
 	context->port = port;
 	context->bufsize = DIAG_LINE_BUFSIZE;
+#ifdef _BSD_SOURCE
 	if (DIAG_PORT_FD_P(port)) {
 		struct stat st;
 		if (fstat(port->stream.fd, &st) == 0 && st.st_blksize > 0) {
 			context->bufsize = (size_t)st.st_blksize;
 		}
 	}
+#endif
 	context->buf = diag_malloc(context->bufsize);
 	context->head = context->sentinel = 0;
 	context->error = 0;

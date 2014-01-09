@@ -7,21 +7,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
 #include "diagonal.h"
 #include "diagonal/port.h"
+
+static const int BUFFER_LENGTH = 4096;
 
 static int
 read_byte_fd(struct diag_port *port, uint8_t *i)
@@ -187,12 +180,17 @@ static int
 read_bytes_bm(struct diag_port *port, size_t size, uint8_t *buf)
 {
 	assert(port && buf);
-	if (port->i_pos + size <= port->stream.bm.size) {
-		(void)memmove((void *)buf, (const void *)port->stream.bm.head + port->i_pos, size);
+	size_t len = port->stream.bm.size - port->i_pos;
+	if (size <= len) {
+		(void)memmove(buf, port->stream.bm.head + port->i_pos, size);
 		port->i_pos += size;
 		return 1;
+	} else {
+		(void)memmove(buf, port->stream.bm.head + port->i_pos, len);
+		port->i_pos += len;
+		return 0;
 	}
-	return 0;
+	return -1;
 }
 
 static int
@@ -315,6 +313,95 @@ diag_port_new_path(const char *path, const char *mode)
 	port = diag_port_new_fp(fp, flags);
 	port->close = close_fp;
 	return port;
+}
+
+ssize_t diag_port_copy(struct diag_port *iport, struct diag_port *oport)
+{
+	ssize_t pos = 0;
+	uint8_t *buf = diag_malloc(BUFFER_LENGTH);
+	int r = iport->read_bytes(iport, BUFFER_LENGTH, buf);
+	while (r > 0) {
+		int s = oport->write_bytes(oport, BUFFER_LENGTH, buf);
+		if (s < 0) {
+			pos = s;
+			goto done;
+		}
+		pos += BUFFER_LENGTH;
+		r = iport->read_bytes(iport, BUFFER_LENGTH, buf);
+	}
+	if (r < 0) {
+		pos = r;
+		goto done;
+	}
+	size_t len = iport->i_pos - pos;
+	if (len > 0) {
+		int s = oport->write_bytes(oport, len, buf);
+		if (s < 0) {
+			pos = s;
+			goto done;
+		}
+		pos += len;
+	}
+ done:
+	diag_free(buf);
+	return pos;
+}
+
+int diag_port_diff(struct diag_port *iport1, struct diag_port *iport2)
+{
+	int r = 0;
+	int r1;
+	int r2;
+	uint8_t *buf = diag_malloc(BUFFER_LENGTH * 2);
+	uint8_t *buf1 = buf;
+	uint8_t *buf2 = buf + BUFFER_LENGTH;
+	size_t pos1 = iport1->i_pos;
+	size_t pos2 = iport2->i_pos;
+	size_t len1;
+	size_t len2;
+
+ iter:
+	r1 = iport1->read_bytes(iport1, BUFFER_LENGTH, buf1);
+	if (r1 < 0) {
+		r = r1;
+		goto done;
+	}
+	r2 = iport2->read_bytes(iport2, BUFFER_LENGTH, buf2);
+	if (r2 < 0) {
+		r = r2;
+		goto done;
+	}
+	if (r1 != r2) {
+		r = 1;
+		goto done;
+	}
+	if (r1 == 1) {
+		assert(r2 == 1);
+		if (memcmp(buf1, buf2, BUFFER_LENGTH) != 0) {
+			r = 1;
+			goto done;
+		}
+		pos1 = iport1->i_pos;
+		pos2 = iport2->i_pos;
+		goto iter;
+	}
+	assert(r1 == 0 && r2 == 0);
+	len1 = iport1->i_pos - pos1;
+	len2 = iport2->i_pos - pos2;
+	if (len1 != len2) {
+		r = 1;
+		goto done;
+	}
+	if (len1 > 0) {
+		assert(len2 > 0);
+		if (memcmp(buf1, buf2, len1) != 0) {
+			r = 1;
+		}
+	}
+
+ done:
+	diag_free(buf);
+	return r;
 }
 
 void

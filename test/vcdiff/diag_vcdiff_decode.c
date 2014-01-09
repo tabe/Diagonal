@@ -6,6 +6,7 @@
 #include "diagonal/port.h"
 #include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
+#include "diagonal/private/filesystem.h"
 
 static void
 decode3(const char *source, const char *input, const char *output)
@@ -13,8 +14,6 @@ decode3(const char *source, const char *input, const char *output)
 	struct diag_vcdiff_context *context;
 	struct diag_vcdiff *vcdiff;
 	struct diag_vcdiff_vm *vm;
-	int fd, r;
-	struct stat st;
 	uint8_t *expected;
 	uint32_t i;
 
@@ -34,33 +33,20 @@ decode3(const char *source, const char *input, const char *output)
 		printf("failed to decode\n");
 		exit(EXIT_FAILURE);
 	}
-	fd = open(output, O_RDONLY);
-	if (fd < 0) {
-		printf("failed to open %s\n", output);
+	struct diag_mmap *mm = diag_mmap_file(output, DIAG_MMAP_RO);
+	if (!mm) diag_fatal("could not map file: %s", output);
+	if (vm->s_target != (uint32_t)mm->size) {
+		printf("mismatch found: expected size %d, but s_target %d\n", (uint32_t)mm->size, vm->s_target);
 		exit(EXIT_FAILURE);
 	}
-	r = fstat(fd, &st);
-	if (r < 0) {
-		printf("failed to stat %s\n", output);
-		exit(EXIT_FAILURE);
-	}
-	if (vm->s_target != (uint32_t)st.st_size) {
-		printf("mismatch found: expected size %d, but s_target %d\n", (uint32_t)st.st_size, vm->s_target);
-		exit(EXIT_FAILURE);
-	}
-	expected = (uint8_t *)mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	close(fd);
-	if (!expected) {
-		printf("failed to mmap %s\n", output);
-		exit(EXIT_FAILURE);
-	}
+	expected = (uint8_t *)mm->addr;
 	for (i = 0; i < vm->s_target; i++) {
 		if (vm->target[i] != expected[i]) {
 			printf("mismatch found: %c expected, but %c\n", expected[i], vm->target[i]);
 			exit(EXIT_FAILURE);
 		}
 	}
-	munmap(expected, st.st_size);
+	diag_munmap(mm);
 	diag_vcdiff_vm_destroy(vm);
 	diag_vcdiff_destroy(vcdiff);
 	diag_vcdiff_context_destroy(context);

@@ -6,8 +6,10 @@
 #include "diagonal/rbtree.h"
 
 static void
-count(uintptr_t attr)
+count(uintptr_t attr, void *data)
 {
+	(void)data;
+
 	static uintptr_t i = 0;
 
 	assert(attr == i);
@@ -26,7 +28,7 @@ main()
 		node = diag_rbtree_node_new(i, i);
 		diag_rbtree_insert(tree, node);
 	}
-	diag_rbtree_for_each_attr(tree, count);
+	diag_rbtree_for_each_attr(tree, count, NULL);
 	diag_rbtree_destroy(tree);
 	return EXIT_SUCCESS;
 }

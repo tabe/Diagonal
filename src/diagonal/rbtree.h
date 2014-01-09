@@ -2,8 +2,8 @@
 #ifndef DIAGONAL_RBTREE_H
 #define DIAGONAL_RBTREE_H
 
-typedef void (*diag_rbtree_callback_t)(uintptr_t key, uintptr_t attr);
-typedef void (*diag_rbtree_callback_attr_t)(uintptr_t attr);
+typedef void (*diag_rbtree_callback_t)(uintptr_t key, uintptr_t attr, void *data);
+typedef void (*diag_rbtree_callback_attr_t)(uintptr_t attr, void *data);
 
 struct diag_rbtree_node {
 	uintptr_t key;
@@ -42,8 +42,12 @@ DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_maximum(const struct diag_rbt
 DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_predecessor(const struct diag_rbtree_node *node);
 DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_successor(const struct diag_rbtree_node *node);
 
-DIAG_FUNCTION void diag_rbtree_for_each(const struct diag_rbtree *tree, diag_rbtree_callback_t callback);
-DIAG_FUNCTION void diag_rbtree_for_each_attr(const struct diag_rbtree *tree, diag_rbtree_callback_attr_t callback);
+DIAG_FUNCTION void diag_rbtree_for_each(const struct diag_rbtree *tree,
+					diag_rbtree_callback_t callback,
+					void *data);
+DIAG_FUNCTION void diag_rbtree_for_each_attr(const struct diag_rbtree *tree,
+					     diag_rbtree_callback_attr_t callback,
+					     void *data);
 
 DIAG_C_DECL_END
 

@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -26,6 +23,8 @@ static void usage(void)
 
 int main(int argc, char *argv[])
 {
+	diag_init();
+
 	int c;
 	long long count = 0;
 	size_t size;
@@ -63,7 +62,9 @@ int main(int argc, char *argv[])
 	if (count == 0) {
 		diag_fatal("please specify the count with the -c option");
 	}
-	size = diag_mmap_file(argv[optind], &buf);
+	struct diag_mmap *mm = diag_mmap_file(argv[optind], DIAG_MMAP_RO);
+	buf = mm->addr;
+	size = mm->size;
 	if (output) {
 		port = diag_port_new_path(output, "wb");
 	} else {
@@ -92,6 +93,6 @@ int main(int argc, char *argv[])
 	if (r > 0) port->write_bytes(port, (size_t)r, (const uint8_t *)p);
  done:
 	diag_port_destroy(port);
-	munmap(buf, size);
+	diag_munmap(mm);
 	return EXIT_SUCCESS;
 }

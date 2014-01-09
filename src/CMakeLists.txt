@@ -20,6 +20,7 @@ add_library(diagonal SHARED
             rbtree.c
             set.c
             singlelinkage.c
+            system.c
             trie.c
             vcdiff.c
             vector.c

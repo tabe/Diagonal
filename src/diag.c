@@ -96,6 +96,8 @@ print_commands(void)
 int
 main(int argc, char *argv[])
 {
+	diag_init();
+
 	char c, *e;
 	char *path1, *path2, *dir, *base;
 	const char *cmd;
@@ -141,11 +143,11 @@ main(int argc, char *argv[])
 	cmd = commands[found->i];
 
 	assert(argv[0]);
-	path1 = strdup(argv[0]);
+	path1 = diag_strdup(argv[0]);
 	if (!path1) {
 		diag_fatal("could not duplicate path");
 	}
-	path2 = strdup(argv[0]);
+	path2 = diag_strdup(argv[0]);
 	if (!path2) {
 		diag_fatal("could not duplicate path");
 	}
@@ -162,8 +164,8 @@ main(int argc, char *argv[])
 	} else if (DIAG_EXECUTABLE_PATH_MAX <= elen) {
 		diag_fatal("exceed DIAG_EXECUTABLE_PATH_MAX");
 	}
-	free(path1);
-	free(path2);
+	diag_free(path1);
+	diag_free(path2);
 	if (execvp(e, &argv[optind]) == -1) {
 		diag_free(e);
 		diag_fatal("failed to exec");

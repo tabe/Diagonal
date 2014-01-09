@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(DIAGONAL C)
 set(DIAGONAL_VERSION_MAJOR 0)
 set(DIAGONAL_VERSION_MINOR 0)
-set(DIAGONAL_VERSION_PATCH 1)
+set(DIAGONAL_VERSION_PATCH 2)
 
 include(CheckIncludeFile)
 # check required headers

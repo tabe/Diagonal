@@ -8,65 +8,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_WAIT_H
-#include <sys/wait.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
 #include "diagonal.h"
 #include "diagonal/port.h"
+#include "diagonal/private/system.h"
 
-#define BUFFER_LENGTH 1024
+static const int BUFFER_LENGTH = 4096;
 
-static void
-usage(void)
+static void usage(void)
 {
 	diag_printf("diag-cycle command [operand ...]");
 }
 
-static void
-execute_program(char *const argv[], int ifd[2], int ofd[2])
+int main(int argc, char *argv[])
 {
-	int r;
+	int c;
 
-	close(ifd[1]);
-	close(ofd[0]);
-	if (fcntl(ifd[0], F_SETFD, FD_CLOEXEC) < 0) {
-		_Exit(EXIT_FAILURE);
-	}
-	r = dup2(ifd[0], STDIN_FILENO);
-	if (r < 0) {
-		_Exit(EXIT_FAILURE);
-	}
-	if (fcntl(ofd[1], F_SETFD, FD_CLOEXEC) < 0) {
-		_Exit(EXIT_FAILURE);
-	}
-	r = dup2(ofd[1], STDOUT_FILENO);
-	if (r < 0) {
-		_Exit(EXIT_FAILURE);
-	}
-	if (execvp(argv[0], argv) == -1) {
-		_Exit(EXIT_FAILURE);
-	}
-}
-
-int
-main(int argc, char *argv[])
-{
-	int c, d, r, status;
-	pid_t pid1, pid2;
-	int ifd1[2], ifd2[2];
-	int ofd1[2], ofd2[2];
-	char *m1, *m2;
-	size_t s, s1, s2;
+	diag_init();
 
 	while ( (c = getopt(argc, argv, "+Vh")) >=0) {
 		switch (c) {
@@ -87,125 +48,79 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	/* 1st */
-	r = pipe(ifd1);
-	if (r < 0) {
+	struct diag_port *op0 = diag_port_new_path("diagonal0.out", "wb");
+	if (!op0) {
 		exit(EXIT_FAILURE);
 	}
-	r = pipe(ofd1);
-	if (r < 0) {
-		close(ifd1[0]);
-		close(ifd1[1]);
+	struct diag_port *ip = diag_port_new_fd(STDIN_FILENO, DIAG_PORT_INPUT);
+	assert(ip);
+	ssize_t s = diag_port_copy(ip, op0);
+	diag_port_destroy(ip);
+	diag_port_destroy(op0);
+	if (s < 0) {
 		exit(EXIT_FAILURE);
 	}
-	pid1 = fork();
-	if (pid1 < 0) {
-		exit(EXIT_FAILURE);
-	} else if (pid1 == 0) { /* child */
-		execute_program(argv+optind, ifd1, ofd1);
-	} else { /* parent */
-		struct diag_port *port;
 
-		close(ofd1[1]);
-		close(ifd1[0]);
-		s1 = BUFFER_LENGTH;
-		m1 = diag_malloc(s1);
-		s = 0;
-		port = diag_port_new_fd(ifd1[1], DIAG_PORT_OUTPUT);
-		while (read(STDIN_FILENO, (void *)m1+s, 1) > 0) {
-			port->write_byte(port, (uint8_t)m1[s]);
-			if (++s == s1) {
-				s1 += BUFFER_LENGTH;
-				m1 = diag_realloc(m1, s1);
-			}
-		}
-		diag_port_destroy(port);
-		close(ifd1[1]);
-		s1 = s;
-		m1 = (char *)diag_realloc((void *)m1, s1);
+	char *in = diag_strdup("diagonal0.out");
+	struct diag_command *cmd;
+
+ run:
+	cmd = diag_command_new(argv+optind, NULL, in, NULL, NULL);
+	if (!cmd) {
+		exit(EXIT_FAILURE);
+	}
+	struct diag_process *p = diag_run_program(cmd);
+	if (!p) {
+		diag_command_destroy(cmd);
+		exit(EXIT_FAILURE);
+	}
+	diag_process_wait(p);
+	int status = p->status;
+	diag_process_destroy(p);
+	if (status != 0) {
+		diag_command_destroy(cmd);
+		exit(p->status);
 	}
 
-#define RUN(x, y) do {							\
-		waitpid(pid##y, &status, 0);				\
-		if (!WIFEXITED(status)) {				\
-			exit(EXIT_FAILURE);				\
-		}							\
-		if (WEXITSTATUS(status) != EXIT_SUCCESS) {		\
-			exit(WEXITSTATUS(status));			\
-		}							\
-		r = pipe(ifd##x);					\
-		if (r < 0) {						\
-			close(ofd##y[0]);				\
-			close(ofd##y[1]);				\
-			exit(EXIT_FAILURE);				\
-		}							\
-		r = pipe(ofd##x);					\
-		if (r < 0) {						\
-			close(ofd##y[0]);				\
-			close(ofd##y[1]);				\
-			close(ifd##x[0]);				\
-			close(ifd##x[1]);				\
-			exit(EXIT_FAILURE);				\
-		}							\
-		pid##x = fork();					\
-		if (pid##x < 0) {					\
-			exit(EXIT_FAILURE);				\
-		} else if (pid##x == 0) { /* child */			\
-			execute_program(argv+optind, ifd##x, ofd##x);	\
-		} else { /* parent */					\
-			struct diag_port *port;				\
-									\
-			close(ofd##x[1]);				\
-			close(ifd##x[0]);				\
-			s##x = BUFFER_LENGTH;				\
-			m##x = diag_malloc(s##x);			\
-			s = 0;						\
-			port = diag_port_new_fd(ifd##x[1], DIAG_PORT_OUTPUT); \
-			while (read(ofd##y[0], (void *)m##x+s, 1) > 0) { \
-				if (port->write_byte(port, m##x[s]) < 1) { \
-					exit(EXIT_FAILURE);		\
-				}					\
-				if (++s == s##x) {			\
-					s##x += BUFFER_LENGTH;		\
-					m##x = (char *)diag_realloc((void *)m##x, s##x); \
-				}					\
-			}						\
-			diag_port_destroy(port);			\
-			close(ifd##x[1]);				\
-			s##x = s;					\
-			m##x = (char *)diag_realloc((void *)m##x, s##x); \
-			close(ofd##y[0]);				\
-			if (s##x == s##y) {				\
-				d = 0;					\
-				for (s = 0; s < s##x; s++) {		\
-					if (m##x[s] != m##y[s]) {	\
-						d = 1;			\
-						break;			\
-					}				\
-				}					\
-				if (!d) {				\
-					struct diag_port *port;		\
-									\
-					kill(pid##x, SIGINT);		\
-					waitpid(pid##x, NULL, 0);	\
-					port = diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT); \
-					r = port->write_bytes(port, s##x, (uint8_t *)m##x); \
-					diag_port_destroy(port);	\
-					if (r <= 0) {			\
-						exit(EXIT_FAILURE);	\
-					}				\
-					exit(EXIT_SUCCESS);		\
-				}					\
-			}						\
-		}							\
-	} while (0)
+	struct diag_port *pp;
+	struct diag_port *cp;
+	pp = diag_port_new_path(in, "rb");
+	if (!pp) {
+		diag_command_destroy(cmd);
+		exit(EXIT_FAILURE);
+	}
+	cp = diag_port_new_path(cmd->out, "rb");
+	if (!cp) {
+		diag_port_destroy(pp);
+		diag_command_destroy(cmd);
+		exit(EXIT_FAILURE);
+	}
+	int r = diag_port_diff(pp, cp);
+	diag_port_destroy(cp);
+	diag_port_destroy(pp);
+	if (r == 1) {
+		diag_free(in);
+		in = diag_strdup(cmd->out);
+		diag_command_destroy(cmd);
+		goto run;
+	}
+	if (r == -1) {
+		exit(EXIT_FAILURE);
+	}
 
- loop:
-	/* 2nd */
-	RUN(2, 1);
-	/* 3rd */
-	RUN(1, 2);
-	goto loop;
-
+	cp = diag_port_new_path(in, "rb");
+	if (!cp) {
+		diag_free(in);
+		exit(EXIT_FAILURE);
+	}
+	diag_free(in);
+	struct diag_port *op = diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT);
+	assert(op);
+	s = diag_port_copy(cp, op);
+	diag_port_destroy(cp);
+	diag_port_destroy(op);
+	if (s < 0) {
+		exit(EXIT_FAILURE);
+	}
 	return EXIT_SUCCESS;
 }

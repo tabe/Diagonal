@@ -48,60 +48,29 @@ static void usage(void)
 	diag_printf("diag-line [-m metric] [-t threshold] [-1] [file]");
 }
 
-static void *map_file(const char *path, struct diag_rbtree *tree, size_t *plen)
+static void map_file(const char *path, struct diag_rbtree *tree)
 {
-	int fd, r;
-	struct stat st;
-	size_t len;
-	char *p, *q;
+	struct diag_port *port;
+	char *p;
 
 	assert(tree);
 	if (path) {
-		fd = open(path, O_RDONLY);
-		if (fd < 0) diag_fatal("could not open file");
+		port = diag_port_new_path(path, "r");
+		if (!port) diag_fatal("could not open file: %s", path);
 	} else {
-		fd = STDIN_FILENO;
+		port = diag_port_new_fp(stdin, DIAG_PORT_INPUT);
 	}
-	r = fstat(fd, &st);
-	if (r < 0) diag_fatal("could not stat file");
-	*plen = len = st.st_size;
-	if (S_ISREG(st.st_mode) && len == 0) {
-		diag_rbtree_destroy(tree);
-		exit(EXIT_SUCCESS);
+	size_t n = 0;
+	struct diag_line_context *context = diag_line_context_new(port);
+	struct diag_rbtree_node *node;
+	for (;;) {
+		context = diag_line_read(context, NULL, &p);
+		if (DIAG_LINE_HAS_ERROR(context)) break;
+		node = diag_rbtree_node_new((uintptr_t)n++, (uintptr_t)p);
+		diag_rbtree_insert(tree, node);
 	}
-	p = q = (char *)mmap(NULL, len + 1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-	if (p == MAP_FAILED) {
-		struct diag_port *port;
-		struct diag_line_context *context;
-		struct diag_rbtree_node *node;
-		size_t n = 0;
-
-		port = diag_port_new_fd(fd, DIAG_PORT_INPUT);
-		context = diag_line_context_new(port);
-		for (;;) {
-			context = diag_line_read(context, NULL, &q);
-			if (DIAG_LINE_HAS_ERROR(context)) break;
-			node = diag_rbtree_node_new((uintptr_t)n++, (uintptr_t)q);
-			diag_rbtree_insert(tree, node);
-		}
-		diag_line_context_destroy(context);
-		diag_port_destroy(port);
-		close(fd);
-	} else {
-		close(fd);
-		*(p + len) = '\0';
-		while (q < p + len) {
-			struct diag_rbtree_node *node = diag_rbtree_node_new((uintptr_t)(q - p), (uintptr_t)q);
-			diag_rbtree_insert(tree, node);
-			do {
-				if (*q == '\n') {
-					*q++ = '\0';
-					break;
-				}
-			} while (++q < p + len);
-		}
-	}
-	return (void *)p;
+	diag_line_context_destroy(context);
+	diag_port_destroy(port);
 }
 
 static char **serialize_entries(const struct diag_rbtree *tree,
@@ -273,11 +242,11 @@ static void display_groups(char **entries, register unsigned int num_entries,
 
 int main(int argc, char *argv[])
 {
+	diag_init();
+
 	int c, t = THRESHOLD, one = 0;
 	int field_width;
 	diag_emetric_t metric = diag_ehamming_chars;
-	size_t len;
-	void *p;
 #if 1
 	struct diag_rbtree *tree;
 #else
@@ -326,7 +295,7 @@ int main(int argc, char *argv[])
 	}
 
 	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
-	p = map_file(argv[optind], tree, &len);
+	map_file(argv[optind], tree);
 	entries = serialize_entries(tree, &num_entries);
 	diag_rbtree_destroy(tree);
 	if (!entries) goto done;
@@ -351,6 +320,5 @@ int main(int argc, char *argv[])
 	diag_free(occur);
 	diag_free(entries);
  done:
-	if (p != MAP_FAILED) munmap(p, len + 1);
 	return EXIT_SUCCESS;
 }

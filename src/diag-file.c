@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -33,15 +30,17 @@ static uintptr_t hamming(intptr_t a, intptr_t b)
 
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
-	if (x->tag < y->tag) {
-		smin = (size_t)(x->tag>>1);
-		smax = (size_t)(y->tag>>1);
+	const struct diag_mmap *xmm = (const struct diag_mmap *)x->value;
+	const struct diag_mmap *ymm = (const struct diag_mmap *)y->value;
+	if (xmm->size < ymm->size) {
+		smin = xmm->size;
+		smax = ymm->size;
 	} else {
-		smin = (size_t)(y->tag>>1);
-		smax = (size_t)(x->tag>>1);
+		smin = ymm->size;
+		smax = xmm->size;
 	}
 	for (i = 0; i < smin; i++) {
-		if (((char *)x->value)[i] != ((char *)y->value)[i]) d++;
+		if (((char *)xmm->addr)[i] != ((char *)ymm->addr)[i]) d++;
 	}
 	return d + (smax - smin);
 }
@@ -55,8 +54,10 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 	dx = (const struct diag_datum *)x;
 	dy = (const struct diag_datum *)y;
 	assert(dx && dy);
-	lx = (size_t)(dx->tag>>1);
-	ly = (size_t)(dy->tag>>1);
+	const struct diag_mmap *xmm = (const struct diag_mmap *)dx->value;
+	const struct diag_mmap *ymm = (const struct diag_mmap *)dy->value;
+	lx = xmm->size;
+	ly = xmm->size;
 	if (lx == 0) return ly;
 	if (ly == 0) return lx;
 	if (lx < ly) {
@@ -77,8 +78,8 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 			k = j + 1;
 			a = new[j] + 1;
 			b = cur[k] + 1;
-			cx = ((char *)dx->value)[i];
-			cy = ((char *)dy->value)[j];
+			cx = ((char *)xmm->addr)[i];
+			cy = ((char *)ymm->addr)[j];
 			c = cur[j] + ((cx == cy) ? 0 : 1);
 			d = (a < b) ? a : b;
 			d = (c < d) ? c : d;
@@ -101,11 +102,13 @@ static uintptr_t hash32(intptr_t a, intptr_t b)
 
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
-	lx = (size_t)x->tag>>3;
-	ly = (size_t)y->tag>>3;
-	p = (uint32_t *)x->value;
+	const struct diag_mmap *xmm = (const struct diag_mmap *)x->value;
+	const struct diag_mmap *ymm = (const struct diag_mmap *)y->value;
+	lx = xmm->size>>2; /* number of 32 bits words */
+	ly = ymm->size>>2; /* number of 32 bits words */
+	p = (uint32_t *)xmm->addr;
 	pe = p + lx;
-	q = (uint32_t *)y->value;
+	q = (uint32_t *)ymm->addr;
 	qe = q + ly;
 	while (p < pe && q < qe) {
 		if (*p < *q) {
@@ -128,11 +131,13 @@ static uintptr_t hash32_rev(intptr_t a, intptr_t b)
 
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
-	lx = (size_t)x->tag>>3;
-	ly = (size_t)y->tag>>3;
-	p = (uint32_t *)x->value;
+	const struct diag_mmap *xmm = (const struct diag_mmap *)x->value;
+	const struct diag_mmap *ymm = (const struct diag_mmap *)y->value;
+	lx = xmm->size>>2; /* number of 32 bits words */
+	ly = ymm->size>>2; /* number of 32 bits words */
+	p = (uint32_t *)xmm->addr;
 	pe = p + lx;
-	q = (uint32_t *)y->value;
+	q = (uint32_t *)ymm->addr;
 	qe = q + ly;
 	while (p < pe && q < qe) {
 		if (*p < *q) {
@@ -172,24 +177,17 @@ static void usage(void)
 
 static void finalize(struct diag_datum *d)
 {
-	size_t len;
-
-	len = (size_t)(d->tag>>1);
-	munmap((char *)d->value, len);
+	diag_munmap((struct diag_mmap *)d->value);
 }
 
 static struct diag_datum *at(size_t i, struct diag_dataset *ds)
 {
-	struct diag_customized_datum *d;
-	char **entries, *p = NULL;
-	size_t len;
-
-	entries = (char **)ds->attic;
-	len = diag_mmap_file(entries[i], &p);
-	d = diag_customized_datum_create((uintptr_t)entries[i],
-					 (intptr_t)p,
-					 finalize);
-	d->tag |= (uint64_t)len<<1;
+	char **entries = (char **)ds->attic;
+	struct diag_mmap *mm = diag_mmap_file(entries[i], DIAG_MMAP_RO);
+	if (!mm) diag_fatal("could not map file: %s", entries[i]);
+	struct diag_customized_datum *d = diag_customized_datum_create((uintptr_t)entries[i],
+								       (intptr_t)mm,
+								       finalize);
 	return (struct diag_datum *)d;
 }
 
@@ -205,6 +203,8 @@ int main(int argc, char *argv[])
 	struct diag_set *clusters, *cluster;
 	char **args = NULL, **entries, *dst = NULL;
 	size_t i, j, num_entries, *num_leaves;
+
+	diag_init();
 
 	if (argc < 2) {
 		usage();
@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 	if (!entries) {
 		exit(EXIT_FAILURE);
 	}
-	printf("number of entries: %zd\n", num_entries);
+	printf("number of entries: %ld\n", (long int)num_entries);
 	fflush(stdout);
 	ds = diag_dataset_create(at, (intptr_t)entries);
 	ds->size = num_entries;
@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < clusters->size; i++) {
 		cluster = (struct diag_set *)clusters->arr[i];
 		if (one || num_leaves[i] > 1) {
-			printf("= cluster %zd:\n", i);
+			printf("= cluster %ld:\n", (long int)i);
 			for (j = 0; j < cluster->size; j++) {
 				size_t k = (size_t)cluster->arr[j];
 				if (k < ds->size) printf("%s\n", entries[k]);
@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
 	diag_singlelinkage_destroy(sl);
 	diag_dataset_destroy(ds);
 	for (i = 0; i < num_entries; i++) {
-		free(entries[i]); /* free memory given by strdup() */
+		diag_free(entries[i]);
 	}
 	diag_free(entries);
 	if (input) {

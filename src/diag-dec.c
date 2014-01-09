@@ -41,6 +41,8 @@ main(int argc, char *argv[])
 	struct diag_vcdiff_context *context;
 	struct diag_vcdiff_vm *vm;
 
+	diag_init();
+
 	while ( (c = getopt(argc, argv, "Vhs:t:")) >= 0) {
 		switch (c) {
 		case 'V':
@@ -84,7 +86,14 @@ main(int argc, char *argv[])
 		ssize_t s;
 
 		if (path_target) {
-			fd = open(path_target, O_CREAT|O_WRONLY|O_TRUNC, S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
+			fd = open(path_target, O_CREAT|O_WRONLY|O_TRUNC, S_IWUSR|S_IRUSR
+#ifdef S_IRGRP
+				  |S_IRGRP
+#endif
+#ifdef S_IROTH
+				  |S_IROTH
+#endif
+				  );
 			if (fd < 0) {
 				perror(strerror(errno));
 				exit(EXIT_FAILURE);

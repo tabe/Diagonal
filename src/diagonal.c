@@ -5,12 +5,34 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#if defined(_WIN32) && defined(__MINGW32__)
+#include <fcntl.h>
+#include <io.h>
+#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
 #include "diagonal.h"
+
+void diag_init(void)
+{
+#if defined(_WIN32) && defined(__MINGW32__)
+	int r;
+
+	r = _setmode(_fileno(stdin), _O_BINARY);
+	if (r == -1) {
+		perror("failed to set mode");
+	}
+	r = _setmode(_fileno(stdout), _O_BINARY);
+	if (r == -1) {
+		perror("failed to set mode");
+	}
+#endif
+}
 
 void
 diag_print_version(void)
@@ -148,4 +170,14 @@ void
 diag_free(void *ptr)
 {
 	free(ptr);
+}
+
+char *diag_strdup(const char *s)
+{
+	assert(s);
+	size_t len = strlen(s);
+	char *r = diag_malloc(len + 1);
+	memcpy(r, s, len);
+	r[len] = '\0'; /* NULL-terminated */
+	return r;
 }
