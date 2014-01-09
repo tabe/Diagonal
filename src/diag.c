@@ -217,8 +217,7 @@ main(int argc, char *argv[])
 	found = bsearch(&cv, command_variations, NUM_OF_COMMAND_VARIATIONS,
 			sizeof(struct diag_command_variation), cmpcmd);
 	if (!found) {
-		usage();
-		exit(EXIT_FAILURE);
+		diag_fatal("unknown command: %s", cv.name);
 	}
 	assert(found->i < NUM_OF_COMMANDS);
 	cmd = commands[found->i];
