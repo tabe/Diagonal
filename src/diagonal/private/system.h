@@ -26,6 +26,8 @@ DIAG_FUNCTION struct diag_command *diag_command_new(char **argv,
 
 DIAG_FUNCTION void diag_command_destroy(struct diag_command *);
 
+DIAG_FUNCTION char *diag_get_command_line(char **argv);
+
 DIAG_FUNCTION struct diag_process *diag_run_program(struct diag_command *);
 
 DIAG_FUNCTION void diag_process_wait(struct diag_process *);

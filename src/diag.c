@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(_WIN32) && defined(__MINGW32__)
+#include <process.h>
+#include <windows.h>
+#endif
+
 #ifdef HAVE_LIBGEN_H
 #include <libgen.h>
 #endif
@@ -15,6 +20,7 @@
 #endif
 
 #include "diagonal.h"
+#include "diagonal/private/system.h"
 
 #define DIAG_EXECUTABLE_PATH_MAX 1024
 
@@ -94,6 +100,79 @@ print_commands(void)
 	}
 }
 
+#if defined(_WIN32) && defined(__MINGW32__)
+
+static void run_command(char *e, char **argv) {
+	if (strlen(e) + 4 > DIAG_EXECUTABLE_PATH_MAX) {
+		diag_fatal("exceed DIAG_EXECUTABLE_PATH_MAX");
+	}
+	strcat(e, ".exe");
+	argv[0] = e;
+
+	SECURITY_ATTRIBUTES sa;
+	sa.nLength = sizeof(sa);
+	sa.bInheritHandle = TRUE;
+	sa.lpSecurityDescriptor = NULL;
+
+	STARTUPINFO si;
+	GetStartupInfo(&si);
+	si.dwFlags |= STARTF_USESTDHANDLES;
+	si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+	si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&pi, sizeof(pi));
+
+	char *line = diag_get_command_line(argv);
+
+	BOOL b = CreateProcess(e,
+			       line,
+			       NULL,
+			       NULL,
+			       TRUE,
+			       0,
+			       NULL,
+			       NULL,
+			       &si,
+			       &pi);
+	if (!b) {
+		diag_error("failed to create process: %s: %x",
+			   line,
+			   (unsigned int)GetLastError());
+		// should follow GetLastError()
+		diag_free(line);
+		exit(EXIT_FAILURE);
+	}
+
+	/* We do not want WaitForInputIdle() because there is no interaction
+	   between the parent process and this child */
+
+	diag_free(line);
+	CloseHandle(pi.hThread);
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	DWORD code = EXIT_FAILURE;
+	if (GetExitCodeProcess(pi.hProcess, &code) == 0) {
+		diag_error("failed to get exit code: %x",
+			   (unsigned int)GetLastError());
+	}
+	CloseHandle(pi.hProcess);
+	exit(code);
+}
+
+#elif defined(HAVE_UNISTD_H)
+
+static void run_command(char *e, char **argv) {
+	argv[0] = e;
+	if (execvp(e, argv) == -1) {
+		diag_free(e);
+		diag_fatal("failed to exec");
+	}
+}
+
+#endif
+
 int
 main(int argc, char *argv[])
 {
@@ -168,9 +247,7 @@ main(int argc, char *argv[])
 	}
 	diag_free(path1);
 	diag_free(path2);
-	if (execvp(e, &argv[optind]) == -1) {
-		diag_free(e);
-		diag_fatal("failed to exec");
-	}
+
+	run_command(e, &argv[optind]);
 	return EXIT_SUCCESS;
 }

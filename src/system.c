@@ -38,10 +38,6 @@ static void build_path(const char *dir, int pid, const char *ext, char *path)
 	if (PATH_LENGTH <= len) diag_fatal("exceed PATH_LENGTH");
 }
 
-#if defined(_WIN32) && defined(__MINGW32__)
-
-static int local_pid = 100;
-
 static int contains_space(const char *s)
 {
 	size_t i;
@@ -50,8 +46,6 @@ static int contains_space(const char *s)
 	}
 	return 0;
 }
-
-#endif
 
 /* API */
 
@@ -121,7 +115,40 @@ void diag_command_destroy(struct diag_command *command)
 	diag_free(command);
 }
 
+char *diag_get_command_line(char **argv)
+{
+	assert(argv);
+
+	char *line = diag_malloc(32768);
+	char *lp = line;
+	int i;
+	for (i = 0; argv[i]; i++) {
+		const char *s = argv[i];
+		int slen = (int)strlen(s);
+		if (lp + slen >= line + 32768) {
+			diag_free(line);
+			return NULL;
+		}
+		if (i > 0) {
+			*lp++ = ' ';
+		}
+		if (contains_space(s)) {
+			*lp++ = '"';
+			strcpy(lp, s);
+			lp += slen;
+			*lp++ = '"';
+		} else {
+			strcpy(lp, s);
+			lp += slen;
+		}
+	}
+	*lp = '\0';
+	return line;
+}
+
 #if defined(_WIN32) && defined(__MINGW32__)
+
+static int local_pid = 100;
 
 struct diag_process *diag_run_program(struct diag_command *command)
 {
@@ -191,30 +218,7 @@ struct diag_process *diag_run_program(struct diag_command *command)
 	PROCESS_INFORMATION pi;
 	ZeroMemory(&pi, sizeof(pi));
 
-	char *line = diag_malloc(32768);
-	char *lp = line;
-	int i;
-	for (i = 0; command->argv[i]; i++) {
-		const char *s = command->argv[i];
-		int slen = (int)strlen(s);
-		if (lp + slen >= line + 32768) {
-			diag_free(line);
-			return NULL;
-		}
-		if (i > 0) {
-			*lp++ = ' ';
-		}
-		if (contains_space(s)) {
-			*lp++ = '"';
-			strcpy(lp, s);
-			lp += slen;
-			*lp++ = '"';
-		} else {
-			strcpy(lp, s);
-			lp += slen;
-		}
-	}
-	*lp = '\0';
+	char *line = diag_get_command_line(command->argv);
 
 	BOOL b = CreateProcess(NULL,
 			       line,
