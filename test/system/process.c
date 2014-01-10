@@ -6,7 +6,8 @@
 
 static char *ARGV[] = {
 	"date",
-	"+%Y%m%d"
+	"+%Y%m%d",
+	NULL
 };
 
 int main(void)

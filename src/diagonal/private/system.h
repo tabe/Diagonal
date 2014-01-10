@@ -18,6 +18,9 @@ struct diag_process {
 
 DIAG_C_DECL_BEGIN
 
+/*
+ * `argv' must be NULL-terminated.
+ */
 DIAG_FUNCTION struct diag_command *diag_command_new(char **argv,
 						    const char *dir,
 						    const char *in,
