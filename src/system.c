@@ -61,13 +61,13 @@ struct diag_command *diag_command_new(char **argv,
 	command->argv = diag_calloc(argc + 1, sizeof(char *));
 	int i;
 	for (i = 0; i < argc; i++) {
-		command->argv[i] = strdup(argv[i]);
+		command->argv[i] = diag_strdup(argv[i]);
 	}
 	command->argv[argc] = NULL; /* NULL-terminated */
 	command->file = argv[0];
 
 	if (dir) {
-		command->dir = strdup(dir);
+		command->dir = diag_strdup(dir);
 	} else {
 		command->dir = diag_malloc(PATH_LENGTH);
 		char *p;
@@ -83,17 +83,17 @@ struct diag_command *diag_command_new(char **argv,
 	}
 
 	if (in) {
-		command->in = strdup(in);
+		command->in = diag_strdup(in);
 	} else {
 		command->in = NULL;
 	}
 	if (out) {
-		command->out = strdup(out);
+		command->out = diag_strdup(out);
 	} else {
 		command->out = NULL;
 	}
 	if (err) {
-		command->err = strdup(err);
+		command->err = diag_strdup(err);
 	} else {
 		command->err = NULL;
 	}
@@ -105,7 +105,7 @@ void diag_command_destroy(struct diag_command *command)
 	if (!command) return;
 	int i;
 	for (i = 0; command->argv[i]; i++) {
-		free(command->argv[i]);
+		diag_free(command->argv[i]);
 	}
 	diag_free(command->argv);
 	diag_free(command->dir);
