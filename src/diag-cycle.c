@@ -16,8 +16,6 @@
 #include "diagonal/port.h"
 #include "diagonal/private/system.h"
 
-static const int BUFFER_LENGTH = 4096;
-
 static void usage(void)
 {
 	diag_printf("diag-cycle command [operand ...]");

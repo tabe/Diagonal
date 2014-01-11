@@ -25,7 +25,6 @@
 #include "diagonal/private/system.h"
 
 #define NUMBER_OF_TRIALS 5
-#define PATH_LENGTH 1024
 #define BUFFER_LENGTH 256
 
 #define DECIMAL_P(x) ( ('0' <= (x) && (x) <= '9') || (x) == '.')
