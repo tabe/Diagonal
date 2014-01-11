@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	if (!op0) {
 		exit(EXIT_FAILURE);
 	}
-	struct diag_port *ip = diag_port_new_fd(STDIN_FILENO, DIAG_PORT_INPUT);
+	struct diag_port *ip = diag_port_new_stdin();
 	assert(ip);
 	ssize_t s = diag_port_copy(ip, op0);
 	diag_port_destroy(ip);
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	diag_free(in);
-	struct diag_port *op = diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT);
+	struct diag_port *op = diag_port_new_stdout();
 	assert(op);
 	s = diag_port_copy(cp, op);
 	diag_port_destroy(cp);

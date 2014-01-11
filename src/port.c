@@ -315,6 +315,16 @@ diag_port_new_path(const char *path, const char *mode)
 	return port;
 }
 
+struct diag_port *diag_port_new_stdin(void)
+{
+	return diag_port_new_fd(STDIN_FILENO, DIAG_PORT_INPUT);
+}
+
+struct diag_port *diag_port_new_stdout(void)
+{
+	return diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT);
+}
+
 ssize_t diag_port_copy(struct diag_port *iport, struct diag_port *oport)
 {
 	ssize_t pos = 0;

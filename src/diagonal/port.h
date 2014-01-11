@@ -45,6 +45,9 @@ DIAG_FUNCTION struct diag_port *diag_port_new_fp(FILE *fp, uint8_t flags);
 DIAG_FUNCTION struct diag_port *diag_port_new_bm(uint8_t *head, uint32_t size, uint8_t flags);
 DIAG_FUNCTION struct diag_port *diag_port_new_path(const char *path, const char *mode);
 
+DIAG_FUNCTION struct diag_port *diag_port_new_stdin(void);
+DIAG_FUNCTION struct diag_port *diag_port_new_stdout(void);
+
 /*
  * Copy the content of `iport' into `oport'.
  * Return the length of copied bytes (>= 0) in case of success,
