@@ -302,15 +302,19 @@ struct diag_process *diag_run_program(struct diag_command *command)
 			command->err = err;
 		}
 		if (!freopen(command->in, "rb", stdin)) {
+			perror(command->in);
 			_Exit(EXIT_FAILURE);
 		}
 		if (!freopen(command->out, "wb", stdout)) {
+			perror(command->out);
 			_Exit(EXIT_FAILURE);
 		}
 		if (!freopen(command->err, "wb", stderr)) {
+			perror(command->err);
  			_Exit(EXIT_FAILURE);
 		}
 		if (execvp(command->file, command->argv) == -1) {
+			perror(command->file);
 			_Exit(EXIT_FAILURE);
 		}
 	}
