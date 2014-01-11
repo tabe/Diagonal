@@ -81,7 +81,8 @@ int main(int argc, char *argv[])
 	diag_process_destroy(p);
 	if (status != 0) {
 		diag_command_destroy(cmd);
-		exit(p->status);
+		diag_free(in);
+		exit(status);
 	}
 
 	struct diag_port *pp;
