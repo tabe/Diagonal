@@ -7,12 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -22,6 +16,7 @@
 #include "diagonal/deque.h"
 #include "diagonal/port.h"
 #include "diagonal/rbtree.h"
+#include "diagonal/private/filesystem.h"
 #include "diagonal/private/system.h"
 
 #define NUMBER_OF_TRIALS 5
@@ -274,6 +269,14 @@ wait_callback(uintptr_t key, uintptr_t attr, void *data)
 	diag_process_destroy(process);
 }
 
+static void assert_dir(const char *dir)
+{
+	int r = diag_is_directory(dir);
+	if (r == 1) return;
+	else if (r == 0) diag_fatal("%s is not a directory", dir);
+	else diag_fatal("could not stat %s", dir);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -286,19 +289,6 @@ main(int argc, char *argv[])
 	char **opaths, **epaths;
 
 	diag_init();
-
-#define CHECK_DIR() do {						\
-		struct stat st;						\
-		if (!dir) {						\
-			diag_fatal("could not allocate memory");	\
-		}							\
-		if (stat(dir, &st) < 0) {				\
-			diag_fatal("could not stat %s", dir);		\
-		}							\
-		if (!S_ISDIR(st.st_mode)) {				\
-			diag_fatal("%s is not a directory", dir);	\
-		}							\
-	} while (0)
 
 	while ( (c = getopt(argc, argv, "+Vhn:o:")) >= 0) {
 		switch (c) {
@@ -321,7 +311,7 @@ main(int argc, char *argv[])
 		case 'o':
 			leave_output = 1;
 			dir = diag_strdup(optarg);
-			CHECK_DIR();
+			assert_dir(dir);
 			break;
 		case ':':
 		case '?':
@@ -340,7 +330,7 @@ main(int argc, char *argv[])
 
 		tmpdir = getenv("TMPDIR");
 		dir = diag_strdup((tmpdir) ? tmpdir : ".");
-		CHECK_DIR();
+		assert_dir(dir);
 	}
 
 #define FAIL() do {							\

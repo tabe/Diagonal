@@ -17,6 +17,12 @@ enum diag_mmap_mode {
 
 DIAG_C_DECL_BEGIN
 
+/*
+ * Return 1 if `path' is a directory, 0 otherwise.
+ * Return -1 in case of error.
+ */
+DIAG_FUNCTION int diag_is_directory(const char *path);
+
 DIAG_FUNCTION char **diag_paths(char **paths, size_t *);
 
 DIAG_FUNCTION struct diag_mmap *diag_mmap_file(const char *path, enum diag_mmap_mode mode);

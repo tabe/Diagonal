@@ -162,6 +162,19 @@ static char **serialize_entries(const struct diag_rbtree *tree,
 
 /* API */
 
+int diag_is_directory(const char *path)
+{
+	assert(path);
+
+	struct stat st;
+	int r = stat(path, &st);
+	if (r == 0) {
+		return S_ISDIR(st.st_mode) ? 1 : 0;
+	}
+	perror(path);
+	return r;
+}
+
 char **diag_paths(char **paths, size_t *num_entries)
 {
 	struct diag_rbtree *tree;
