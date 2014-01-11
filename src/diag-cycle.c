@@ -69,11 +69,13 @@ int main(int argc, char *argv[])
  run:
 	cmd = diag_command_new(argv+optind, NULL, in, NULL, NULL);
 	if (!cmd) {
+		diag_free(in);
 		exit(EXIT_FAILURE);
 	}
 	struct diag_process *p = diag_run_program(cmd);
 	if (!p) {
 		diag_command_destroy(cmd);
+		diag_free(in);
 		exit(EXIT_FAILURE);
 	}
 	diag_process_wait(p);
@@ -90,12 +92,14 @@ int main(int argc, char *argv[])
 	pp = diag_port_new_path(in, "rb");
 	if (!pp) {
 		diag_command_destroy(cmd);
+		diag_free(in);
 		exit(EXIT_FAILURE);
 	}
 	cp = diag_port_new_path(cmd->out, "rb");
 	if (!cp) {
 		diag_port_destroy(pp);
 		diag_command_destroy(cmd);
+		diag_free(in);
 		exit(EXIT_FAILURE);
 	}
 	int r = diag_port_diff(pp, cp);
@@ -107,7 +111,9 @@ int main(int argc, char *argv[])
 		diag_command_destroy(cmd);
 		goto run;
 	}
+	diag_command_destroy(cmd);
 	if (r == -1) {
+		diag_free(in);
 		exit(EXIT_FAILURE);
 	}
 
