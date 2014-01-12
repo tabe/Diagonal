@@ -17,10 +17,10 @@ main()
 	ASSERT_TRUE(DIAG_PORT_INPUT_P(port));
 	ASSERT_FALSE(DIAG_PORT_OUTPUT_P(port));
 	ASSERT_TRUE(DIAG_PORT_FP_P(port));
-	ASSERT_EQ_INT(1, port->read_byte(port, &b));
+	ASSERT_EQ_INT(1, diag_port_read_byte(port, &b));
 	ASSERT_EQ_UINT8(47, b); /* '/' */
 	ASSERT_EQ_SIZE(1, port->i_pos);
-	ASSERT_EQ_INT(1, port->read_bytes(port, BUFLEN, buf));
+	ASSERT_EQ_INT(1, diag_port_read_bytes(port, BUFLEN, buf));
 	ASSERT_EQ_UINT8(42, buf[0]); /* '*' */
 	ASSERT_EQ_UINT8(32, buf[1]); /* ' ' */
 	ASSERT_EQ_SIZE(3, port->i_pos);

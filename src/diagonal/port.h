@@ -48,6 +48,11 @@ DIAG_FUNCTION struct diag_port *diag_port_new_path(const char *path, const char 
 DIAG_FUNCTION struct diag_port *diag_port_new_stdin(void);
 DIAG_FUNCTION struct diag_port *diag_port_new_stdout(void);
 
+DIAG_FUNCTION int diag_port_read_byte(struct diag_port *port, uint8_t *i);
+DIAG_FUNCTION int diag_port_read_bytes(struct diag_port *port, size_t size, uint8_t *buf);
+DIAG_FUNCTION int diag_port_write_byte(struct diag_port *port, uint8_t i);
+DIAG_FUNCTION int diag_port_write_bytes(struct diag_port *port, size_t size, const uint8_t *buf);
+
 /*
  * Copy the content of `iport' into `oport'.
  * Return the length of copied bytes (>= 0) in case of success,

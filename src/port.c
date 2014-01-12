@@ -216,6 +216,8 @@ write_bytes_bm(struct diag_port *port, size_t size, const uint8_t *buf)
 	return 0;
 }
 
+/* API */
+
 struct diag_port *
 diag_port_new_fd(int fd, uint8_t flags)
 {
@@ -323,6 +325,26 @@ struct diag_port *diag_port_new_stdin(void)
 struct diag_port *diag_port_new_stdout(void)
 {
 	return diag_port_new_fd(STDOUT_FILENO, DIAG_PORT_OUTPUT);
+}
+
+int diag_port_read_byte(struct diag_port *port, uint8_t *i)
+{
+	return port->read_byte(port, i);
+}
+
+int diag_port_read_bytes(struct diag_port *port, size_t size, uint8_t *buf)
+{
+	return port->read_bytes(port, size, buf);
+}
+
+int diag_port_write_byte(struct diag_port *port, uint8_t i)
+{
+	return port->write_byte(port, i);
+}
+
+int diag_port_write_bytes(struct diag_port *port, size_t size, const uint8_t *buf)
+{
+	return port->write_bytes(port, size, buf);
 }
 
 ssize_t diag_port_copy(struct diag_port *iport, struct diag_port *oport)

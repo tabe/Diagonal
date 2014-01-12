@@ -20,14 +20,14 @@ main()
 	ASSERT_TRUE(DIAG_PORT_OUTPUT_P(port));
 	ASSERT_TRUE(DIAG_PORT_BM_P(port));
 
-	ASSERT_EQ_INT(1, port->write_byte(port, (uint8_t)'0'));
+	ASSERT_EQ_INT(1, diag_port_write_byte(port, (uint8_t)'0'));
 	ASSERT_EQ_SIZE(1, port->o_pos);
-	ASSERT_EQ_INT(1, port->read_byte(port, &b));
+	ASSERT_EQ_INT(1, diag_port_read_byte(port, &b));
 	ASSERT_EQ_UINT8('0', b);
 	ASSERT_EQ_SIZE(1, port->i_pos);
-	ASSERT_EQ_INT(1, port->write_bytes(port, BUFLEN-1, obuf));
+	ASSERT_EQ_INT(1, diag_port_write_bytes(port, BUFLEN-1, obuf));
 	ASSERT_EQ_SIZE(3, port->o_pos);
-	ASSERT_EQ_INT(1, port->read_bytes(port, BUFLEN, ibuf));
+	ASSERT_EQ_INT(1, diag_port_read_bytes(port, BUFLEN, ibuf));
 	ASSERT_EQ_UINT8('1', ibuf[0]);
 	ASSERT_EQ_UINT8('2', ibuf[1]);
 	ASSERT_EQ_UINT8('d', ibuf[2]);

@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 	} else {
 		port = diag_port_new_fp(stdout, DIAG_PORT_OUTPUT);
 	}
-	port->write_bytes(port, len * sizeof(*result), (const uint8_t *)result);
+	diag_port_write_bytes(port, len * sizeof(*result), (const uint8_t *)result);
 	diag_port_destroy(port);
 	diag_free(result);
 	diag_rollinghash32_destroy(rh);

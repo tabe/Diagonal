@@ -63,7 +63,7 @@ diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 		if (context->head >= context->sentinel) {
 			context->head = 0;
 			i_pos = port->i_pos;
-			s = port->read_bytes(port, context->bufsize, (uint8_t *)context->buf);
+			s = diag_port_read_bytes(port, context->bufsize, (uint8_t *)context->buf);
 			if (s == 1) {
 				context->sentinel = context->bufsize;
 			} else if (s == 0) {

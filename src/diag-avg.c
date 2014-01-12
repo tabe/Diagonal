@@ -109,7 +109,7 @@ read_parameter(struct diag_port *port, struct diag_deque *head, struct diag_avg_
 			r = 1;
 			break;
 		}
-	} while (port->read_byte(port, xp));
+	} while (diag_port_read_byte(port, xp));
 	couple_to_param(head, tail, param);
 	diag_deque_destroy(tail);
 	return r;
@@ -203,7 +203,7 @@ run_files(char **paths, int n, int fd)
 	cont = 0;
 	param = diag_calloc(n, sizeof(struct diag_avg_param));
 	buf = diag_malloc(BUFFER_LENGTH);
-	while ( cont || port->read_byte(port, x) > 0 ) {
+	while ( cont || diag_port_read_byte(port, x) > 0 ) {
 		if (DECIMAL_P(*x)) {
 			diag_deque_push(head, (uintptr_t)*x);
 		} else {
@@ -212,7 +212,7 @@ run_files(char **paths, int n, int fd)
 		}
 		d = 0;
 		for (i = 1; i < n; i++) {
-			if ( cont || ports[i]->read_byte(ports[i], x+i) > 0 ) {
+			if ( cont || diag_port_read_byte(ports[i], x+i) > 0 ) {
 				if (*x != x[i]) {
 					if (DECIMAL_P(*x) && DECIMAL_P(x[i])) {
 						d = 1;
@@ -241,7 +241,7 @@ run_files(char **paths, int n, int fd)
 	}
 	fdport = diag_port_new_fd(fd, DIAG_PORT_OUTPUT);
 	while ( (e = diag_deque_shift(q)) ) {
-		fdport->write_byte(fdport, (uint8_t)e->attr);
+		diag_port_write_byte(fdport, (uint8_t)e->attr);
 		diag_free(e);
 	}
 	diag_port_destroy(fdport);

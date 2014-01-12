@@ -105,7 +105,7 @@ main(int argc, char *argv[])
 			fd = STDOUT_FILENO;
 		}
 		port = diag_port_new_fd(fd, DIAG_PORT_OUTPUT);
-		s = port->write_bytes(port, vm->s_target, vm->target);
+		s = diag_port_write_bytes(port, vm->s_target, vm->target);
 		diag_port_destroy(port);
 		close(fd);
 		if (s < 0) {

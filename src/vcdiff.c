@@ -27,7 +27,7 @@ integer_read(struct diag_vcdiff_context *context, uint32_t *i)
 
 	assert(context && i);
 	port = context->port;
-	while ( (r = port->read_byte(port, &b)) > 0) {
+	while ( (r = diag_port_read_byte(port, &b)) > 0) {
 		if (b >> 7) {
 			t = (t << 7) | (b & ~((uint8_t)0x80));
 			continue;
@@ -53,7 +53,7 @@ code_table_data_read(struct diag_vcdiff_context *context, struct diag_vcdiff *vc
 	}
 	data = diag_calloc((size_t)length, sizeof(uint8_t));
 	port = context->port;
-	if ( (r = port->read_bytes(port, (size_t)length, data)) <= 0) {
+	if ( (r = diag_port_read_bytes(port, (size_t)length, data)) <= 0) {
 		diag_free(data);
 		return r;
 	}
@@ -78,7 +78,7 @@ delta_read(struct diag_vcdiff_context *context, struct diag_vcdiff_window *windo
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
 	delta->s_window = i;
 	port = context->port;
-	if ( (r = port->read_byte(port, &b)) <= 0) goto bail;
+	if ( (r = diag_port_read_byte(port, &b)) <= 0) goto bail;
 	delta->indicator = b;
 	if ( (r = integer_read(context, &i)) <= 0) goto bail;
 	delta->length_data = i;
@@ -89,9 +89,9 @@ delta_read(struct diag_vcdiff_context *context, struct diag_vcdiff_window *windo
 	data = diag_calloc((size_t)(delta->length_data), sizeof(uint8_t));
 	inst = diag_calloc((size_t)(delta->length_inst), sizeof(uint8_t));
 	addr = diag_calloc((size_t)(delta->length_addr), sizeof(uint8_t));
-	if ( (r = port->read_bytes(port, (size_t)(delta->length_data), data)) <= 0) goto clear;
-	if ( (r = port->read_bytes(port, (size_t)(delta->length_inst), inst)) <= 0) goto clear;
-	if ( (r = port->read_bytes(port, (size_t)(delta->length_addr), addr)) <= 0) goto clear;
+	if ( (r = diag_port_read_bytes(port, (size_t)(delta->length_data), data)) <= 0) goto clear;
+	if ( (r = diag_port_read_bytes(port, (size_t)(delta->length_inst), inst)) <= 0) goto clear;
+	if ( (r = diag_port_read_bytes(port, (size_t)(delta->length_addr), addr)) <= 0) goto clear;
 	delta->data = data;
 	delta->inst = inst;
 	delta->addr = addr;
@@ -495,23 +495,23 @@ diag_vcdiff_read(struct diag_vcdiff_context *context)
 
 	assert(context);
 	port = context->port;
-	if ( port->read_byte(port, &b) <= 0 || b != (uint8_t)0xD6 ||
-		 port->read_byte(port, &b) <= 0 || b != (uint8_t)0xC3 ||
-		 port->read_byte(port, &b) <= 0 || b != (uint8_t)0xC4 ) {
+	if ( diag_port_read_byte(port, &b) <= 0 || b != (uint8_t)0xD6 ||
+		 diag_port_read_byte(port, &b) <= 0 || b != (uint8_t)0xC3 ||
+		 diag_port_read_byte(port, &b) <= 0 || b != (uint8_t)0xC4 ) {
 		return NULL;
 	}
 	vcdiff = diag_malloc(sizeof(struct diag_vcdiff));
-	if ( port->read_byte(port, &b) <= 0 ||
+	if ( diag_port_read_byte(port, &b) <= 0 ||
 		 (DIAG_VCDIFF_COMPATIBLEP(context) && b != (uint8_t)0x0) ) {
 		goto bail;
 	}
 	vcdiff->version = b;
-	if (port->read_byte(port, &b) <= 0) {
+	if (diag_port_read_byte(port, &b) <= 0) {
 		goto bail;
 	}
 	vcdiff->indicator = b;
 	if (DIAG_VCDIFF_DECOMPRESSP(vcdiff)) {
-		if (port->read_byte(port, &b) <= 0) {
+		if (diag_port_read_byte(port, &b) <= 0) {
 			goto bail;
 		}
 		vcdiff->compressor_id = b;
@@ -522,7 +522,7 @@ diag_vcdiff_read(struct diag_vcdiff_context *context)
 		}
 	}
 	deque = diag_deque_new();
-	while ( (r = port->read_byte(port, &b)) > 0) {
+	while ( (r = diag_port_read_byte(port, &b)) > 0) {
 		struct diag_vcdiff_window *window;
 
 		if (DIAG_VCDIFF_COMPATIBLEP(context)) {

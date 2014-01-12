@@ -77,24 +77,24 @@ int main(int argc, char *argv[])
 	if (size == 0) {
 		goto done;
 	} else if (size <= (size_t)count) {
-		port->write_bytes(port, size, (const uint8_t *)buf);
+		diag_port_write_bytes(port, size, (const uint8_t *)buf);
 		goto done;
 	}
 	lldiv_t d = lldiv((long long)size, count);
 	long long n = d.quot;
 	long long r = d.rem;
-	port->write_bytes(port, (size_t)count, (const uint8_t *)buf);
+	diag_port_write_bytes(port, (size_t)count, (const uint8_t *)buf);
 	p = buf;
 	q = buf + count;
 	long long i;
 	for (i = 1; i < n; i++) {
 		if (memcmp(p, q, (size_t)count) != 0) {
-			port->write_bytes(port, (size_t)count, (const uint8_t *)q);
+			diag_port_write_bytes(port, (size_t)count, (const uint8_t *)q);
 		}
 		p = q;
 		q += count;
 	}
-	if (r > 0) port->write_bytes(port, (size_t)r, (const uint8_t *)p);
+	if (r > 0) diag_port_write_bytes(port, (size_t)r, (const uint8_t *)p);
  done:
 	diag_port_destroy(port);
 	diag_munmap(mm);
