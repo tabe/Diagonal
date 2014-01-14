@@ -162,6 +162,14 @@ static char **serialize_entries(const struct diag_rbtree *tree,
 
 /* API */
 
+void diag_assert_directory(const char *path)
+{
+	int r = diag_is_directory(path);
+	if (r == 1) return;
+	else if (r == 0) diag_fatal("%s is not a directory", path);
+	else diag_fatal("could not stat %s", path);
+}
+
 int diag_is_directory(const char *path)
 {
 	assert(path);

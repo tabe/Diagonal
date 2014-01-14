@@ -269,14 +269,6 @@ wait_callback(uintptr_t key, uintptr_t attr, void *data)
 	diag_process_destroy(process);
 }
 
-static void assert_dir(const char *dir)
-{
-	int r = diag_is_directory(dir);
-	if (r == 1) return;
-	else if (r == 0) diag_fatal("%s is not a directory", dir);
-	else diag_fatal("could not stat %s", dir);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -311,7 +303,7 @@ main(int argc, char *argv[])
 		case 'o':
 			leave_output = 1;
 			dir = diag_strdup(optarg);
-			assert_dir(dir);
+			diag_assert_directory(dir);
 			break;
 		case ':':
 		case '?':
@@ -330,7 +322,7 @@ main(int argc, char *argv[])
 
 		tmpdir = getenv("TMPDIR");
 		dir = diag_strdup((tmpdir) ? tmpdir : ".");
-		assert_dir(dir);
+		diag_assert_directory(dir);
 	}
 
 #define FAIL() do {							\

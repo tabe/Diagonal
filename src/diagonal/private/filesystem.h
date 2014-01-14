@@ -18,6 +18,11 @@ enum diag_mmap_mode {
 DIAG_C_DECL_BEGIN
 
 /*
+ * Scream and die unless `path' is an existing directory.
+ */
+DIAG_FUNCTION void diag_assert_directory(const char *path);
+
+/*
  * Return 1 if `path' is a directory, 0 otherwise.
  * Return -1 in case of error.
  */
