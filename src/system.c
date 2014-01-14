@@ -42,7 +42,7 @@ static int contains_space(const char *s)
 {
 	size_t i;
 	for (i = 0; s[i]; i++) {
-		if (isspace(s[i])) return 1;
+		if (isspace((int)s[i])) return 1;
 	}
 	return 0;
 }
