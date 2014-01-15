@@ -179,7 +179,9 @@ struct diag_process *diag_run_program(struct diag_command *command)
 				0,
 				NULL);
 		if (ih == INVALID_HANDLE_VALUE) {
-			diag_error("failed to open file: %s", command->in);
+			diag_error("failed to open file: %s: 0x%x",
+				   command->in,
+				   (unsigned int)GetLastError());
 			return NULL;
 		}
 	}
@@ -192,7 +194,9 @@ struct diag_process *diag_run_program(struct diag_command *command)
 			       FILE_ATTRIBUTE_NORMAL,
 			       NULL);
 	if (oh == INVALID_HANDLE_VALUE) {
-		diag_error("failed to open file: %s", command->out);
+		diag_error("failed to open file: %s: 0x%x",
+			   command->out,
+			   (unsigned int)GetLastError());
 		return NULL;
 	}
 
@@ -204,7 +208,9 @@ struct diag_process *diag_run_program(struct diag_command *command)
 			       FILE_ATTRIBUTE_NORMAL,
 			       NULL);
 	if (eh == INVALID_HANDLE_VALUE) {
-		diag_error("failed to open file: %s", command->err);
+		diag_error("failed to open file: %s: 0x%x",
+			   command->err,
+			   (unsigned int)GetLastError());
 		return NULL;
 	}
 
@@ -231,7 +237,7 @@ struct diag_process *diag_run_program(struct diag_command *command)
 			       &si,
 			       &pi);
 	if (!b) {
-		diag_error("could not create process: %s: %x",
+		diag_error("could not create process: %s: 0x%x",
 			   line,
 			   (unsigned int)GetLastError());
 		// should follow GetLastError()
