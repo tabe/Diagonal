@@ -17,6 +17,7 @@
 #include "diagonal/port.h"
 #include "diagonal/private/filesystem.h"
 #include "diagonal/private/system.h"
+#include "diagonal/private/temporary-file.h"
 
 static void usage(void)
 {
@@ -67,21 +68,20 @@ int main(int argc, char *argv[])
 	struct diag_deque_elem *e;
 
 	if (!in) {
-		struct diag_port *op0 = diag_port_new_path("diagonal0.out", "wb");
-		if (!op0) {
+		struct diag_temporary_file *tf = diag_temporary_file_new();
+		if (!tf) {
 			goto done;
 		}
+		in = diag_strdup(tf->path);
+		diag_deque_push(q, (intptr_t)diag_strdup(tf->path));
 		struct diag_port *ip = diag_port_new_stdin();
 		assert(ip);
-		ssize_t s = diag_port_copy(ip, op0);
+		ssize_t s = diag_port_copy(ip, tf->port);
 		diag_port_destroy(ip);
-		diag_port_destroy(op0);
+		diag_temporary_file_destroy(tf);
 		if (s < 0) {
 			goto done;
 		}
-
-		in = diag_strdup("diagonal0.out");
-		diag_deque_push((intptr_t)diag_strdup("diagonal0.out"));
 	}
 
 	struct diag_command *cmd;

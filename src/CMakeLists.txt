@@ -21,6 +21,7 @@ add_library(diagonal SHARED
             set.c
             singlelinkage.c
             system.c
+            temporary-file.c
             trie.c
             vcdiff.c
             vector.c
