@@ -355,9 +355,9 @@ void diag_process_wait(struct diag_process *process)
 		diag_fatal("failed to wait process: %d", (int)process->pid);
 	}
 	if (WIFEXITED(status)) {
-		process->status = status;
+		process->status = WEXITSTATUS(status);
 	} else if (WIFSIGNALED(status)) {
-		process->status = status;
+		process->status = 1;
 	} else if (WIFSTOPPED(status)) {
 
 #ifdef WIFCONTINUED
