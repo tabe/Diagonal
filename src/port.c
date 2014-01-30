@@ -329,26 +329,33 @@ struct diag_port *diag_port_new_stdout(void)
 
 int diag_port_read_byte(struct diag_port *port, uint8_t *i)
 {
+	assert(port);
 	return port->read_byte(port, i);
 }
 
 int diag_port_read_bytes(struct diag_port *port, size_t size, uint8_t *buf)
 {
+	assert(port);
 	return port->read_bytes(port, size, buf);
 }
 
 int diag_port_write_byte(struct diag_port *port, uint8_t i)
 {
+	assert(port);
 	return port->write_byte(port, i);
 }
 
 int diag_port_write_bytes(struct diag_port *port, size_t size, const uint8_t *buf)
 {
+	assert(port);
 	return port->write_bytes(port, size, buf);
 }
 
 ssize_t diag_port_copy(struct diag_port *iport, struct diag_port *oport)
 {
+	assert(iport);
+	assert(oport);
+
 	ssize_t pos = 0;
 	uint8_t *buf = diag_malloc(BUFFER_LENGTH);
 	int r = iport->read_bytes(iport, BUFFER_LENGTH, buf);
@@ -381,6 +388,9 @@ ssize_t diag_port_copy(struct diag_port *iport, struct diag_port *oport)
 
 int diag_port_diff(struct diag_port *iport1, struct diag_port *iport2)
 {
+	assert(iport1);
+	assert(iport2);
+
 	int r = 0;
 	int r1;
 	int r2;
