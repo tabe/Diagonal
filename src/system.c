@@ -357,7 +357,7 @@ void diag_process_wait(struct diag_process *process)
 	if (WIFEXITED(status)) {
 		process->status = WEXITSTATUS(status);
 	} else if (WIFSIGNALED(status)) {
-		process->status = 1;
+		process->status = -1;
 	} else if (WIFSTOPPED(status)) {
 
 #ifdef WIFCONTINUED
