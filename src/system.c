@@ -307,10 +307,13 @@ struct diag_process *diag_run_program(struct diag_command *command)
 			build_path(command->dir, pid, "err", err);
 			command->err = err;
 		}
-		if (!freopen(command->in, "rb", stdin)) {
-			perror(command->in);
-			_Exit(EXIT_FAILURE);
+		if (command->in) { /* redirect stdin only when specified */
+			if (!freopen(command->in, "rb", stdin)) {
+				perror(command->in);
+				_Exit(EXIT_FAILURE);
+			}
 		}
+		/* Both stdout and stderr should be always redirected */
 		if (!freopen(command->out, "wb", stdout)) {
 			perror(command->out);
 			_Exit(EXIT_FAILURE);
