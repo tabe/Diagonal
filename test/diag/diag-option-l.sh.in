@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 trap 'rm -f diag-option-l.stdout' EXIT
 @DIAG_COMMAND@ -l > diag-option-l.stdout
