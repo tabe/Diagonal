@@ -30,11 +30,24 @@ DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_node_new(uintptr_t key, uintp
 
 DIAG_FUNCTION void diag_rbtree_node_destroy(struct diag_rbtree_node *node);
 
-DIAG_FUNCTION size_t diag_rbtree_insert(struct diag_rbtree *tree, struct diag_rbtree_node *node);
+/*
+ * Insert `node' into `tree' and return the resulting number of nodes in `tree'.
+ */
+DIAG_FUNCTION size_t diag_rbtree_insert(struct diag_rbtree *tree,
+					struct diag_rbtree_node *node);
 
-DIAG_FUNCTION size_t diag_rbtree_delete(struct diag_rbtree *tree, struct diag_rbtree_node *node);
+/*
+ * Delete `node' from `tree' and return the resulting number of nodes in `tree'.
+ */
+DIAG_FUNCTION size_t diag_rbtree_delete(struct diag_rbtree *tree,
+					struct diag_rbtree_node *node);
 
-DIAG_FUNCTION int diag_rbtree_search(struct diag_rbtree *tree, uintptr_t key, struct diag_rbtree_node **found);
+/*
+ * If `key' is found in `tree', return DIAG_SUCCESS with the resulting node
+ * assigned to `found', otherwise return DIAG_FAILURE.
+ */
+DIAG_FUNCTION int diag_rbtree_search(struct diag_rbtree *tree, uintptr_t key,
+				     struct diag_rbtree_node **found);
 
 DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_minimum(const struct diag_rbtree *tree);
 DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_maximum(const struct diag_rbtree *tree);
