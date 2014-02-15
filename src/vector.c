@@ -22,10 +22,10 @@ diag_vector_create(size_t length)
 	size_t s;
 
 	while (c < length) c <<= 1;
-	s = sizeof(*v->elements) * c;
-	if (s < length) {
+	if (c >= SIZE_MAX / sizeof(*v->elements)) {
 		diag_fatal("vector size overflow");
 	}
+	s = sizeof(*v->elements) * c;
 	v = diag_malloc(sizeof(*v));
 	v->capacity = c;
 	v->length = length;
@@ -111,7 +111,11 @@ void diag_vector_push_back(struct diag_vector *v, intptr_t e)
 	assert(v);
 	if (v->length == v->capacity) {
 		v->capacity <<= 1;
-		v->elements = diag_realloc(v->elements, v->capacity * sizeof(*v->elements));
+		if (v->capacity >= SIZE_MAX / sizeof(*v->elements)) {
+			diag_fatal("vector size overflow");
+		}
+		size_t s = v->capacity * sizeof(*v->elements);
+		v->elements = diag_realloc(v->elements, s);
 	}
 	v->elements[v->length++] = e;
 }
