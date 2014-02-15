@@ -4,11 +4,12 @@
 
 /*
  * The vector structure
- * This is for representing fixed-length vectors.
+ * This is for representing variable-length vectors.
  */
 struct diag_vector {
+	size_t capacity;
 	size_t length;
-	intptr_t elements[];
+	intptr_t *elements;
 };
 
 DIAG_C_DECL_BEGIN
@@ -29,6 +30,10 @@ DIAG_FUNCTION struct diag_vector *diag_vector_copy(const struct diag_vector *v);
 
 DIAG_FUNCTION struct diag_vector *
 diag_vector_copy_from(const struct diag_vector *v, size_t start);
+
+DIAG_FUNCTION void diag_vector_push_back(struct diag_vector *v, intptr_t e);
+
+DIAG_FUNCTION void diag_vector_pop_back(struct diag_vector *v);
 
 DIAG_C_DECL_END
 

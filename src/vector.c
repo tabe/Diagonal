@@ -18,18 +18,26 @@ struct diag_vector *
 diag_vector_create(size_t length)
 {
 	struct diag_vector *v;
+	size_t c = 1;
 	size_t s;
 
-	s = sizeof(*v) + sizeof(*v->elements) * length;
-	/* TODO: check the overflow */
-	v = diag_malloc(s);
+	while (c < length) c <<= 1;
+	s = sizeof(*v->elements) * c;
+	if (s < length) {
+		diag_fatal("vector size overflow");
+	}
+	v = diag_malloc(sizeof(*v));
+	v->capacity = c;
 	v->length = length;
+	v->elements = diag_malloc(s);
 	return v;
 }
 
 void
 diag_vector_destroy(struct diag_vector *v)
 {
+	if (!v) return;
+	diag_free(v->elements);
 	diag_free(v);
 }
 
@@ -96,4 +104,20 @@ struct diag_vector *diag_vector_copy_from(const struct diag_vector *v,
 	if (s == 0) return w;
 	memcpy(w->elements, v->elements + start, sizeof(*v->elements) * s);
 	return w;
+}
+
+void diag_vector_push_back(struct diag_vector *v, intptr_t e)
+{
+	assert(v);
+	if (v->length == v->capacity) {
+		v->capacity <<= 1;
+		v->elements = diag_realloc(v->elements, v->capacity * sizeof(*v->elements));
+	}
+	v->elements[v->length++] = e;
+}
+
+void diag_vector_pop_back(struct diag_vector *v)
+{
+	assert(v);
+	v->length--;
 }
