@@ -121,3 +121,14 @@ void diag_vector_pop_back(struct diag_vector *v)
 	assert(v);
 	v->length--;
 }
+
+void diag_vector_for_each(struct diag_vector *v,
+			  diag_vector_callback_t callback,
+			  void *data)
+{
+	assert(v);
+	size_t i;
+	for (i = 0; i < v->length; i++) {
+		callback(i, v->elements[i], data);
+	}
+}

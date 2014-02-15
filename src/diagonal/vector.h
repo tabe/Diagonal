@@ -12,6 +12,8 @@ struct diag_vector {
 	intptr_t *elements;
 };
 
+typedef void (*diag_vector_callback_t)(size_t i, intptr_t e, void *data);
+
 DIAG_C_DECL_BEGIN
 
 DIAG_FUNCTION struct diag_vector *diag_vector_create(size_t length);
@@ -34,6 +36,10 @@ diag_vector_copy_from(const struct diag_vector *v, size_t start);
 DIAG_FUNCTION void diag_vector_push_back(struct diag_vector *v, intptr_t e);
 
 DIAG_FUNCTION void diag_vector_pop_back(struct diag_vector *v);
+
+DIAG_FUNCTION void diag_vector_for_each(struct diag_vector *v,
+					diag_vector_callback_t callback,
+					void *data);
 
 DIAG_C_DECL_END
 

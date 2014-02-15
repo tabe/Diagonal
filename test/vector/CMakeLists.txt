@@ -2,6 +2,7 @@ set(tests
     diag_vector_length
     diag_vector_copy
     diag_vector_copy_from
+    diag_vector_for_each
     diag_vector_pop_back
     diag_vector_push_back
 )
