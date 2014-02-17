@@ -18,6 +18,7 @@
 #include "diagonal/hash.h"
 #include "diagonal/port.h"
 #include "diagonal/rbtree.h"
+#include "diagonal/vector.h"
 #include "diagonal/private/filesystem.h"
 #include "diagonal/private/system.h"
 #include "diagonal/private/temporary-file.h"
@@ -34,17 +35,16 @@ static int hash(const char *file, uint32_t *hp)
 	return 1;
 }
 
-static char *insert(char *file, uint32_t h, struct diag_rbtree *tree)
+static void insert(size_t n, uint32_t h, struct diag_rbtree *tree)
 {
 	struct diag_deque *q = diag_deque_new();
-	(void)diag_deque_push(q, (intptr_t)file);
+	(void)diag_deque_push(q, (intptr_t)n);
 	struct diag_rbtree_node *node;
 	node = diag_rbtree_node_new((uintptr_t)h, (uintptr_t)q);
 	(void)diag_rbtree_insert(tree, node);
-	return file;
 }
 
-static char *find_or_insert(const char *file, uint32_t h,
+static int find_or_insert(size_t n, uint32_t h,
 			    struct diag_rbtree *tree,
 			    struct diag_deque **qp)
 {
@@ -54,23 +54,16 @@ static char *find_or_insert(const char *file, uint32_t h,
 		assert(node);
 		assert(node->attr);
 		*qp = (struct diag_deque *)node->attr;
-		return NULL;
+		return found;
 	}
-	char *f = diag_strdup(file);
-	return insert(f, h, tree);
+	insert(n, h, tree);
+	return 0;
 }
 
-static void free_filenames(uintptr_t attr, void *data)
+static void free_entries(uintptr_t attr, void *data)
 {
 	(void)data;
 	struct diag_deque *dq = (struct diag_deque *)attr;
-	assert(dq);
-	struct diag_deque_elem *dqe;
-	DIAG_DEQUE_FOR_EACH(dq, dqe) {
-		char *out = (char *)dqe->attr;
-		assert(out);
-		diag_free(out);
-	}
 	diag_deque_destroy(dq);
 }
 
@@ -100,7 +93,7 @@ int main(int argc, char *argv[])
 			exit(EXIT_SUCCESS);
 			break;
 		case 'i':
-			in = diag_strdup(optarg);
+			in = optarg;
 			break;
 		case 'o':
 			leave_output = 1;
@@ -130,7 +123,7 @@ int main(int argc, char *argv[])
 			goto done;
 		}
 		in = diag_strdup(tf->path);
-		diag_deque_push(q, (intptr_t)diag_strdup(tf->path));
+		diag_deque_push(q, (intptr_t)in);
 		struct diag_port *ip = diag_port_new_stdin();
 		assert(ip);
 		ssize_t s = diag_port_copy(ip, tf->port);
@@ -141,18 +134,25 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	struct diag_vector *v = diag_vector_create(1);
+	diag_vector_set(v, 0, (intptr_t)in);
+
+	size_t n = 0;
+
 	uint32_t h;
 	int hashed;
 	hashed = hash(in, &h);
 	if (!hashed) {
 		goto done;
 	}
-	(void)insert(in, h, tree);
+	insert(n, h, tree);
 
+	char *file;
 	struct diag_command *cmd;
-
  run:
-	cmd = diag_command_new(argv+optind, dir, in, NULL, NULL);
+	file = (char *)diag_vector_ref(v, n++);
+	assert(file);
+	cmd = diag_command_new(argv+optind, dir, file, NULL, NULL);
 	if (!cmd) {
 		goto done;
 	}
@@ -168,7 +168,9 @@ int main(int argc, char *argv[])
 		goto done;
 	}
 
-	diag_deque_push(q, (intptr_t)diag_strdup(cmd->out));
+	file = (char *)diag_strdup(cmd->out);
+	diag_vector_push_back(v, (intptr_t)file);
+	diag_deque_push(q, (intptr_t)file);
 	diag_deque_push(q, (intptr_t)diag_strdup(cmd->err));
 
 	hashed = hash(cmd->out, &h);
@@ -176,8 +178,8 @@ int main(int argc, char *argv[])
 		goto done;
 	}
 	struct diag_deque *dq;
-	in = find_or_insert(cmd->out, h, tree, &dq);
-	if (in) {
+	int found = find_or_insert(n, h, tree, &dq);
+	if (!found) {
 		diag_command_destroy(cmd);
 		goto run;
 	}
@@ -186,7 +188,9 @@ int main(int argc, char *argv[])
 	DIAG_DEQUE_FOR_EACH(dq, dqe) {
 		struct diag_port *pp;
 		struct diag_port *cp;
-		pp = diag_port_new_path((const char *)dqe->attr, "rb");
+		size_t k = (size_t)dqe->attr;
+		file = (char *)diag_vector_ref(v, k);
+		pp = diag_port_new_path(file, "rb");
 		if (!pp) {
 			goto done;
 		}
@@ -199,8 +203,7 @@ int main(int argc, char *argv[])
 		diag_port_destroy(cp);
 		diag_port_destroy(pp);
 		if (d == 1) {
-			in = diag_strdup(cmd->out);
-			diag_deque_push(dq, (intptr_t)in);
+			diag_deque_push(dq, (intptr_t)n);
 			diag_command_destroy(cmd);
 			goto run;
 		}
@@ -208,21 +211,10 @@ int main(int argc, char *argv[])
 			goto done;
 		}
 
-		cp = diag_port_new_path(cmd->out, "rb");
-		if (!cp) {
-			goto done;
-		}
-		struct diag_port *op = diag_port_new_stdout();
-		assert(op);
-		ssize_t s = diag_port_copy(cp, op);
-		diag_port_destroy(cp);
-		diag_port_destroy(op);
-		if (s < 0) {
-			goto done;
-		}
+		diag_printf("%ld %ld\n", k, n-k);
 		if (!leave_output) {
 			DIAG_DEQUE_FOR_EACH(q, e) {
-				char *file = (char *)e->attr;
+				file = (char *)e->attr;
 				assert(file);
 				remove(file);
 			}
@@ -234,7 +226,8 @@ int main(int argc, char *argv[])
 
  done:
 	diag_command_destroy(cmd);
-	diag_rbtree_for_each_attr(tree, free_filenames, NULL);
+	diag_vector_destroy(v);
+	diag_rbtree_for_each_attr(tree, free_entries, NULL);
 	diag_rbtree_destroy(tree);
 	DIAG_DEQUE_FOR_EACH(q, e) {
 		diag_free((void *)e->attr);

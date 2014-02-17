@@ -2,4 +2,5 @@
 
 FILE=@DIAGONAL_BINARY_DIR@/test/diag/diag-command-cycle.sh
 
-cat $FILE | @DIAG_COMMAND@ cycle cat | diff $FILE -
+MU_LAMBDA=`@DIAG_COMMAND@ cycle cat < $FILE`
+test "$MU_LAMBDA" = "0 1"
