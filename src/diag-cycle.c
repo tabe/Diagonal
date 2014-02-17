@@ -69,7 +69,7 @@ static void free_entries(uintptr_t attr, void *data)
 
 static void usage(void)
 {
-	diag_printf("diag-cycle [-i input] [-o output] command [operand ...]");
+	diag_printf("diag-cycle [-O output] [-i input] command [operand ...]");
 }
 
 int main(int argc, char *argv[])
@@ -82,8 +82,13 @@ int main(int argc, char *argv[])
 
 	diag_init();
 
-	while ( (c = getopt(argc, argv, "+Vhi:o:")) >=0) {
+	while ( (c = getopt(argc, argv, "+O:Vhi:")) >=0) {
 		switch (c) {
+		case 'O':
+			leave_output = 1;
+			dir = diag_strdup(optarg);
+			diag_assert_directory(dir);
+			break;
 		case 'V':
 			diag_print_version();
 			exit(EXIT_SUCCESS);
@@ -94,11 +99,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			in = optarg;
-			break;
-		case 'o':
-			leave_output = 1;
-			dir = diag_strdup(optarg);
-			diag_assert_directory(dir);
 			break;
 		case ':':
 		case '?':

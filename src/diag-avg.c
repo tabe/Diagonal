@@ -24,10 +24,9 @@
 
 #define DECIMAL_P(x) ( ('0' <= (x) && (x) <= '9') || (x) == '.')
 
-static void
-usage(void)
+static void usage(void)
 {
-	diag_printf("diag-avg [-n num_of_trials] [-o output] command [operand ...]");
+	diag_printf("diag-avg [-O output] [-n num_of_trials] command [operand ...]");
 }
 
 enum diag_avg_param_type {
@@ -282,8 +281,13 @@ main(int argc, char *argv[])
 
 	diag_init();
 
-	while ( (c = getopt(argc, argv, "+Vhn:o:")) >= 0) {
+	while ( (c = getopt(argc, argv, "+O:Vhn:")) >= 0) {
 		switch (c) {
+		case 'O':
+			leave_output = 1;
+			dir = diag_strdup(optarg);
+			diag_assert_directory(dir);
+			break;
 		case 'V':
 			diag_print_version();
 			exit(EXIT_SUCCESS);
@@ -299,11 +303,6 @@ main(int argc, char *argv[])
 			} else if (n == 0) {
 				exit(EXIT_SUCCESS);
 			}
-			break;
-		case 'o':
-			leave_output = 1;
-			dir = diag_strdup(optarg);
-			diag_assert_directory(dir);
 			break;
 		case ':':
 		case '?':
