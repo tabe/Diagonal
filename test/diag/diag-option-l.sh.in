@@ -9,6 +9,7 @@ available commands are:
   decode  (dec)
   encode  (enc)
   file
+  fix
   hash
   line
   uniq
