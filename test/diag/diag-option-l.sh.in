@@ -12,5 +12,6 @@ available commands are:
   fix
   hash
   line
+  root
   uniq
 EOF

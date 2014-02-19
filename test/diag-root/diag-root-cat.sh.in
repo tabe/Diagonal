@@ -1,0 +1,9 @@
+#!/bin/sh
+
+FILE=@DIAGONAL_BINARY_DIR@/test/diag-root/diag-root-cat.sh
+
+trap 'rm -f x0 x1' EXIT
+echo "-2" > x0
+echo "3" > x1
+ROOT=`@DIAG_ROOT@ -g x0 -g x1 cat`
+test "$?" = "0" && test "$ROOT" = "0"

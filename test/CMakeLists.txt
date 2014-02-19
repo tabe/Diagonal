@@ -20,6 +20,7 @@ set(subdirectories
     diag-avg
     diag-cycle
     diag-fix
+    diag-root
     diag
 )
 set(DIAGONAL_TEST_DIR "${DIAGONAL_SOURCE_DIR}/test")
