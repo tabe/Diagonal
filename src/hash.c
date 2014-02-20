@@ -18,6 +18,8 @@ uint32_t diag_hash32_rabin_karp(const uint8_t *data,
 	register size_t i;
 	register uint32_t v = 0;
 
+	/* data can be NULL when size is 0 */
+	if (size == 0) return v;
 	assert(data);
 	for (i = 0; i < size; i++) {
 		v *= base;
@@ -33,6 +35,8 @@ uint64_t diag_hash64_rabin_karp(const uint8_t *data,
 	register size_t i;
 	register uint64_t v = 0;
 
+	/* data can be NULL when size is 0 */
+	if (size == 0) return v;
 	assert(data);
 	for (i = 0; i < size; i++) {
 		v *= base;
