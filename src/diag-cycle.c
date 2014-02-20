@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 			goto done;
 		}
 
-		diag_printf("%ld %ld", k, n-k);
+		diag_printf("%ld %ld", n-k, k);
 		if (!leave_output) {
 			DIAG_DEQUE_FOR_EACH(q, e) {
 				file = (char *)e->attr;

@@ -3,4 +3,4 @@
 MU_LAMBDA=`@DIAG_CYCLE@ awk 'BEGIN {ORS = " "}; {print $1 + $2; for (n = 3; n <= NF; n++) {print $n}}' <<EOF
 23 23 0 10 999 678
 EOF`
-test "$MU_LAMBDA" = "5 1"
+test "$MU_LAMBDA" = "1 5"

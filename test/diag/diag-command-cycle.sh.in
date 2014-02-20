@@ -3,4 +3,4 @@
 FILE=@DIAGONAL_BINARY_DIR@/test/diag/diag-command-cycle.sh
 
 MU_LAMBDA=`@DIAG_COMMAND@ cycle cat < $FILE`
-test "$MU_LAMBDA" = "0 1"
+test "$MU_LAMBDA" = "1 0"
