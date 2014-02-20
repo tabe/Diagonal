@@ -1,6 +1,7 @@
 set(tests
     diag-cycle-cat
     diag-cycle-add2
+    diag-cycle-collatz
 )
 get_target_property(diag-cycle-path diag-cycle LOCATION)
 set(DIAG_CYCLE ${diag-cycle-path})
@@ -10,3 +11,5 @@ foreach(test ${tests})
                  @ONLY)
   add_test(${test} sh "${test}.sh")
 endforeach(test ${tests})
+
+add_executable(collatz collatz.c)

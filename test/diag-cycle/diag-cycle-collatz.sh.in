@@ -1,0 +1,5 @@
+#!/bin/sh
+
+trap 'rm -f trivial' EXIT
+echo '3' > trivial
+date +%Y%m%d%H%M%S | @DIAG_CYCLE@ ./collatz | cut -d' ' -f1 | diff -u trivial -
