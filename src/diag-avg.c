@@ -311,6 +311,10 @@ main(int argc, char *argv[])
 			break;
 		}
 	}
+	if (optind >= argc) {
+		usage();
+		exit(EXIT_FAILURE);
+	}
 
 	assert(n > 0);
 	ptree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
