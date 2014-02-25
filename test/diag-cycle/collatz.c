@@ -1,4 +1,5 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+#include <inttypes.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,8 +7,8 @@
 
 int main(void)
 {
-	unsigned long int x;
-	int r = fscanf(stdin, "%lu", &x);
+	uint64_t x;
+	int r = fscanf(stdin, "%" SCNu64, &x);
 	if (r != 1) {
 		fprintf(stderr, "failed to read integer\n");
 		return EXIT_FAILURE;
@@ -19,7 +20,7 @@ int main(void)
 	if (x%2 == 0) {
 		x /= 2;
 	} else {
-		if (x >= ULONG_MAX/3) {
+		if (x >= UINT64_MAX/3) {
 			fprintf(stderr, "overflow\n");
 			return EXIT_FAILURE;
 		}
@@ -30,6 +31,6 @@ int main(void)
 			return EXIT_FAILURE;
 		}
 	}
-	(void)printf("%lu\n", x);
+	(void)printf("%"  PRIu64 "\n", x);
 	return EXIT_SUCCESS;
 }
