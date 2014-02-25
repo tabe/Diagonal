@@ -203,9 +203,7 @@ int main(int argc, char *argv[])
 		diag_port_destroy(cp);
 		diag_port_destroy(pp);
 		if (d == 1) {
-			diag_deque_push(dq, (intptr_t)n);
-			diag_command_destroy(cmd);
-			goto run;
+			continue;
 		}
 		if (d == -1) {
 			goto done;
@@ -222,7 +220,9 @@ int main(int argc, char *argv[])
 		r = EXIT_SUCCESS;
 		goto done;
 	}
-	diag_error("inconsistency with hashing or reading file: %s", cmd->out);
+	diag_deque_push(dq, (intptr_t)n);
+	diag_command_destroy(cmd);
+	goto run;
 
  done:
 	diag_command_destroy(cmd);

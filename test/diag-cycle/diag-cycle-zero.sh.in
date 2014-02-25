@@ -1,0 +1,3 @@
+#!/bin/sh
+MU_LAMBDA=`@DIAG_CYCLE@ -i /dev/null head -c1 /dev/zero`
+test "$MU_LAMBDA" = "1 1"

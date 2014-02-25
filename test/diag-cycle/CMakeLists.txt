@@ -2,6 +2,7 @@ set(tests
     diag-cycle-cat
     diag-cycle-add2
     diag-cycle-collatz
+    diag-cycle-zero
 )
 get_target_property(diag-cycle-path diag-cycle LOCATION)
 set(DIAG_CYCLE ${diag-cycle-path})

@@ -1,0 +1,2 @@
+#!/bin/sh
+@DIAG_FIX@ -i /dev/null head -c1 /dev/zero | cmp -n1 /dev/zero -
