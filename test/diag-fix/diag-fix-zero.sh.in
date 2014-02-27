@@ -1,2 +1,4 @@
 #!/bin/sh
-@DIAG_FIX@ -i /dev/null head -c1 /dev/zero | cmp -n1 /dev/zero -
+trap 'rm -f zero1' EXIT
+head -c1 /dev/zero > zero1
+@DIAG_FIX@ -i /dev/null head -c1 /dev/zero | cmp zero1 -
