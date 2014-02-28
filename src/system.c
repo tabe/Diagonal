@@ -284,17 +284,19 @@ struct diag_process *diag_run_program(struct diag_command *command)
 {
 	assert(command);
 
-	char *out;
+	char *out = NULL;
 	if (!command->out) {
 		out = diag_malloc(PATH_LENGTH);
 	}
-	char *err;
+	char *err = NULL;
 	if (!command->err) {
 		err = diag_malloc(PATH_LENGTH);
 	}
 	pid_t pid = fork();
 	if (pid < 0) {
 		perror(command->file);
+		diag_free(out);
+		diag_free(err);
 		return NULL;
 	}
 	if (pid == 0) {
