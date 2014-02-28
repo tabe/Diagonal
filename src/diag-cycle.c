@@ -117,6 +117,9 @@ int main(int argc, char *argv[])
 	struct diag_deque *q = diag_deque_new();
 	struct diag_deque_elem *e;
 
+	struct diag_vector *v = diag_vector_create(1);
+	struct diag_command *cmd = NULL;
+
 	if (!in) {
 		struct diag_temporary_file *tf = diag_temporary_file_new();
 		if (!tf) {
@@ -133,8 +136,6 @@ int main(int argc, char *argv[])
 			goto done;
 		}
 	}
-
-	struct diag_vector *v = diag_vector_create(1);
 	diag_vector_set(v, 0, (intptr_t)in);
 
 	size_t n = 0;
@@ -148,7 +149,6 @@ int main(int argc, char *argv[])
 	insert(n, h, tree);
 
 	char *file;
-	struct diag_command *cmd;
  run:
 	file = (char *)diag_vector_ref(v, n++);
 	assert(file);
