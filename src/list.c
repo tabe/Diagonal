@@ -35,10 +35,10 @@ size_t diag_list_length(const struct diag_pair *list)
 
 intptr_t diag_list_ref(const struct diag_pair *list, size_t i)
 {
-	if (!list) diag_error("list is null");
+	if (!list) diag_fatal("list is null");
 	while (i-- > 0) {
 		list = (const struct diag_pair *)list->cdr;
-		if (!list) diag_error("exceed list length");
+		if (!list) diag_fatal("exceed list length");
 	}
 	return list->car;
 }
