@@ -203,11 +203,11 @@ int main(int argc, char *argv[])
 	q = r_n1 - r_n2;
 	if (q == 0) {
 		diag_error("failed due to div-by-zero");
-		goto done1;
+		goto done0;
 	}
 	x_n = (x_n2*r_n1 - x_n1*r_n2)/q;
 	if (!write_real(x_n, &file)) {
-		goto done1;
+		goto done0;
 	}
 	double r_n;
 	r = evaluate(argv + optind, file, &r_n);
