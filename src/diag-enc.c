@@ -307,7 +307,7 @@ main(int argc, char *argv[])
 	size_t num_entries, *parent;
 	struct diag_rbtree *tree, *comb;
 	char **entries;
-	unsigned int *occur;
+	unsigned int *occur = NULL;
 
 	diag_init();
 
