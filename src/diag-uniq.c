@@ -67,6 +67,9 @@ int main(int argc, char *argv[])
 		diag_fatal("please specify the count with the -c option");
 	}
 	struct diag_mmap *mm = diag_mmap_file(argv[optind], DIAG_MMAP_RO);
+	if (!mm) {
+		diag_fatal("failed to map file: %s", argv[optind]);
+	}
 	buf = mm->addr;
 	size = mm->size;
 	if (output) {
