@@ -12,6 +12,12 @@
 #include <windows.h>
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -106,7 +112,9 @@ struct diag_temporary_file *diag_temporary_file_new(void)
 	path = diag_realloc(path, len1);
 	path[dirlen] = '/';
 	strcpy(path + dirlen + 1, TEMPLATE);
+	mode_t old_mode = umask(S_IXUSR|S_IRWXG|S_IRWXO);
 	int fd = mkstemp(path);
+	(void)umask(old_mode);
 	if (fd == -1) {
 		perror(path);
 		diag_free(path);
