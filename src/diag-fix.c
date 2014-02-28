@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 		diag_temporary_file_destroy(tf);
 		if (s < 0) {
 			assert(tfin);
-			remove(tfin);
+			diag_remove(tfin);
 			diag_free(tfin);
 			return EXIT_FAILURE;
 		}
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 	}
 
 	assert(cmd->err);
-	remove(cmd->err);
+	diag_remove(cmd->err);
 
 	struct diag_port *ip;
 	struct diag_port *op;
@@ -116,10 +116,10 @@ int main(int argc, char *argv[])
 	}
 	if (d == 1) {
 		if (n) {
-			remove(file);
+			diag_remove(file);
 			diag_free(file);
 		} else if (tfin) {
-			remove(tfin);
+			diag_remove(tfin);
 			diag_free(tfin);
 			tfin = NULL;
 		}
@@ -142,9 +142,9 @@ int main(int argc, char *argv[])
 		goto done;
 	}
 
-	remove(cmd->out);
+	diag_remove(cmd->out);
 	if (n) {
-		remove(file);
+		diag_remove(file);
 		diag_free(file);
 	}
 
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
  done:
 	diag_command_destroy(cmd);
 	if (tfin) {
-		remove(tfin);
+		diag_remove(tfin);
 		diag_free(tfin);
 	}
 	return r;

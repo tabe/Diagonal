@@ -90,12 +90,12 @@ static int evaluate(char **argv, const char *input, double *val)
 	}
 	assert(cmd->out);
 	assert(cmd->err);
-	remove(cmd->err);
+	diag_remove(cmd->err);
 	if (!read_real(cmd->out, val)) {
-		remove(cmd->out);
+		diag_remove(cmd->out);
 		goto done;
 	}
-	remove(cmd->out);
+	diag_remove(cmd->out);
 	r = EXIT_SUCCESS;
  done:
 	diag_command_destroy(cmd);
@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 			diag_error("the number of iteration exceeded");
 			goto done1;
 		}
-		remove(file);
+		diag_remove(file);
 		diag_free(file);
 		x_n2 = x_n1;
 		x_n1 = x_n;
@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 
  done1:
 	if (file) {
-		remove(file);
+		diag_remove(file);
 		diag_free(file);
 	}
  done0:

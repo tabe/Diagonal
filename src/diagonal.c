@@ -181,3 +181,10 @@ char *diag_strdup(const char *s)
 	r[len] = '\0'; /* NULL-terminated */
 	return r;
 }
+
+void diag_remove(const char *pathname)
+{
+	int r = remove(pathname);
+	if (r == 0) return;
+	perror(pathname);
+}

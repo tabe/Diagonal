@@ -29,7 +29,7 @@ int main(void)
 	ssize_t s = diag_port_copy(p0, p1);
 	if (s < 0) {
 		diag_port_destroy(p1);
-		remove("0.txt");
+		diag_remove("0.txt");
 		diag_port_destroy(p0);
 		diag_free(buf);
 		return EXIT_FAILURE;
@@ -42,13 +42,13 @@ int main(void)
 	assert(p0);
 	struct diag_port *p2 = diag_port_new_path("0.txt", "rb");
 	if (!p2) {
-		remove("0.txt");
+		diag_remove("0.txt");
 		diag_port_destroy(p0);
 		diag_free(buf);
 		return EXIT_FAILURE;
 	}
 	int r = diag_port_diff(p0, p2);
-	remove("0.txt");
+	diag_remove("0.txt");
 	diag_port_destroy(p2);
 	diag_port_destroy(p0);
 	diag_free(buf);

@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 			DIAG_DEQUE_FOR_EACH(q, e) {
 				file = (char *)e->attr;
 				assert(file);
-				remove(file);
+				diag_remove(file);
 			}
 		}
 		r = EXIT_SUCCESS;

@@ -47,6 +47,10 @@ DIAG_FUNCTION void *diag_realloc(void *ptr, size_t size);
 DIAG_FUNCTION void diag_free(void *ptr);
 
 DIAG_FUNCTION char *diag_strdup(const char *s);
+/**
+ * Try to remove `pathname', and show an error message in case of failure.
+ */
+DIAG_FUNCTION void diag_remove(const char *pathname);
 
 DIAG_C_DECL_END
 

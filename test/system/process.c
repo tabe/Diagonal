@@ -19,8 +19,8 @@ int main(void)
 	diag_process_wait(p);
 	ASSERT_EQ_INT(0, p->status);
 	diag_process_destroy(p);
-	remove(c->out);
-	remove(c->err);
+	diag_remove(c->out);
+	diag_remove(c->err);
 	diag_command_destroy(c);
 	return EXIT_SUCCESS;
 }
