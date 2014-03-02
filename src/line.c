@@ -37,7 +37,6 @@ diag_line_context_new(struct diag_port *port)
 #endif
 	context->buf = diag_malloc(context->bufsize);
 	context->head = context->sentinel = 0;
-	context->error = 0;
 	return context;
 }
 
@@ -49,7 +48,7 @@ diag_line_context_destroy(struct diag_line_context *context)
 	diag_free(context);
 }
 
-struct diag_line_context *
+enum diag_line_error_e
 diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 {
 	size_t h, i_pos, size = 0;
@@ -69,19 +68,17 @@ diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 			} else if (s == 0) {
 				context->sentinel = port->i_pos - i_pos;
 				if (context->sentinel == 0) {
-					if (line) {
-						line[size] = '\0';
-						*linep = line;
-						if (sizep) *sizep = size;
-					} else {
-						context->error = DIAG_LINE_ERROR_EOF;
+					if (!line) {
+						return DIAG_LINE_ERROR_EOF;
 					}
-					return context;
+					line[size] = '\0';
+					*linep = line;
+					if (sizep) *sizep = size;
+					return DIAG_LINE_ERROR_OK;
 				}
 			} else {
 				diag_free(line);
-				context->error = DIAG_LINE_ERROR_UNKNOWN;
-				return context;
+				return DIAG_LINE_ERROR_UNKNOWN;
 			}
 		}
 
@@ -96,7 +93,7 @@ diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 				*linep = line;
 				if (sizep) *sizep = size+s;
 				context->head = h+1;
-				return context;
+				return DIAG_LINE_ERROR_OK;
 			}
 			h++;
 		}

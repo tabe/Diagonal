@@ -54,9 +54,10 @@ static void map_file(const char *path, struct diag_rbtree *tree)
 	size_t n = 0;
 	struct diag_line_context *context = diag_line_context_new(port);
 	struct diag_rbtree_node *node;
+	enum diag_line_error_e e;
 	for (;;) {
-		context = diag_line_read(context, NULL, &p);
-		if (DIAG_LINE_HAS_ERROR(context)) break;
+		e = diag_line_read(context, NULL, &p);
+		if (e != DIAG_LINE_ERROR_OK) break;
 		node = diag_rbtree_node_new((uintptr_t)n++, (uintptr_t)p);
 		diag_rbtree_insert(tree, node);
 	}
