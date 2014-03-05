@@ -150,6 +150,12 @@ char *diag_get_command_line(char **argv)
 
 static int local_pid = 100;
 
+/*
+ * References:
+ *
+ * How to spawn console processes with redirected standard handles
+ * http://support.microsoft.com/kb/190351
+ */
 struct diag_process *diag_run_program(struct diag_command *command)
 {
 	assert(command);
@@ -424,6 +430,10 @@ intptr_t diag_run_agent(char **argv)
 	return (intptr_t)pi.hProcess;
 }
 
+/*
+ * TODO: n should exceed MAXIMUM_WAIT_OBJECTS
+ * http://msdn.microsoft.com/en-us/library/windows/desktop/ms687025(v=vs.85).aspx
+ */
 int diag_wait_agent(int n, const intptr_t *agents)
 {
 	assert(n > 0);
