@@ -378,3 +378,115 @@ void diag_process_destroy(struct diag_process *process)
 {
 	diag_free(process);
 }
+
+#if defined(_WIN32) && defined(__MINGW32__)
+
+intptr_t diag_run_agent(char **argv)
+{
+	SECURITY_ATTRIBUTES sa;
+	sa.nLength = sizeof(sa);
+	sa.bInheritHandle = TRUE;
+	sa.lpSecurityDescriptor = NULL;
+
+	STARTUPINFO si;
+	GetStartupInfo(&si);
+	si.dwFlags |= STARTF_USESTDHANDLES;
+	si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+	si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&pi, sizeof(pi));
+
+	char *line = diag_get_command_line(argv);
+
+	BOOL b = CreateProcess(NULL,
+			       line,
+			       NULL,
+			       NULL,
+			       TRUE,
+			       0,
+			       NULL,
+			       NULL,
+			       &si,
+			       &pi);
+	if (!b) {
+		diag_fatal("could not create process: %s: 0x%x",
+			   line,
+			   (unsigned int)GetLastError());
+	}
+
+	/* We do not want WaitForInputIdle() because there is no interaction
+	   between the parent process and this child */
+
+	diag_free(line);
+	CloseHandle(pi.hThread);
+	return (intptr_t)pi.hProcess;
+}
+
+int diag_wait_agent(int n, const intptr_t *agents)
+{
+	assert(n > 0);
+	assert(agents);
+
+	DWORD r = WaitForMultipleObjects((DWORD)n,
+					 (const HANDLE *)agents,
+					 FALSE,
+					 INFINITE);
+	assert(r != WAIT_TIMEOUT);
+	if (r == WAIT_FAILED) {
+		diag_fatal("failed to wait agent: %x",
+			   (unsigned int)GetLastError());
+	}
+	assert(WAIT_OBJECT_0 == 0);
+	if (WAIT_OBJECT_0 + (DWORD)n <= r) {
+		diag_fatal("failed to wait agent");
+	}
+	DWORD i = r - WAIT_OBJECT_0;
+	intptr_t p = agents[i];
+	if (CloseHandle((HANDLE)p) == 0) {
+		diag_error("failed to close handle");
+	}
+	return (int)i;
+}
+
+#else
+
+intptr_t diag_run_agent(char **argv)
+{
+	assert(argv);
+
+	pid_t pid = fork();
+	if (pid < 0) {
+		perror(argv[0]);
+		_Exit(EXIT_FAILURE);
+	}
+	if (pid == 0) {
+		if (execvp(argv[0], argv) == -1) {
+			perror(argv[0]);
+			_Exit(EXIT_FAILURE);
+		}
+	}
+	return (intptr_t)pid;
+}
+
+int diag_wait_agent(int n, const intptr_t *agents)
+{
+	assert(n > 0);
+	assert(agents);
+
+	for (;;) {
+		pid_t pid = wait(NULL);
+		int i;
+		if (pid == -1) {
+			diag_fatal("failed to wait agent");
+		}
+		for (i = 0; i < n; i++) {
+			if (pid == agents[i]) {
+				return i;
+			}
+		}
+	}
+}
+
+#endif

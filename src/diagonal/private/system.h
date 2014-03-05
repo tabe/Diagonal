@@ -37,6 +37,10 @@ DIAG_FUNCTION void diag_process_wait(struct diag_process *);
 
 DIAG_FUNCTION void diag_process_destroy(struct diag_process *);
 
+DIAG_FUNCTION intptr_t diag_run_agent(char **argv);
+
+DIAG_FUNCTION int diag_wait_agent(int n, const intptr_t *agents);
+
 DIAG_C_DECL_END
 
 #endif

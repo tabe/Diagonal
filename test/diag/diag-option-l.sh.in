@@ -12,6 +12,7 @@ available commands are:
   fix
   hash
   line
+  pool
   root
   uniq
 EOF
