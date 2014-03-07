@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
 	diag_init();
 
-	while ( (c = getopt(argc, argv, "+I:Vehn:s")) >= 0) {
+	while ( (c = getopt(argc, argv, "+I:Ve:hn:")) >= 0) {
 		switch (c) {
 		case 'I':
 			interval = atoi(optarg);
