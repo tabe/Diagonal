@@ -55,10 +55,36 @@ add_executable(diag-uniq diag-uniq.c)
 target_link_libraries(diag-uniq diagonal)
 
 # set RPATH for each executable, cf. http://www.cmake.org/Wiki/CMake_RPATH_handling
-set_target_properties(diag diag-avg diag-cycle diag-dec diag-enc diag-file diag-fix diag-hash diag-line diag-pool diag-repeat diag-root diag-uniq
+set_target_properties(
+  diag
+  diag-avg
+  diag-cycle
+  diag-dec
+  diag-enc
+  diag-file
+  diag-fix
+  diag-hash
+  diag-line
+  diag-pool
+  diag-repeat
+  diag-root
+  diag-uniq
   PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
-install(TARGETS diagonal diag diag-avg diag-cycle diag-dec diag-enc diag-file diag-fix diag-hash diag-line diag-pool diag-repeat diag-root diag-uniq
+install(TARGETS diagonal
+                diag
+                diag-avg
+                diag-cycle
+                diag-dec
+                diag-enc
+                diag-file
+                diag-fix
+                diag-hash
+                diag-line
+                diag-pool
+                diag-repeat
+                diag-root
+                diag-uniq
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
