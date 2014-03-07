@@ -47,8 +47,8 @@ add_executable(diag-line diag-line.c)
 target_link_libraries(diag-line diagonal)
 add_executable(diag-pool diag-pool.c)
 target_link_libraries(diag-pool diagonal)
-add_executable(diag-repeat diag-repeat.c)
-target_link_libraries(diag-repeat diagonal)
+add_executable(diag-rep diag-rep.c)
+target_link_libraries(diag-rep diagonal)
 add_executable(diag-root diag-root.c)
 target_link_libraries(diag-root diagonal)
 add_executable(diag-uniq diag-uniq.c)
@@ -66,7 +66,7 @@ set_target_properties(
   diag-hash
   diag-line
   diag-pool
-  diag-repeat
+  diag-rep
   diag-root
   diag-uniq
   PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -82,7 +82,7 @@ install(TARGETS diagonal
                 diag-hash
                 diag-line
                 diag-pool
-                diag-repeat
+                diag-rep
                 diag-root
                 diag-uniq
         RUNTIME DESTINATION bin

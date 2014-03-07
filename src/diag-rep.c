@@ -18,7 +18,7 @@ static const int NUMBER_OF_TRIALS = 5;
 
 static void usage(void)
 {
-	diag_printf("diag-repeat [-I interval] [-e code] [-n num] command [operand ...]");
+	diag_printf("diag-rep [-I interval] [-e code] [-n num] command [operand ...]");
 }
 
 int main(int argc, char *argv[])

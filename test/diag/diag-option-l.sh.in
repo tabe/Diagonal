@@ -13,7 +13,7 @@ available commands are:
   hash
   line
   pool
-  repeat
+  repeat  (rep)
   root
   uniq
 EOF

@@ -1,5 +1,0 @@
-#!/bin/sh
-
-FILE=@DIAGONAL_BINARY_DIR@/test/diag-repeat/diag-repeat-head.sh
-
-@DIAG_REPEAT@ -n 5 head -1 < $FILE | diff -u $FILE -

@@ -34,7 +34,7 @@ enum diag_command_index_e {
 	DIAG_COMMAND_HASH,
 	DIAG_COMMAND_LINE,
 	DIAG_COMMAND_POOL,
-	DIAG_COMMAND_REPEAT,
+	DIAG_COMMAND_REP,
 	DIAG_COMMAND_ROOT,
 	DIAG_COMMAND_UNIQ
 };
@@ -49,7 +49,7 @@ static const char *commands[] = {
 	"hash",
 	"line",
 	"pool",
-	"repeat",
+	"rep",
 	"root",
 	"uniq"
 };
@@ -72,7 +72,8 @@ struct diag_command_variation {
 	{DIAG_COMMAND_HASH, "hash"},
 	{DIAG_COMMAND_LINE, "line"},
 	{DIAG_COMMAND_POOL, "pool"},
-	{DIAG_COMMAND_REPEAT, "repeat"},
+	{DIAG_COMMAND_REP, "rep"},
+	{DIAG_COMMAND_REP, "repeat"},
 	{DIAG_COMMAND_ROOT, "root"},
 	{DIAG_COMMAND_UNIQ, "uniq"}
 };

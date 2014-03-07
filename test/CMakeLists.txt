@@ -20,7 +20,7 @@ set(subdirectories
     diag-avg
     diag-cycle
     diag-fix
-    diag-repeat
+    diag-rep
     diag-root
     diag
 )
