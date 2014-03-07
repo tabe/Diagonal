@@ -434,19 +434,24 @@ intptr_t diag_run_agent(char **argv)
  * TODO: n should exceed MAXIMUM_WAIT_OBJECTS
  * http://msdn.microsoft.com/en-us/library/windows/desktop/ms687025(v=vs.85).aspx
  */
-int diag_wait_agent(int n, const intptr_t *agents)
+int diag_wait_agent(int n, const intptr_t *agents, int *code)
 {
 	assert(n > 0);
 	assert(agents);
 
+	if (n > MAXIMUM_WAIT_OBJECTS) {
+		diag_error("number of agents exceeds MAXIMUM_WAIT_OBJECTS");
+		return -1;
+	}
 	DWORD r = WaitForMultipleObjects((DWORD)n,
 					 (const HANDLE *)agents,
 					 FALSE,
 					 INFINITE);
 	assert(r != WAIT_TIMEOUT);
 	if (r == WAIT_FAILED) {
-		diag_fatal("failed to wait agent: %x",
+		diag_error("failed to wait agent: %x",
 			   (unsigned int)GetLastError());
+		return -1;
 	}
 	assert(WAIT_OBJECT_0 == 0);
 	if (WAIT_OBJECT_0 + (DWORD)n <= r) {
@@ -454,10 +459,25 @@ int diag_wait_agent(int n, const intptr_t *agents)
 	}
 	DWORD i = r - WAIT_OBJECT_0;
 	intptr_t p = agents[i];
+	if (code) {
+		DWORD c = 0;
+		if (GetExitCodeProcess((HANDLE)p, &c) == 0) {
+			diag_fatal("failed to get exit code: %x",
+				   (unsigned int)GetLastError());
+		}
+		*code = (int)c;
+	}
 	if (CloseHandle((HANDLE)p) == 0) {
 		diag_error("failed to close handle");
 	}
 	return (int)i;
+}
+
+void diag_sleep(int interval)
+{
+	if (interval <= 0) return;
+	DWORD milliseconds = (DWORD)(interval * 1000);
+	Sleep(milliseconds);
 }
 
 #else
@@ -480,22 +500,40 @@ intptr_t diag_run_agent(char **argv)
 	return (intptr_t)pid;
 }
 
-int diag_wait_agent(int n, const intptr_t *agents)
+int diag_wait_agent(int n, const intptr_t *agents, int *code)
 {
 	assert(n > 0);
 	assert(agents);
 
+	int status;
+	int i;
 	for (;;) {
-		pid_t pid = wait(NULL);
-		int i;
-		if (pid == -1) {
-			diag_fatal("failed to wait agent");
+		pid_t pid = wait(&status);
+		if (pid == (pid_t)0) {
+			assert(0);
+		} else if (pid == (pid_t)-1) {
+			perror(NULL);
+			diag_error("failed to wait agent");
+			return -1;
+		}
+		if (!WIFEXITED(status)) continue;
+		if (code) {
+			*code = WEXITSTATUS(status);
 		}
 		for (i = 0; i < n; i++) {
 			if (pid == agents[i]) {
 				return i;
 			}
 		}
+	}
+}
+
+void diag_sleep(int interval)
+{
+	if (interval <= 0) return;
+	unsigned int s = (unsigned int)interval;
+	while (s > 0) {
+		s = sleep(s);
 	}
 }
 

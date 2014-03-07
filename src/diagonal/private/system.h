@@ -37,9 +37,24 @@ DIAG_FUNCTION void diag_process_wait(struct diag_process *);
 
 DIAG_FUNCTION void diag_process_destroy(struct diag_process *);
 
+/*
+ * Run a command specified with `argv' as an agent.
+ */
 DIAG_FUNCTION intptr_t diag_run_agent(char **argv);
 
-DIAG_FUNCTION int diag_wait_agent(int n, const intptr_t *agents);
+/*
+ * Wait until one of `n' numbers of `agents' exits.
+ * Return the index of the exiting agent in case of success.
+ * If `code' is non-NULL, fill it with the exit status.
+ * Return -1 if an error occurs.
+ */
+DIAG_FUNCTION int diag_wait_agent(int n, const intptr_t *agents, int *code);
+
+/*
+ * Suspend the calling thread until `interval' seconds have elapsed.
+ * Return immediately if `interval` is non-positive.
+ */
+DIAG_FUNCTION void diag_sleep(int interval);
 
 DIAG_C_DECL_END
 

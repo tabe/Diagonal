@@ -12,28 +12,39 @@
 #endif
 
 #include "diagonal.h"
-#include "diagonal/vector.h"
 #include "diagonal/private/system.h"
 
-static const int NUMBER_OF_PROCESSES = 5;
+static const int NUMBER_OF_TRIALS = 5;
 
 static void usage(void)
 {
-	diag_printf("diag-pool [-n num] command [operand ...]");
+	diag_printf("diag-repeat [-I interval] [-e code] [-n num] command [operand ...]");
 }
 
 int main(int argc, char *argv[])
 {
-	int c, i, n = NUMBER_OF_PROCESSES;
-	int r = EXIT_FAILURE;
+	int c, i, n = NUMBER_OF_TRIALS;
+	int interval = 0;
+	int early_exit = 0;
+	int exit_code = 0;
 
 	diag_init();
 
-	while ( (c = getopt(argc, argv, "+Vhn:")) >= 0) {
+	while ( (c = getopt(argc, argv, "+I:Vehn:s")) >= 0) {
 		switch (c) {
+		case 'I':
+			interval = atoi(optarg);
+			if (interval < 0) {
+				diag_fatal("non-negative integer expected, but %d", interval);
+			}
+			break;
 		case 'V':
 			diag_print_version();
 			exit(EXIT_SUCCESS);
+			break;
+		case 'e':
+			early_exit = 1;
+			exit_code = atoi(optarg);
 			break;
 		case 'h':
 			usage();
@@ -60,23 +71,17 @@ int main(int argc, char *argv[])
 	}
 
 	assert(n > 0);
-	struct diag_vector *pv = diag_vector_create(n);
-	if (!pv) {
-		exit(EXIT_FAILURE);
-	}
+	assert(interval >= 0);
 	char **cmd = argv + optind;
 	intptr_t p;
+	int r = EXIT_SUCCESS;
 	for (i = 0; i < n; i++) {
+		if (i > 0) diag_sleep(interval);
 		p = diag_run_agent(cmd);
-		diag_vector_set(pv, i, p);
+		(void)diag_wait_agent(1, &p, &r);
+		if (early_exit && r == exit_code) {
+			return r;
+		}
 	}
-	for (;;) {
-		i = diag_wait_agent(n, pv->elements, NULL);
-		p = diag_run_agent(cmd);
-		diag_vector_set(pv, i, p);
-	}
-	r = EXIT_SUCCESS;
-
-	diag_vector_destroy(pv);
 	return r;
 }
