@@ -72,11 +72,15 @@ int main(int argc, char *argv[])
 	}
 	for (;;) {
 		i = diag_wait_agent(n, pv->elements, NULL);
+		if (i < 0) {
+			goto done;
+		}
 		p = diag_run_agent(cmd);
 		diag_vector_set(pv, i, p);
 	}
 	r = EXIT_SUCCESS;
 
+ done:
 	diag_vector_destroy(pv);
 	return r;
 }
