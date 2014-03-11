@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -e
-
-trap 'rm -f diag-avg-one.txt' EXIT
-echo '1 2.3 -4.5' > diag-avg-one.txt
-@DIAG_AVG@ -c 3 < diag-avg-one.txt | diff -u diag-avg-one.txt -

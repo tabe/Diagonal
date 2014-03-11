@@ -1,9 +1,8 @@
 set(tests
     diag-option-l
-    diag-command-average
-    diag-command-avg
     diag-command-cycle
     diag-command-fix
+    diag-command-mean
     diag-command-root
 )
 get_target_property(diag-path diag LOCATION)

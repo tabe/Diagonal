@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-mean-one.txt' EXIT
+echo '1 2.3 -4.5' > diag-mean-one.txt
+@DIAG_MEAN@ -c 3 < diag-mean-one.txt | diff -u diag-mean-one.txt -

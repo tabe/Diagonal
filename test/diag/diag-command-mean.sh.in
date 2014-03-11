@@ -1,0 +1,7 @@
+#!/bin/sh
+
+trap 'rm -f diag-command-mean.stdout' EXIT
+echo 42 | @DIAG_COMMAND@ mean > diag-command-mean.stdout
+diff -u - diag-command-mean.stdout <<EOF
+42
+EOF

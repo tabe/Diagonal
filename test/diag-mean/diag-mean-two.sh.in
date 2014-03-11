@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-mean-two.input diag-mean-two.output' EXIT
+cat > diag-mean-two.input <<EOF
+-8.5
+4
+EOF
+echo '-2.25' > diag-mean-two.output
+@DIAG_MEAN@ < diag-mean-two.input | diff -u diag-mean-two.output -

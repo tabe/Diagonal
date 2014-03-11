@@ -1,4 +1,4 @@
 #!/bin/sh
 
-@DIAG_AVG@ < /dev/null
+@DIAG_MEAN@ < /dev/null
 if test $? -eq 0; then exit 1; fi

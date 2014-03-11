@@ -25,7 +25,6 @@
 #define DIAG_EXECUTABLE_PATH_MAX 1024
 
 enum diag_command_index_e {
-	DIAG_COMMAND_AVG,
 	DIAG_COMMAND_CYCLE,
 	DIAG_COMMAND_DEC,
 	DIAG_COMMAND_ENC,
@@ -33,6 +32,7 @@ enum diag_command_index_e {
 	DIAG_COMMAND_FIX,
 	DIAG_COMMAND_HASH,
 	DIAG_COMMAND_LINE,
+	DIAG_COMMAND_MEAN,
 	DIAG_COMMAND_MEDI,
 	DIAG_COMMAND_POOL,
 	DIAG_COMMAND_REP,
@@ -41,7 +41,6 @@ enum diag_command_index_e {
 };
 
 static const char *commands[] = {
-	"avg",
 	"cycle",
 	"dec",
 	"enc",
@@ -49,6 +48,7 @@ static const char *commands[] = {
 	"fix",
 	"hash",
 	"line",
+	"mean",
 	"medi",
 	"pool",
 	"rep",
@@ -62,8 +62,6 @@ struct diag_command_variation {
 	unsigned int i;
 	char *name;
 } command_variations[] = {
-	{DIAG_COMMAND_AVG, "average"},
-	{DIAG_COMMAND_AVG, "avg"},
 	{DIAG_COMMAND_CYCLE, "cycle"},
 	{DIAG_COMMAND_DEC, "dec"},
 	{DIAG_COMMAND_DEC, "decode"},
@@ -73,6 +71,7 @@ struct diag_command_variation {
 	{DIAG_COMMAND_FIX, "fix"},
 	{DIAG_COMMAND_HASH, "hash"},
 	{DIAG_COMMAND_LINE, "line"},
+	{DIAG_COMMAND_MEAN, "mean"},
 	{DIAG_COMMAND_MEDI, "medi"},
 	{DIAG_COMMAND_MEDI, "median"},
 	{DIAG_COMMAND_POOL, "pool"},

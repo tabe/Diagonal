@@ -17,9 +17,9 @@ set(subdirectories
     line
     list
     vcdiff
-    diag-avg
     diag-cycle
     diag-fix
+    diag-mean
     diag-medi
     diag-rep
     diag-root

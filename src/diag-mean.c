@@ -19,7 +19,7 @@
 
 static void usage(void)
 {
-	diag_printf("diag-avg [-c num_of_columns]");
+	diag_printf("diag-mean [-c num_of_columns]");
 }
 
 int main(int argc, char *argv[])

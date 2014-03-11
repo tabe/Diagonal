@@ -1,7 +1,0 @@
-#!/bin/sh
-
-trap 'rm -f diag-command-avg.stdout' EXIT
-echo 42 | @DIAG_COMMAND@ avg > diag-command-avg.stdout
-diff -u - diag-command-avg.stdout <<EOF
-42
-EOF

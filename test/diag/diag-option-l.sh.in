@@ -4,7 +4,6 @@ trap 'rm -f diag-option-l.stdout' EXIT
 @DIAG_COMMAND@ -l > diag-option-l.stdout
 diff -u - diag-option-l.stdout <<EOF
 available commands are:
-  average (avg)
   cycle
   decode  (dec)
   encode  (enc)
@@ -12,6 +11,7 @@ available commands are:
   fix
   hash
   line
+  mean
   median  (medi)
   pool
   repeat  (rep)

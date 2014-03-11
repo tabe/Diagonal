@@ -30,8 +30,6 @@ add_library(diagonal SHARED
 
 add_executable(diag diag.c)
 target_link_libraries(diag diagonal)
-add_executable(diag-avg diag-avg.c)
-target_link_libraries(diag-avg diagonal)
 add_executable(diag-cycle diag-cycle.c)
 target_link_libraries(diag-cycle diagonal)
 add_executable(diag-dec diag-dec.c)
@@ -46,6 +44,8 @@ add_executable(diag-hash diag-hash.c)
 target_link_libraries(diag-hash diagonal)
 add_executable(diag-line diag-line.c)
 target_link_libraries(diag-line diagonal)
+add_executable(diag-mean diag-mean.c)
+target_link_libraries(diag-mean diagonal)
 add_executable(diag-medi diag-medi.c)
 target_link_libraries(diag-medi diagonal)
 add_executable(diag-pool diag-pool.c)
@@ -60,7 +60,6 @@ target_link_libraries(diag-uniq diagonal)
 # set RPATH for each executable, cf. http://www.cmake.org/Wiki/CMake_RPATH_handling
 set_target_properties(
   diag
-  diag-avg
   diag-cycle
   diag-dec
   diag-enc
@@ -68,6 +67,7 @@ set_target_properties(
   diag-fix
   diag-hash
   diag-line
+  diag-mean
   diag-medi
   diag-pool
   diag-rep
@@ -77,7 +77,6 @@ set_target_properties(
 
 install(TARGETS diagonal
                 diag
-                diag-avg
                 diag-cycle
                 diag-dec
                 diag-enc
@@ -85,6 +84,7 @@ install(TARGETS diagonal
                 diag-fix
                 diag-hash
                 diag-line
+                diag-mean
                 diag-medi
                 diag-pool
                 diag-rep
