@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-medi-one.txt' EXIT
+echo 1 > diag-medi-one.txt
+@DIAG_MEDI@ < diag-medi-one.txt | diff -u diag-medi-one.txt -

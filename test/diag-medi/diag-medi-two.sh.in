@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-medi-two.input diag-medi-two.output' EXIT
+cat > diag-medi-two.input <<EOF
+-8.5
+4
+EOF
+echo '-2.25' > diag-medi-two.output
+@DIAG_MEDI@ < diag-medi-two.input | diff -u diag-medi-two.output -

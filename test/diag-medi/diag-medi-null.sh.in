@@ -1,0 +1,4 @@
+#!/bin/sh
+
+@DIAG_MEDI@ < /dev/null
+if test $? -eq 0; then exit 1; fi

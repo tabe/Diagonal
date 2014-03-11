@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-medi-1000.input diag-medi-1000.output' EXIT
+./median-rand 0 1000 > diag-medi-1000.input
+echo '0' > diag-medi-1000.output
+@DIAG_MEDI@ < diag-medi-1000.input | diff -u diag-medi-1000.output -

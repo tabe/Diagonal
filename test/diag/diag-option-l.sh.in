@@ -12,6 +12,7 @@ available commands are:
   fix
   hash
   line
+  median  (medi)
   pool
   repeat  (rep)
   root

@@ -17,6 +17,7 @@ add_library(diagonal SHARED
             memory.c
             pair.c
             port.c
+            qselect.c
             rbtree.c
             set.c
             singlelinkage.c
@@ -45,6 +46,8 @@ add_executable(diag-hash diag-hash.c)
 target_link_libraries(diag-hash diagonal)
 add_executable(diag-line diag-line.c)
 target_link_libraries(diag-line diagonal)
+add_executable(diag-medi diag-medi.c)
+target_link_libraries(diag-medi diagonal)
 add_executable(diag-pool diag-pool.c)
 target_link_libraries(diag-pool diagonal)
 add_executable(diag-rep diag-rep.c)
@@ -65,6 +68,7 @@ set_target_properties(
   diag-fix
   diag-hash
   diag-line
+  diag-medi
   diag-pool
   diag-rep
   diag-root
@@ -81,6 +85,7 @@ install(TARGETS diagonal
                 diag-fix
                 diag-hash
                 diag-line
+                diag-medi
                 diag-pool
                 diag-rep
                 diag-root
