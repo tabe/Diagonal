@@ -1,7 +1,0 @@
-#!/bin/sh
-
-FILE=@DIAGONAL_BINARY_DIR@/test/diag-avg/diag-avg-cat.sh
-
-@DIAG_AVG@ cat $FILE | diff -c $FILE -
-
-

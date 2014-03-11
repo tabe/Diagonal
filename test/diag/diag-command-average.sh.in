@@ -1,7 +1,7 @@
 #!/bin/sh
 
 trap 'rm -f diag-command-average.stdout' EXIT
-@DIAG_COMMAND@ average echo 42 > diag-command-average.stdout
+echo 42 | @DIAG_COMMAND@ average > diag-command-average.stdout
 diff -u - diag-command-average.stdout <<EOF
 42
 EOF
