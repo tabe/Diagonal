@@ -40,7 +40,7 @@ static void insert(size_t n, uint32_t h, struct diag_rbtree *tree)
 	struct diag_deque *q = diag_deque_new();
 	(void)diag_deque_push(q, (intptr_t)n);
 	struct diag_rbtree_node *node;
-	node = diag_rbtree_node_new((uintptr_t)h, (uintptr_t)q);
+	node = diag_rbtree_node_new((intptr_t)h, (intptr_t)q);
 	(void)diag_rbtree_insert(tree, node);
 }
 
@@ -60,7 +60,7 @@ static int find_or_insert(size_t n, uint32_t h,
 	return 0;
 }
 
-static void free_entries(uintptr_t attr, void *data)
+static void free_entries(intptr_t attr, void *data)
 {
 	(void)data;
 	struct diag_deque *dq = (struct diag_deque *)attr;

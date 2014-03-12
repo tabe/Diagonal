@@ -2,12 +2,12 @@
 #ifndef DIAGONAL_RBTREE_H
 #define DIAGONAL_RBTREE_H
 
-typedef void (*diag_rbtree_callback_t)(uintptr_t key, uintptr_t attr, void *data);
-typedef void (*diag_rbtree_callback_attr_t)(uintptr_t attr, void *data);
+typedef void (*diag_rbtree_callback_t)(intptr_t key, intptr_t attr, void *data);
+typedef void (*diag_rbtree_callback_attr_t)(intptr_t attr, void *data);
 
 struct diag_rbtree_node {
-	uintptr_t key;
-	uintptr_t attr;
+	intptr_t key;
+	intptr_t attr;
 	char color;
 	struct diag_rbtree_node *parent;
 	struct diag_rbtree_node *left;
@@ -26,7 +26,7 @@ DIAG_FUNCTION struct diag_rbtree *diag_rbtree_create(diag_cmp_t cmp);
 
 DIAG_FUNCTION void diag_rbtree_destroy(struct diag_rbtree *tree);
 
-DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_node_new(uintptr_t key, uintptr_t attr);
+DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_node_new(intptr_t key, intptr_t attr);
 
 DIAG_FUNCTION void diag_rbtree_node_destroy(struct diag_rbtree_node *node);
 
@@ -46,7 +46,7 @@ DIAG_FUNCTION size_t diag_rbtree_delete(struct diag_rbtree *tree,
  * If `key' is found in `tree', return DIAG_SUCCESS with the resulting node
  * assigned to `found', otherwise return DIAG_FAILURE.
  */
-DIAG_FUNCTION int diag_rbtree_search(struct diag_rbtree *tree, uintptr_t key,
+DIAG_FUNCTION int diag_rbtree_search(struct diag_rbtree *tree, intptr_t key,
 				     struct diag_rbtree_node **found);
 
 DIAG_FUNCTION struct diag_rbtree_node *diag_rbtree_minimum(const struct diag_rbtree *tree);

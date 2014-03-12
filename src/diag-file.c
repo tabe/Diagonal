@@ -151,7 +151,7 @@ static uintptr_t hash32_rev(intptr_t a, intptr_t b)
 	return d;
 }
 
-static int cmp_imm_rev(uintptr_t x, uintptr_t y)
+static int cmp_imm_rev(intptr_t x, intptr_t y)
 {
 	return (x < y) - (x > y);
 }

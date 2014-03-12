@@ -10,12 +10,12 @@ main()
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;
-	uintptr_t keys[] = {1, 6, 8, 11, 13, 15, 17, 22, 25, 27, 0};
+	intptr_t keys[] = {1, 6, 8, 11, 13, 15, 17, 22, 25, 27, 0};
 	int i, r;
 
 	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 	for (i = 0; keys[i] > 0; i++) {
-		node = diag_rbtree_node_new(keys[i], (uintptr_t)NULL);
+		node = diag_rbtree_node_new(keys[i], (intptr_t)NULL);
 		diag_rbtree_insert(tree, node);
 	}
 	for (i = 0; keys[i] > 0; i++) {
@@ -23,7 +23,7 @@ main()
 		assert(r == DIAG_SUCCESS);
 		assert(keys[i] == node->key);
 	}
-	r = diag_rbtree_search(tree, (uintptr_t)50, &node);
+	r = diag_rbtree_search(tree, (intptr_t)50, &node);
 	assert(r == DIAG_FAILURE);
 
 	node = diag_rbtree_minimum(tree);

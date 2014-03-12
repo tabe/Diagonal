@@ -8,9 +8,9 @@
 
 struct diag_couple {
 	size_t i;
-	uintptr_t car;
+	intptr_t car;
 	size_t j;
-	uintptr_t cdr;
+	intptr_t cdr;
 };
 
 struct diag_singlelinkage {

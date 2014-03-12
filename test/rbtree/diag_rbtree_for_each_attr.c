@@ -6,11 +6,11 @@
 #include "diagonal/rbtree.h"
 
 static void
-count(uintptr_t attr, void *data)
+count(intptr_t attr, void *data)
 {
 	(void)data;
 
-	static uintptr_t i = 0;
+	static intptr_t i = 0;
 
 	assert(attr == i);
 	i++;
@@ -21,7 +21,7 @@ main()
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;
-	uintptr_t i;
+	intptr_t i;
 
 	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 	for (i = 0; i < 100; i++) {

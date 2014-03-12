@@ -20,7 +20,7 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-void free_couple(uintptr_t attr, void *data)
+void free_couple(intptr_t attr, void *data)
 {
 	(void)data;
 	struct diag_couple *p = (struct diag_couple *)attr;
@@ -53,7 +53,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 	struct diag_rbtree_node *cur_node, *nxt_node, *tmp_node, *node;
 	struct diag_couple *p;
 	size_t i, j, k, n, initial = 0, final;
-	uintptr_t x, car, cdr;
+	intptr_t x, car, cdr;
 	int r = 0;
 
 	assert(sl);
@@ -75,7 +75,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 			p->car = di->id;
 			p->j = j;
 			p->cdr = dj->id;
-			tmp_node = diag_rbtree_node_new(x, (uintptr_t)p);
+			tmp_node = diag_rbtree_node_new(x, (intptr_t)p);
 			diag_rbtree_insert(sl->m, tmp_node);
 			diag_datum_destroy(dj);
 		}
@@ -99,13 +99,13 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 			p = (struct diag_couple *)tmp_node->attr;
 			if (p->i == i || p->i == j) {
 				k = p->j;
-				if (diag_rbtree_search(tree, (uintptr_t)k, &node)) {
+				if (diag_rbtree_search(tree, (intptr_t)k, &node)) {
 					diag_rbtree_delete(tree, node);
 					nxt_node = diag_rbtree_successor(tmp_node);
 					diag_rbtree_delete(sl->m, tmp_node);
 				} else {
 					p->i = n;
-					node = diag_rbtree_node_new((uintptr_t)k, (uintptr_t)NULL);
+					node = diag_rbtree_node_new((intptr_t)k, (intptr_t)NULL);
 					diag_rbtree_insert(tree, node);
 					nxt_node = diag_rbtree_successor(tmp_node);
 				}
@@ -113,13 +113,13 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 			}
 			if (p->j == i || p->j == j) {
 				k = p->i;
-				if (diag_rbtree_search(tree, (uintptr_t)k, &node)) {
+				if (diag_rbtree_search(tree, (intptr_t)k, &node)) {
 					diag_rbtree_delete(tree, node);
 					nxt_node = diag_rbtree_successor(tmp_node);
 					diag_rbtree_delete(sl->m, tmp_node);
 				} else {
 					p->j = n;
-					node = diag_rbtree_node_new((uintptr_t)k, (uintptr_t)NULL);
+					node = diag_rbtree_node_new((intptr_t)k, (intptr_t)NULL);
 					diag_rbtree_insert(tree, node);
 					nxt_node = diag_rbtree_successor(tmp_node);
 				}
@@ -134,13 +134,13 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		p->i = i;
 		p->car = car;
 		p->j = n;
-		p->cdr = (uintptr_t)NULL;
+		p->cdr = (intptr_t)NULL;
 		diag_deque_unshift(sl->t, (intptr_t)p);
 		p = diag_malloc(sizeof(*p));
 		p->i = j;
 		p->car = cdr;
 		p->j = n;
-		p->cdr = (uintptr_t)NULL;
+		p->cdr = (intptr_t)NULL;
 		diag_deque_unshift(sl->t, (intptr_t)p);
 		n++;
 		if (sl->initial > 0 && sl->initial == ++initial) break;

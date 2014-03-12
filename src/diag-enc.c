@@ -58,7 +58,7 @@ static void map_file(const char *path, struct diag_rbtree *tree)
 	for (;;) {
 		e = diag_line_read(context, NULL, &p);
 		if (e != DIAG_LINE_ERROR_OK) break;
-		node = diag_rbtree_node_new((uintptr_t)n++, (uintptr_t)p);
+		node = diag_rbtree_node_new((intptr_t)n++, (intptr_t)p);
 		diag_rbtree_insert(tree, node);
 	}
 	diag_line_context_destroy(context);
@@ -98,14 +98,14 @@ aggregate_combinations(char **entries, size_t num_entries, diag_metric_t metric)
 	for (i = 0; i < num_entries; i++) {
 		for (j = i + 1; j < num_entries; j++) {
 			struct diag_rbtree_node *node;
-			uintptr_t k;
+			intptr_t k;
 			unsigned int *p;
 
 			p = diag_calloc(2, sizeof(unsigned int));
 			p[0] = i + 1;
 			p[1] = j + 1;
 			k = metric((intptr_t)entries[i], (intptr_t)entries[j]);
-			node = diag_rbtree_node_new(k, (uintptr_t)p);
+			node = diag_rbtree_node_new(k, (intptr_t)p);
 			diag_rbtree_insert(comb, node);
 		}
 	}
@@ -294,7 +294,7 @@ display_codes(struct diag_analysis *analysis)
 	}
 }
 
-static void free_attr(uintptr_t attr, void *data)
+static void free_attr(intptr_t attr, void *data)
 {
 	(void)data;
 	diag_free((void *)attr);
