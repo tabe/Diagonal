@@ -21,6 +21,7 @@ set(subdirectories
     diag-fix
     diag-mean
     diag-medi
+    diag-mode
     diag-rep
     diag-root
     diag

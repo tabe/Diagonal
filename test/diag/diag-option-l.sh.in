@@ -13,6 +13,7 @@ available commands are:
   line
   mean
   median  (medi)
+  mode
   pool
   repeat  (rep)
   root

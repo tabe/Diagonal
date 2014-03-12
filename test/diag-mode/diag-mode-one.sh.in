@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-mode-one.txt' EXIT
+echo 1 > diag-mode-one.txt
+@DIAG_MODE@ < diag-mode-one.txt | diff -u diag-mode-one.txt -

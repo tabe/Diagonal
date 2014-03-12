@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-mode-three.input diag-mode-three.output' EXIT
+cat > diag-mode-three.input <<EOF
+-8.5
+4
+-8.5
+EOF
+echo '-8.5' > diag-mode-three.output
+@DIAG_MODE@ < diag-mode-three.input | diff -u diag-mode-three.output -

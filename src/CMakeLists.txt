@@ -48,6 +48,8 @@ add_executable(diag-mean diag-mean.c)
 target_link_libraries(diag-mean diagonal)
 add_executable(diag-medi diag-medi.c)
 target_link_libraries(diag-medi diagonal)
+add_executable(diag-mode diag-mode.c)
+target_link_libraries(diag-mode diagonal -lm)
 add_executable(diag-pool diag-pool.c)
 target_link_libraries(diag-pool diagonal)
 add_executable(diag-rep diag-rep.c)
@@ -69,6 +71,7 @@ set_target_properties(
   diag-line
   diag-mean
   diag-medi
+  diag-mode
   diag-pool
   diag-rep
   diag-root
@@ -86,6 +89,7 @@ install(TARGETS diagonal
                 diag-line
                 diag-mean
                 diag-medi
+                diag-mode
                 diag-pool
                 diag-rep
                 diag-root

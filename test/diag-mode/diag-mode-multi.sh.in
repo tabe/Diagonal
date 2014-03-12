@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+
+trap 'rm -f diag-mode-multi.input diag-mode-multi.output' EXIT
+cat > diag-mode-multi.input <<EOF
+1
+-8.5
+2
+4
+-8.5
+10
+7
+1
+10
+-11
+-12
+EOF
+cat > diag-mode-multi.output <<EOF
+-8.5
+1
+10
+EOF
+@DIAG_MODE@ < diag-mode-multi.input | diff -u diag-mode-multi.output -
