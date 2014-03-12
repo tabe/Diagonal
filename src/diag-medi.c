@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 	}
 	/* print result */
 	printf("%g\n", result);
-	r = EXIT_FAILURE;
+	r = EXIT_SUCCESS;
 
  done:
 	diag_free(data);
