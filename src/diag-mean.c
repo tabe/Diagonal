@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
 	}
 	struct diag_line_context *context = diag_line_context_new(iport);
 	if (!context) {
+		diag_port_destroy(iport);
 		return EXIT_FAILURE;
 	}
 	enum diag_line_error_e e;
