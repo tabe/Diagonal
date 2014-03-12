@@ -78,16 +78,20 @@ int main(int argc, char *argv[])
 		double v = strtod(nptr, &end);
 		if (v == 0 && line == end) {
 			diag_error("failed to convert to number");
+			diag_free(line);
 			goto done;
 		}
 		if (v == HUGE_VAL || v == -HUGE_VAL) {
 			diag_error("found overflow");
+			diag_free(line);
 			goto done;
 		}
 		if (v == 0 && errno == ERANGE) {
 			diag_error("found underflow");
+			diag_free(line);
 			goto done;
 		}
+		diag_free(line);
 		if (capacity <= n) {
 			capacity *= 2;
 			data = diag_realloc(data, capacity * sizeof(double));
