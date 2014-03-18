@@ -1,6 +1,6 @@
 set(tests
     diag-rep-head
-    diag-rep-head0
+    diag-rep-head1
 )
 get_target_property(diag-rep-path diag-rep LOCATION)
 set(DIAG_REP ${diag-rep-path})

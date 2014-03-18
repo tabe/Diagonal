@@ -3,5 +3,5 @@
 FILE=@DIAGONAL_BINARY_DIR@/test/diag-rep/diag-rep-head0.sh
 
 trap 'rm -f diag-rep-head0.out' EXIT
-@DIAG_REP@ -e 0 head -1 < $FILE > diag-rep-head0.out
+@DIAG_REP@ -e 0 head -n 1 $FILE > diag-rep-head0.out
 head -1 $FILE | diff -u - diag-rep-head0.out
