@@ -9,8 +9,8 @@
 /* Public API */
 
 void *diag_qselect(void *base, size_t nmemb, size_t size,
-				   int (*cmp)(const void *, const void *),
-				   size_t k)
+		   int (*cmp)(const void *, const void *),
+		   size_t k)
 {
 	assert(base);
 	assert(nmemb > 0);
@@ -28,7 +28,7 @@ void *diag_qselect(void *base, size_t nmemb, size_t size,
 
  partition:
 	assert(k < nmemb);
-	if (nmemb == 1) return base;
+	if (nmemb == 1) goto done;
 
 	n_lt = 0;
 	n_gt = 0;
@@ -73,6 +73,7 @@ void *diag_qselect(void *base, size_t nmemb, size_t size,
 		goto partition;
 	}
 
+ done:
 	diag_free(rv);
 	return base;
 }
