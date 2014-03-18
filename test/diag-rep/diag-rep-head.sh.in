@@ -2,4 +2,12 @@
 
 FILE=@DIAGONAL_BINARY_DIR@/test/diag-rep/diag-rep-head.sh
 
-@DIAG_REP@ -n 5 head -1 < $FILE | diff -u $FILE -
+trap 'rm -f diag-rep-head.out' EXIT
+@DIAG_REP@ head -n 1 $FILE > diag-rep-head.out
+diff -u - diag-rep-head.out <<EOF
+#!/bin/sh
+#!/bin/sh
+#!/bin/sh
+#!/bin/sh
+#!/bin/sh
+EOF
