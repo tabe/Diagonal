@@ -1,0 +1,40 @@
+#+TITLE: Diagonal -- a versatile profiling toolkit
+#+OPTIONS: toc:nil
+
+* About
+  *Diagonal* is a command line toolkit to solve a problem which your favorite program defines.
+  For example it can be used for:
+  - getting descriptive statistics such as mean/median/mode with your program producing a sample
+  - finding a root of an equation your program defines
+#  - solving the inverse problem of a forward problem your program defines
+  - calculating a fixed point of a function your program defines
+  - detecting a cycle of a fuction your program defines
+  as well as
+#  - cluster analysis
+  - decoding a [[http://tools.ietf.org/html/rfc3284][VCDIFF]] file
+* Getting started
+  1. Get the source code via git:
+     #+BEGIN_SRC sh
+     $ git clone git://git.code.sf.net/p/diagonal/code diagonal
+     #+END_SRC
+  2. Build and install it:
+     #+BEGIN_SRC sh
+     $ mkdir build
+     $ cd build
+     $ cmake ../diagonal
+     $ make all
+     # make install
+     #+END_SRC
+  3. Run a command:
+     #+BEGIN_SRC sh
+     $ diag rep echo hello diagonal!
+     #+END_SRC
+* TODO Examples
+* Documentation
+  - [[./reference-manual.html][Reference manual]]
+#  - [[./tutorial.html][Tutorial]]
+* Publications and presentations
+  - [[https://wiki.documentfoundation.org/images/3/33/Libocon2011-similarity.odp]["Understanding the source code via analysis of similarity", LibreOffice Conference 2011]]
+* License
+  [[http://opensource.org/licenses/BSD-3-Clause][Simplified BSD license]].
+-----

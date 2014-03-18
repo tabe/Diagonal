@@ -1,0 +1,161 @@
+#+TITLE: Diagonal reference manual
+
+* Overview
+  Please read this section if you wonder what can be done with diagonal.
+** Schema
+   Diagonal is for solving various type of problems represented with the following schema:
+   #+BEGIN_EXAMPLE
+                          |input
+                          v
+           +-------------------------------+
+           |      ....                     |
+           |    +------------+             |
+           | i->|your program|->o          |
+           |    +------------+             |
+           |         ....                  |
+           |       +------------+          |
+           |    i->|your program|->o       |
+           |       +------------+          |
+   diagonal|            ....               |
+           |          +------------+       |
+           |       i->|your program|->o    |
+           |          +------------+       |
+           |               ....            |
+           |             +------------+    |
+           |          i->|your program|->o |
+           |             +------------+    |
+           |                   ....        |
+           +-------------------------------+
+                          |output
+                          v
+   #+END_EXAMPLE
+   All you have to do is to specify your problem by preparing a program taking input from stdin to produce output to stdout, then the rest for its solution is done by diagonal.
+** Advantages
+   Diagonal is originally designed by a lazy programmer who wants to take advantage of software leverage with a little effort.
+   - You can define your problem in your favorite programming language.
+   - Only a little knowledge about the solution of the problem is needed.
+   - You can forget tedious details to handle computational resources such as temporary files.
+* System requirements
+  Diagonal just works on a POSIX[fn:1] system like Linux, Mac OS X, NetBSD and so on.
+  At the same time, it also supports modern Windows OS like Windows 7/8 via MinGW[fn:2].
+* Invocation
+  Diagonal is a command line tool with a set of subcommands.
+  This section explains all available subcommands one by one.
+** diag cycle
+   =diag cycle [-O output] [-i input] command [operand ...]=
+
+   Execute a =command= with optional =operand ...= as a funcion, which takes input from stdin to produce output to stdout.
+   If the sequence of its iterated function values has a cycle, then it exits successfully after printing both the loop length and the smallest number of the repetition such that the output reappears infinitely many times within the sequence.
+   The initial input is either =input= if specified, or stdin otherwise.
+   The output to stdout of each run will be saved as a file =diagonal*.out= in an =output= directory if given, as well as saving the stderr as another file =diagonal*.err=.
+   Note that it will run into an infinite loop when failing to find a cycle.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag decode
+   =diag dec [-s source] [-t target] [file]=
+
+   Decode a =file= (or stdin) encoded in the VCDIFF data format defined in RFC 3284[fn:3].
+   Optionally a =source= is used for decoding.
+   The decoded content will be written into =target= if given, otherwise it goes to stdout.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag file
+   =diag file [-m metric] [-I initial] [-F final] [-1] file [...]=
+
+   =diag file [-m metric] [-I initial] [-F final] [-1] -i input=
+
+   Classify files by a single-linkage clustering with a =metric=, and print the resulting clusters.
+   Input files appears in =file ...= for the former case, while the latter case assumes each line of =input= contains the path of an input file.
+   Possible values of =metric= are /hamming/ (default), /levenshtein/, /hash32/, and /hash32\_rev/.
+   Optional =initial= and =final= are positive numbers which the similarity is in between.
+   Singleton clusters will be omitted for the result unless =-1= is given.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag fix
+   =diag fix [-i input] command [operand ...]=
+
+   Execute a =command= with optional =operand ...=, and compare the stdout with the stdin.
+   The process exits successfully if it reaches a fixed point i.e. the output reproduces the input.
+   Otherwise, run the same command again with feeding the previous output into the stdin; continue until reaching a fixed point.
+   The initial input is either =input= if specified, or stdin otherwise.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag hash
+   =diag hash [-b base] [-o output] [-s] [-w window] file=
+
+   Calculate Rabin-Karp rolling hash[fn:4] for bytes in a =file= with the =window= size, writing to =output= (or stdout if omitted).
+   Hashing treats a consecutive bytes as a number in the =base=, which is 107 by default.
+   The result will be sorted if =-s= given.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag line
+   =diag line [-m metric] [-t threshold] [-1] [file]=
+
+   Classify lines in a =file= (or stdin) by a single-linkage clutering with a =metric=, and print the resulting clusters.
+   Two lines go into the same cluster if the distance between them is under =threshold=, which is 10 by default.
+   Singleton clusters will be ommitted for the result unless =-1= is given.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag mean
+   =diag mean [-c num_of_columns]=
+
+   Read a real number per each line of stdin, then calculate the arithmetic mean of all the numbers and print it to stdout.
+   If =num_of_columns= specified, it reads as many numbers as =num_of_columns= from each line, forming a vector; then calculate and show all of the mean for each column.
+   It is an error to give an empty input, or to give a less number of columns than =num_of_columns= at a line.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag median
+   =diag medi=
+
+   Read a real number per each line of stdin, then calculate the median of the input sample and print it to stdout.
+   It is an error to give an empty input.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag mode
+   =diag mode [-e exponent]=
+
+   Read a real number per each line of stdin, then calculate the mode of the input sample and print it to stdout.
+   Because the input data can be multimodal, it will result in as many lines of output as the number of the modes.
+   It is an error to give an empty input.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag pool
+   =diag pool [-n num] command [operand ...]=
+
+   At launch it calls given =command= with optional =operand ...= =num= times.
+   Once one of the callee processes exits normally or abnormally, it will run a new process so as to keep the total number of processes =num=.
+** diag repeat
+   =diag rep [-I interval] [-e code] [-n num] command [operand ...]=
+
+   Run =command= with optional =operand ...= =num= times iteratively.
+   The default value of =num= is 5.
+   By default, each successive run will start immediately after the previous run finishes, but there will be =interval= seconds (at least) between them, if specified.
+   If =code= is given, it will exit immediately if a run finishes with exit status =code=.
+   The exit status will be the same as the last run's.
+** diag root
+   =diag root [-n num_of_iteration] -g guess0 -g guess1 ... command [operand ...]=
+
+   Find a root of an equation of form $F(x) = 0$, where $F$ is a function defined by given =command= with optional =operand ...= taking input from stdin to produce output to stdout.
+   It prints a root of the equation if found.
+   You have to give 2 or more guess via the -g option.
+   If =num_of_iteration= is specified, then it will fail immediately after the total number of iteration (i.e. evalutation of the function) exceeds the number.
+   The exit status will be 0 in case of success, otherwise non-0.
+** diag uniq
+   =diag uniq [-c count] [-o output] file=
+
+   Filter adjacent matching =count= byte-long blocks from =file=, writing to =output= (or stdout if omitted).
+   The exit status will be 0 in case of success, otherwise non-0.
+* Design
+  Keep the following points in mind when developing diagonal:
+** No dependency at run time
+   Link no library but core system libraries including a C standard library.
+** Some items from The UNIX Philosophy[fn:5]:
+   - Make each program do one thing well.
+   - Choose portability over efficiency.
+   - Store numerical data in flat ASCII files.
+   - Use software leverage to your advantage.
+   - Use shell scripts to increse leverage and portability.
+   - Make every program a filter.
+* Footnotes
+
+[fn:1] [[http://pubs.opengroup.org/onlinepubs/9699919799/][The Open Group Base Specifications Issue 7, 2013 Edition]]
+
+[fn:2] http://www.mingw.org/
+
+[fn:3] http://tools.ietf.org/html/rfc3284
+
+[fn:4] Karp, RM; Rabin, MO (March 1987). "Efficient randomized pattern-matching algorithms". IBM Journal of Research and Development 31 (2): 249–260. [[http://dx.doi.org/10.1147/rd.312.0249][doi:10.1147/rd.312.0249]]
+
+[fn:5] [[http://www.amazon.com/dp/1555581234][The UNIX Philosophy]]
+
