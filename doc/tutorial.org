@@ -1,0 +1,128 @@
+#+TITLE: Diagonal Tutorial
+#+OPTIONS: timestamp:nil
+
+* Introduction
+  This documentation is a tutorial of diagonal.
+  You will find a basic idea about what you can do by diagonal.
+* Easy process pooling by diag-pool
+  BSD's SO\_REUSEPORT, which becomes available as of Linux 3.9[fn:1], is a neat option for TCP/UDP server socket if you would like to serve clients with process pooling.
+  =diag-pool= makes it even easier as you see below.
+  Let's describe a simple program to wait for a TCP client on a port, then reply the process ID, and exit:
+  #+BEGIN_SRC C
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <unistd.h>
+
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+
+  static void usage(void)
+  {
+  	fprintf(stderr, "usage: mypid port\n");
+  }
+
+  int main(int argc, char *argv[])
+  {
+  	if (argc < 2) {
+  		usage();
+  		return EXIT_FAILURE;
+  	}
+  	int port = atoi(argv[1]);
+  	if (port == 0) {
+  		usage();
+  		return EXIT_FAILURE;
+  	}
+
+  	int s = socket(PF_INET, SOCK_STREAM, 0);
+  	if (s == -1) {
+  		fprintf(stderr, "failed to create an endpoint\n");
+  		return EXIT_FAILURE;
+  	}
+  	int val = 1;
+  	setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
+
+  	struct sockaddr_in sa;
+  	memset(&sa, 0, sizeof(sa));
+  	sa.sin_family = AF_INET;
+  	sa.sin_port = htons(port);
+  	sa.sin_addr.s_addr = htonl(INADDR_ANY);
+  	if (bind(s, (struct sockaddr *)&sa, sizeof(sa)) != 0) {
+  		perror(argv[0]);
+  		return EXIT_FAILURE;
+  	}
+
+  	if (listen(s, 1) != 0) {
+  		perror(argv[0]);
+  		return EXIT_FAILURE;
+  	}
+
+  	socklen_t socklen = sizeof(sa);
+  	int d = accept(s, (struct sockaddr *)&sa, &socklen);
+  	if (d < 0) {
+  		perror(argv[0]);
+  		return EXIT_FAILURE;
+  	}
+  	FILE *fp = fdopen(d, "w");
+  	if (!fp) {
+  		perror(argv[0]);
+  		return EXIT_FAILURE;
+  	}
+   	fprintf(fp, "pid %d\n", (int)getpid());
+  	fclose(fp);
+  	close(d);
+  	close(s);
+  	return EXIT_SUCCESS;
+  }
+  #+END_SRC
+  We suppose you save the above source code in a file named =mypid.c=, then
+  #+BEGIN_SRC sh
+  $ gcc -o mypid mypid.c
+  #+END_SRC
+  will give you an executable =mypid=.
+  OK, here is all you have to do for process pooling:
+  #+BEGIN_SRC sh
+  $ diag pool ./mypid 43210
+  #+END_SRC
+  Please keep it running and switch another terminal. Now you will see all five processes of =mypid= listening the same port =43210=:
+  #+BEGIN_SRC sh
+  $ pgrep mypid
+  5657
+  5656
+  5655
+  5654
+  5653
+  $ netstat -al | head
+  Active Internet connections (including servers)
+  Proto Recv-Q Send-Q Local Address          Foreign Address        (state)
+  tcp4       0      0 *.43210                *.*                    LISTEN
+  tcp4       0      0 *.43210                *.*                    LISTEN
+  tcp4       0      0 *.43210                *.*                    LISTEN
+  tcp4       0      0 *.43210                *.*                    LISTEN
+  tcp4       0      0 *.43210                *.*                    LISTEN
+  ...
+  #+END_SRC
+  In order to access the port you can use =nc(1)= as follows:
+  #+BEGIN_SRC sh
+  $ nc localhost 43210
+  pid 5653
+  #+END_SRC
+  Note that retrying the access many times is a typical use case of =diag-rep=:
+  #+BEGIN_SRC sh
+  $ diag rep -n 10 nc localhost 43210
+  pid 5654
+  pid 5655
+  pid 5656
+  pid 5657
+  pid 5741
+  pid 5746
+  pid 5748
+  pid 5750
+  pid 5752
+  pid 5754
+  #+END_SRC
+
+* Footnotes
+
+[fn:1] [[http://lwn.net/Articles/542629/][The SO\_REUSEPORT socket option]]

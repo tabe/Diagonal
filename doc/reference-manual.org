@@ -1,4 +1,5 @@
 #+TITLE: Diagonal reference manual
+#+OPTIONS: timestamp:nil
 
 * Overview
   Please read this section if you wonder what can be done with diagonal.

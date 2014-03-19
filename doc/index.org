@@ -1,5 +1,5 @@
 #+TITLE: Diagonal -- a versatile profiling toolkit
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil timestamp:nil
 
 * About
   *Diagonal* is a command line toolkit to solve a problem which your favorite program defines.
@@ -32,7 +32,7 @@
 * TODO Examples
 * Documentation
   - [[./reference-manual.html][Reference manual]]
-#  - [[./tutorial.html][Tutorial]]
+  - [[./tutorial.html][Tutorial]]
 * Publications and presentations
   - [[https://wiki.documentfoundation.org/images/3/33/Libocon2011-similarity.odp]["Understanding the source code via analysis of similarity", LibreOffice Conference 2011]]
 * License
