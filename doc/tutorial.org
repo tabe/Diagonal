@@ -4,6 +4,50 @@
 * Introduction
   This documentation is a tutorial of diagonal.
   You will find a basic idea about what you can do by diagonal.
+* Simple report of elapsed time by diag-rep and diag-medi
+  Repeated observation is important for a scientific experiment.
+  Let's see how =diag-rep= and =diag-medi= helps us to produce a reasonable guess of a process's elapsed time from repeated trials.
+  When you would like to tell how long =dd(1)= takes to copy =/dev/zero= to =/dev/null=, =time(1)= is your friend:
+  #+BEGIN_SRC sh
+  $ /usr/bin/time dd if=/dev/zero of=/dev/null count=1m
+  1048576+0 records in
+  1048576+0 records out
+  536870912 bytes (537 MB) copied, 0.274461 s, 2.0 GB/s
+  0.08user 0.18system 0:00.27elapsed 98%CPU (0avgtext+0avgdata 804maxresident)k
+  0inputs+0outputs (0major+257minor)pagefaults 0swaps
+  #+END_SRC
+  From now on, suppose Linux's =time(1)= for its useful options other =time(1)= implementations may lack.
+  More specifically, you can use options =-f, -o= and redirection in order to focus on elapsed wall clock time:
+  #+BEGIN_SRC sh
+  $ /usr/bin/time -f "%e" -o /dev/stdout dd if=/dev/zero of=/dev/null count=1m 2> /dev/null
+  0.26
+  #+END_SRC
+  Of course the resulting time (in seconds) can vary every time you run the command.
+  A procedure of repeated runs is needed for making your number as reliable as possible.
+  And that's what =diag-rep= is for.
+  #+BEGIN_SRC sh
+  $ diag rep -n 15 /usr/bin/time -f "%e" -o /dev/stdout dd if=/dev/zero of=/dev/null count=1m 2> /dev/null
+  0.27
+  0.28
+  0.26
+  0.26
+  0.27
+  0.27
+  0.27
+  0.27
+  0.27
+  0.26
+  0.28
+  0.26
+  0.27
+  0.27
+  0.27
+  #+END_SRC
+  where =diag-rep= drives fifteen trials. In addition, you can choose a reasonable one in the candidate numbers with =diag-medi=:
+  #+BEGIN_SRC sh
+  $ diag rep -n 15 /usr/bin/time -f "%e" -o /dev/stdout dd if=/dev/zero of=/dev/null count=1m 2> /dev/null | diag-medi
+  0.27
+  #+END_SRC
 * Easy process pooling by diag-pool
   BSD's SO\_REUSEPORT, which becomes available as of Linux 3.9[fn:1], is a neat option for TCP/UDP server socket if you would like to serve clients with process pooling.
   =diag-pool= makes it even easier as you see below.
