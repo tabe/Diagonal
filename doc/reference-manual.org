@@ -37,8 +37,8 @@
    - Only a little knowledge about the solution of the problem is needed.
    - You can forget tedious details to handle computational resources such as temporary files.
 * System requirements
-  Diagonal just works on a POSIX[fn:1] system like Linux, Mac OS X, NetBSD and so on.
-  At the same time, it also supports modern Windows OS like Windows 7/8 via MinGW[fn:2].
+  Diagonal just works on a POSIX[fn:1] system like FreeBSD, Linux, Mac OS X, NetBSD and so on.
+  At the same time, it also supports modern Windows OS like Windows 7/8 via MinGW-w64[fn:2].
 * Invocation
   Diagonal is a command line tool with a set of subcommands.
   This section explains all available subcommands one by one.
@@ -152,7 +152,7 @@
 
 [fn:1] [[http://pubs.opengroup.org/onlinepubs/9699919799/][The Open Group Base Specifications Issue 7, 2013 Edition]]
 
-[fn:2] http://www.mingw.org/
+[fn:2] http://mingw-w64.sourceforge.net/
 
 [fn:3] http://tools.ietf.org/html/rfc3284
 
