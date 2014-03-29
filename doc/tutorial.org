@@ -4,6 +4,31 @@
 * Introduction
   This documentation is a tutorial of diagonal.
   You will find a basic idea about what you can do by diagonal.
+* Getting started
+  To build and install Diagonal from its source code is easy on every supported platform.
+  We are now using Git[fn:1] for its revision control, so you can get its source code with Git by the following command:
+  #+BEGIN_SRC sh
+  $ git clone git://git.code.sf.net/p/diagonal/code diagonal
+  #+END_SRC
+  Prerequisites for building Diagonal are CMake[fn:2] and a modern C compiler, such as clang[fn:3] or gcc[fn:4], that conforms to C99[fn:5].
+  For FreeBSD / Linux / Mac OS X / NetBSD, a typical installation process of Diagonal is as follows:
+  #+BEGIN_SRC sh
+  $ mkdir build
+  $ cd build
+  $ cmake -DCMAKE_INSTALL_PREFIX=$PREFIX ../diagonal
+  $ make all
+  # make install
+  #+END_SRC
+  where =$PREFIX= is where you would like to install it.
+  For Windows, currently you will need MinGW-w64[fn:6] as well.
+  #+BEGIN_SRC sh
+  $ mkdir build
+  $ cd build
+  $ cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=../diagonal/Toolchain-$HOST.cmake ../diagonal
+  $ make all
+  # make install
+  #+END_SRC
+  where $HOST is =x86_64-w64-mingw32= if you are going to build it for 64-bit Windows, or =i686-w64-mingw32= for 32-bin Windows.
 * Simple report of elapsed time by diag-rep and diag-medi
   Repeated observation is important for a scientific experiment.
   Let's see how =diag-rep= and =diag-medi= helps us to produce a reasonable guess of a process's elapsed time from repeated trials.
@@ -49,7 +74,7 @@
   0.27
   #+END_SRC
 * Easy process pooling by diag-pool
-  BSD's SO\_REUSEPORT, which becomes available as of Linux 3.9[fn:1], is a neat option for TCP/UDP server socket if you would like to serve clients with process pooling.
+  BSD's SO\_REUSEPORT, which becomes available as of Linux 3.9[fn:7], is a neat option for TCP/UDP server socket if you would like to serve clients with process pooling.
   =diag-pool= makes it even easier as you see below.
   Let's describe a simple program to wait for a TCP client on a port, then reply the process ID, and exit:
   #+BEGIN_SRC C
@@ -169,4 +194,17 @@
 
 * Footnotes
 
-[fn:1] [[http://lwn.net/Articles/542629/][The SO\_REUSEPORT socket option]]
+[fn:1] http://git-scm.com/
+
+[fn:2] http://www.cmake.org/
+
+[fn:3] http://clang.llvm.org/
+
+[fn:4] http://gcc.gnu.org/
+
+[fn:5] http://en.wikipedia.org/wiki/C99
+
+[fn:6] http://mingw-w64.sourceforge.net/
+
+[fn:7] [[http://lwn.net/Articles/542629/][The SO\_REUSEPORT socket option]]
+
