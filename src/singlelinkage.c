@@ -95,7 +95,7 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 		if (!nxt_node) goto push;
 		tree = diag_rbtree_create(sl->cmp);
 		do {
-			struct diag_rbtree_node *tmp_node = nxt_node;
+			tmp_node = nxt_node;
 			p = (struct diag_couple *)tmp_node->attr;
 			if (p->i == i || p->i == j) {
 				k = p->j;

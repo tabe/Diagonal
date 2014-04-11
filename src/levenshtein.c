@@ -47,13 +47,13 @@ uintptr_t diag_levenshtein_chars(intptr_t a, intptr_t b)
 	for (i = 0; i < lx; i++) {
 		new[0] = cur[0] + 1;
 		for (j = 0; j < ly; j++) {
-			size_t k, a, b, c;
+			size_t k, u, v, w;
 			k = j + 1;
-			a = new[j] + 1;
-			b = cur[k] + 1;
-			c = cur[j] + ((x[i] == y[j]) ? 0 : 1);
-			d = (a < b) ? a : b;
-			d = (c < d) ? c : d;
+			u = new[j] + 1;
+			v = cur[k] + 1;
+			w = cur[j] + ((x[i] == y[j]) ? 0 : 1);
+			d = (u < v) ? u : v;
+			d = (w < d) ? w : d;
 			new[k] = d;
 		}
 		tmp = cur;

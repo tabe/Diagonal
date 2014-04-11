@@ -156,8 +156,8 @@ int main(int argc, char *argv[])
 	size_t i;
 	for (i = 0; i < len; i++) {
 		intptr_t key = (intptr_t)diag_vector_ref(keys, i);
-		int r = diag_rbtree_search(tree, key, &node);
-		assert(r == DIAG_SUCCESS);
+		int s = diag_rbtree_search(tree, key, &node);
+		assert(s == DIAG_SUCCESS);
 		indices = (struct diag_vector *)node->attr;
 		size_t k = (size_t)diag_vector_ref(indices, 0);
 		printf("%g\n", data[k]);
