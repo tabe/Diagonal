@@ -65,10 +65,16 @@ include_directories(BEFORE "${DIAGONAL_BINARY_DIR}")
 configure_file("${DIAGONAL_SOURCE_DIR}/config.h.cmake" "${DIAGONAL_BINARY_DIR}/config.h")
 include_directories("${DIAGONAL_SOURCE_DIR}/src")
 
-add_definitions("-Wall -W -Werror")
+if(CMAKE_COMPILER_IS_GNUCC)
+# http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+# http://www.gnu.org/software/gsl/manual/html_node/GCC-warning-options-for-numerical-programs.html
+add_definitions("-Wall -Wextra -Werror -Wundef -Wconversion -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wcast-align -Wcast-qual -Wwrite-strings")
+# http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html
+add_definitions("-fno-common -g -O2")
 if(BUILD_TESTING)
-  add_definitions("-g -pg")
+  add_definitions("-pg")
 endif(BUILD_TESTING)
+endif(CMAKE_COMPILER_IS_GNUCC)
 
 add_subdirectory(src)
 if(BUILD_TESTING)
