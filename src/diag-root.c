@@ -76,6 +76,7 @@ static int evaluate(char **argv, const char *input, double *val)
 	if (!cmd) {
 		return EXIT_FAILURE;
 	}
+	int r = EXIT_FAILURE;
 	struct diag_process *p = diag_run_program(cmd);
 	if (!p) {
 		goto done;
@@ -83,7 +84,6 @@ static int evaluate(char **argv, const char *input, double *val)
 	diag_process_wait(p);
 	int status = p->status;
 	diag_process_destroy(p);
-	int r = EXIT_FAILURE;
 	if (status != 0) {
 		r = status;
 		goto done;

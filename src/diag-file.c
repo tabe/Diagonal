@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 	struct diag_deque_elem *elem;
 	struct diag_set *clusters, *cluster;
 	char **args = NULL, **entries, *dst = NULL;
-	size_t i, j, num_entries, *num_leaves;
+	size_t i, j, num_entries, *num_leaves = NULL;
 
 	diag_init();
 
