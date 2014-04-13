@@ -55,7 +55,8 @@ static int write_real(double r, char **file)
 	if (!tf) {
 		return 0;
 	}
-	int i = diag_port_write_bytes(tf->port, s, buf);
+	assert(s > 0);
+	int i = diag_port_write_bytes(tf->port, (size_t)s, buf);
 	if (i < 0) {
 		diag_temporary_file_destroy(tf);
 		return 0;

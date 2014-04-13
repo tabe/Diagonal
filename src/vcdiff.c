@@ -29,7 +29,7 @@ integer_read(struct diag_vcdiff_context *context, uint32_t *i)
 	port = context->port;
 	while ( (r = diag_port_read_byte(port, &b)) > 0) {
 		if (b >> 7) {
-			t = (t << 7) | (b & ~((uint8_t)0x80));
+			t = (t << 7) | (uint32_t)(b & ~((uint8_t)0x80));
 			continue;
 		} else {
 			*i = (t << 7) | b;
@@ -120,7 +120,7 @@ cache_init(struct diag_vcdiff_cache *cache, uint8_t s_near, uint8_t s_same)
 		cache->near[i] = 0;
 	}
 	cache->s_same = s_same;
-	cache->same = diag_calloc(s_same * 256, sizeof(uint32_t));
+	cache->same = diag_calloc((uint32_t)s_same * 256, sizeof(uint32_t));
 	for (i = 0; i < (uint32_t)s_same * 256; i++) {
 		cache->same[i] = 0;
 	}
@@ -135,7 +135,7 @@ cache_update(struct diag_vcdiff_cache *cache, uint32_t addr)
 		cache->next_slot = (cache->next_slot + 1) % cache->s_near;
 	}
 	if (cache->s_same > 0) {
-		cache->same[addr % (cache->s_same * 256)] = addr;
+		cache->same[addr % ((uint32_t)cache->s_same * 256)] = addr;
 	}
 }
 
@@ -549,7 +549,7 @@ diag_vcdiff_read(struct diag_vcdiff_context *context)
 			diag_free(window);
 			goto clear;
 		}
-		diag_deque_push(deque, (uintptr_t)window);
+		diag_deque_push(deque, (intptr_t)window);
 	}
 	if (r < 0) {
 		goto clear;
@@ -647,7 +647,7 @@ read_integer(uint8_t *buf, const uint8_t *sentinel, uint32_t *i)
 	assert(buf && i);
 	while (buf < sentinel) {
 		if ( (b = *buf++) >> 7) {
-			t = (t << 7) | (b & ~((uint8_t)0x80));
+			t = (t << 7) | (uint32_t)(b & ~((uint8_t)0x80));
 			continue;
 		} else {
 			*i = (t << 7) | b;
@@ -699,11 +699,13 @@ vm_addr_decode(struct diag_vcdiff_vm *vm, uint32_t here, uint8_t mode)
 		addr = vm_addr_read_integer(vm);
 	} else if (mode == DIAG_VCD_HERE) {
 		addr = here - vm_addr_read_integer(vm);
-	} else if ( mode >= 2 && (m = mode - 2) < cache->s_near ) { /* near cache */
+	} else if ( mode >= 2 && (mode - 2) < cache->s_near ) { /* near cache */
+		m = (uint32_t)(mode - 2);
 		addr = cache->near[m] + vm_addr_read_integer(vm);
 	} else { /* same cache */
 		uint32_t i;
-		m = mode - (2 + cache->s_near);
+		m = (uint32_t)(mode - 2);
+		m -= (uint32_t)cache->s_near;
 		i = m * 256 + vm_addr_read_byte(vm);
 		if (i >= (uint32_t)cache->s_same * 256) vm->error(vm, "exceed same cache with index %d", i);
 		addr = cache->same[i];
@@ -985,7 +987,7 @@ lookback(struct diag_rollinghash32 *rh, uint32_t *arr, size_t i, uint32_t h, str
 				}
 
 				p = pcode_copy_new(tail - head - 1, head - m + 1);
-				node = diag_rbtree_node_new((uintptr_t)head + 1, (uintptr_t)p);
+				node = diag_rbtree_node_new((intptr_t)head + 1, (intptr_t)p);
 				diag_rbtree_insert(tree, node);
 
 				while (++i < tail - rh->s_window + 1) {
@@ -1036,7 +1038,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 
 		if (a < b) {
 			p = pcode_add_new(b - a, rh->data + a);
-			n = diag_rbtree_node_new((uintptr_t)a, (uintptr_t)p);
+			n = diag_rbtree_node_new((intptr_t)a, (intptr_t)p);
 			diag_rbtree_insert(tree, n);
 		}
 		p = (struct diag_vcdiff_pcode *)node->attr;
@@ -1045,7 +1047,7 @@ diag_vcdiff_contract(struct diag_rollinghash32 *rh)
 	}
 	if (a < rh->size) {
 		p = pcode_add_new(rh->size - a, rh->data + a);
-		n = diag_rbtree_node_new((uintptr_t)a, (uintptr_t)p);
+		n = diag_rbtree_node_new((intptr_t)a, (intptr_t)p);
 		diag_rbtree_insert(tree, n);
 	}
 

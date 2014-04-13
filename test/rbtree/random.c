@@ -14,7 +14,7 @@ main()
 	size_t s;
 	int n, i, r;
 
-	srand((int)time(NULL));
+	srand((unsigned int)time(NULL));
 	tree = diag_rbtree_create(DIAG_CMP_IMMEDIATE);
 
 	/* determine the initial number */

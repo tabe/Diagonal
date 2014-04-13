@@ -9,8 +9,8 @@ main()
 {
 	struct diag_deque *head, *tail;
 	struct diag_deque_elem *elem;
-	uintptr_t i;
-	unsigned int len;
+	intptr_t i;
+	size_t len;
 
 	head = diag_deque_new();
 	tail = diag_deque_new();

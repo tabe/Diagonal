@@ -108,21 +108,21 @@ diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char
 			if (*y != '\0') {
 				d = diag_delta_new(DIAG_DELTA_APPEND);
 				d->value = (void *)y;
-				diag_deque_push(deque, (uintptr_t)d);
+				diag_deque_push(deque, (intptr_t)d);
 			}
 			break;
 		}
 		if (*y == '\0') {
 			d = diag_delta_new(DIAG_DELTA_TRIM);
 			d->index = i;
-			diag_deque_push(deque, (uintptr_t)d);
+			diag_deque_push(deque, (intptr_t)d);
 			break;
 		}
 		if (*x != *y) {
 			d = diag_delta_new(DIAG_DELTA_REPLACE);
 			d->index = i;
 			d->value = (void *)y;
-			diag_deque_push(deque, (uintptr_t)d);
+			diag_deque_push(deque, (intptr_t)d);
 		}
 	}
 	code = diag_code_new(cluster, deque->length);

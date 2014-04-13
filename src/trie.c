@@ -43,7 +43,7 @@ extend_if_necessary(struct diag_trie *trie, ssize_t s)
 
 	assert(trie);
 	if ( (t = trie->size) <= s) {
-		trie = (struct diag_trie *)diag_realloc(trie, sizeof(struct diag_trie) + sizeof(struct diag_trie_bc) * (s + 1));
+		trie = (struct diag_trie *)diag_realloc(trie, sizeof(struct diag_trie) + sizeof(struct diag_trie_bc) * (size_t)(s + 1));
 		trie->size = s + 1;
 		do {
 			SET_BASE(trie, t, CODE_NONE);
@@ -97,7 +97,7 @@ transitions(struct diag_trie *trie, ssize_t s)
 			child->dst  = t;
 			child->code = c;
 			child->children = NULL;
-			diag_deque_push(children->deque, (uintptr_t)child);
+			diag_deque_push(children->deque, (intptr_t)child);
 		}
 	}
 	return children;

@@ -10,12 +10,12 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-static uintptr_t f(intptr_t a, intptr_t b)
+static intptr_t f(intptr_t a, intptr_t b)
 {
 	const struct diag_datum *x, *y;
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
-	return (uintptr_t)(x->value - y->value);
+	return (intptr_t)(x->value - y->value);
 }
 
 static struct diag_datum *at(size_t i, struct diag_dataset *ds)

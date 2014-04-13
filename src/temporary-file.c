@@ -108,7 +108,8 @@ struct diag_temporary_file *diag_temporary_file_new(void)
 		diag_free(path);
 		return NULL;
 	}
-	int len1 = dirlen + sizeof(TEMPLATE) + 1;
+	assert(dirlen >= 0);
+	size_t len1 = (size_t)dirlen + sizeof(TEMPLATE) + 1;
 	path = diag_realloc(path, len1);
 	path[dirlen] = '/';
 	strcpy(path + dirlen + 1, TEMPLATE);

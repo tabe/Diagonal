@@ -76,8 +76,8 @@ static void snake(int k, struct diag_onp *onp)
 	}
 	x = y - k;
 	while (x < onp->m && y < onp->n) {
-		vx = diag_vector_ref(onp->a, x);
-		vy = diag_vector_ref(onp->b, y);
+		vx = diag_vector_ref(onp->a, (size_t)x);
+		vy = diag_vector_ref(onp->b, (size_t)y);
 		if (!onp->eq(vx, vy)) break;
 		path_push(k, 0, onp);
 		x++, y++;
@@ -111,7 +111,8 @@ int diag_lcs_compute(struct diag_lcs *lcs, struct diag_vector **ses)
 	int *fp_base;
 	intptr_t *path_base;
 	size_t lx, ly;
-	int i, k, m, n, mn3, d, p;
+	int k, m, n, d, p;
+	size_t i, mn3;
 	struct diag_pair *s;
 
 	onp = diag_malloc(sizeof(*onp));
@@ -133,7 +134,7 @@ int diag_lcs_compute(struct diag_lcs *lcs, struct diag_vector **ses)
 	onp->eq = lcs->eq ? lcs->eq : eq_default;
 	d = n - m;
 
-	mn3 = m + n + 3;
+	mn3 = (size_t)(m + n + 3);
 	fp_base = diag_calloc(mn3, sizeof(*fp_base));
 	path_base = diag_calloc(mn3, sizeof(*path_base));
 	for (i = 0; i < mn3; i++) {
@@ -162,7 +163,7 @@ int diag_lcs_compute(struct diag_lcs *lcs, struct diag_vector **ses)
 	*ses = diag_list_to_vector((struct diag_pair *)s->cdr);
 	diag_list_destroy(s);
 
-	for (i = 0; i < (int)onp->s->size; i++) {
+	for (i = 0; i < onp->s->size; i++) {
 		diag_pair_destroy((struct diag_pair *)onp->s->arr[i]);
 	}
 	diag_set_destroy(onp->s);

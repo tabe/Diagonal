@@ -8,15 +8,15 @@
 
 int main(void)
 {
-	srand((int)time(NULL));
+	srand((unsigned int)time(NULL));
 
-	int len = abs(rand())%32767 + 1; /* RAND_MAX is at least 32767 */
+	size_t len = (size_t)abs(rand())%32767 + 1; /* RAND_MAX is at least 32767 */
 	uint8_t *buf = diag_malloc(len);
-	int i;
+	size_t i;
 	for (i = 0; i < len; i++) {
 		buf[i] = (uint8_t)rand();
 	}
-	struct diag_port *p0 = diag_port_new_bm(buf, len, DIAG_PORT_INPUT);
+	struct diag_port *p0 = diag_port_new_bm(buf, (uint32_t)len, DIAG_PORT_INPUT);
 	assert(p0);
 
 	struct diag_port *p1 = diag_port_new_path("0.txt", "wb");
@@ -38,7 +38,7 @@ int main(void)
 	diag_port_destroy(p1);
 	diag_port_destroy(p0);
 
-	p0 = diag_port_new_bm(buf, len, DIAG_PORT_INPUT);
+	p0 = diag_port_new_bm(buf, (uint32_t)len, DIAG_PORT_INPUT);
 	assert(p0);
 	struct diag_port *p2 = diag_port_new_path("0.txt", "rb");
 	if (!p2) {

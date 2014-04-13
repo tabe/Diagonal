@@ -197,7 +197,8 @@ main(int argc, char *argv[])
 {
 	diag_init();
 
-	char c, *e;
+	int c;
+	char *e;
 	char *path1, *path2, *dir, *base;
 	const char *cmd;
 	struct diag_command_variation cv, *found;

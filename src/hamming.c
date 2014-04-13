@@ -13,10 +13,10 @@
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
 
-uintptr_t diag_hamming_chars(intptr_t a, intptr_t b)
+intptr_t diag_hamming_chars(intptr_t a, intptr_t b)
 {
 	const char *x, *y;
-	register uintptr_t d = 0;
+	intptr_t d = 0;
 
 	x = (const char *)a;
 	y = (const char *)b;
@@ -24,11 +24,11 @@ uintptr_t diag_hamming_chars(intptr_t a, intptr_t b)
 	if (x == y) return 0;
 	for (;;) {
 		if (*x == '\0') {
-			d += strlen(y);
+			d += (intptr_t)strlen(y);
 			break;
 		}
 		if (*y == '\0') {
-			d += strlen(x);
+			d += (intptr_t)strlen(x);
 			break;
 		}
 		if (*x++ != *y++) d++;
@@ -36,11 +36,11 @@ uintptr_t diag_hamming_chars(intptr_t a, intptr_t b)
 	return d;
 }
 
-intptr_t diag_ehamming_chars(intptr_t a, intptr_t b, uintptr_t e)
+intptr_t diag_ehamming_chars(intptr_t a, intptr_t b, intptr_t e)
 {
 	const char *x, *y;
 	size_t lx, ly, dxy;
-	register uintptr_t d;
+	intptr_t d;
 
 	x = (const char *)a;
 	y = (const char *)b;
@@ -51,7 +51,7 @@ intptr_t diag_ehamming_chars(intptr_t a, intptr_t b, uintptr_t e)
 	ly = strlen(y);
 	dxy = (lx < ly) ? ly - lx : lx - ly;
 	if (dxy >= (size_t)e) return -1;
-	d = (uintptr_t)dxy;
+	d = (intptr_t)dxy;
 	do {
 		if (*x == '\0' || *y == '\0') return d;
 		if (*x++ != *y++) d++;

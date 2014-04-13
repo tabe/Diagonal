@@ -56,10 +56,10 @@ struct diag_command *diag_command_new(char **argv,
 				      const char *err)
 {
 	struct diag_command *command = diag_malloc(sizeof(*command));
-	int argc;
+	size_t argc;
 	for (argc = 0; argv[argc]; argc++) ;
 	command->argv = diag_calloc(argc + 1, sizeof(char *));
-	int i;
+	size_t i;
 	for (i = 0; i < argc; i++) {
 		command->argv[i] = diag_strdup(argv[i]);
 	}

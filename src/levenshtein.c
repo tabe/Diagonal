@@ -13,12 +13,12 @@
 #include "diagonal/datum.h"
 #include "diagonal/metric.h"
 
-uintptr_t diag_levenshtein_chars(intptr_t a, intptr_t b)
+intptr_t diag_levenshtein_chars(intptr_t a, intptr_t b)
 {
 	const char *x, *y;
-	register uintptr_t d = 0;
+	size_t d = 0;
 	register unsigned int i, j;
-	register unsigned int lx, ly;
+	size_t lx, ly;
 	size_t *cur, *new, *tmp;
 
 	x = (const char *)a;
@@ -28,11 +28,11 @@ uintptr_t diag_levenshtein_chars(intptr_t a, intptr_t b)
 	while ( *x && *y && (*x == *y) ) x++, y++;
 	lx = strlen(x);
 	ly = strlen(y);
-	if (lx == 0) return ly;
-	if (ly == 0) return lx;
+	if (lx == 0) return (intptr_t)ly;
+	if (ly == 0) return (intptr_t)lx;
 	if (lx < ly) {
 		const char *z = x;
-		unsigned int lz = lx;
+		size_t lz = lx;
 		x = y;
 		y = z;
 		lx = ly;
@@ -40,7 +40,7 @@ uintptr_t diag_levenshtein_chars(intptr_t a, intptr_t b)
 	}
 	/* trim the common final sequence */
 	while ( ly > 0 && x[lx-1] == y[ly-1] ) lx--, ly--;
-	if (ly == 0) return lx;
+	if (ly == 0) return (intptr_t)lx;
 	cur = diag_calloc((ly + 1)*2, sizeof(size_t));
 	new = cur + ly + 1;
 	for (j = 1; j <= ly; j++) cur[j] = j;
@@ -61,14 +61,14 @@ uintptr_t diag_levenshtein_chars(intptr_t a, intptr_t b)
 		new = tmp;
 	}
 	diag_free(cur < new ? cur : new);
-	return d;
+	return (intptr_t)d;
 }
 
-intptr_t diag_elevenshtein_chars(intptr_t a, intptr_t b, uintptr_t e)
+intptr_t diag_elevenshtein_chars(intptr_t a, intptr_t b, intptr_t e)
 {
 	const char *x, *y;
 	size_t lx, ly, dxy;
-	register uintptr_t d;
+	intptr_t d;
 
 	x = (const char *)a;
 	y = (const char *)b;
@@ -80,5 +80,5 @@ intptr_t diag_elevenshtein_chars(intptr_t a, intptr_t b, uintptr_t e)
 	dxy = (lx < ly) ? ly - lx : lx - ly;
 	if (dxy >= (size_t)e) return -1;
 	d = diag_levenshtein_chars(a, b);
-	return (d < e) ? (intptr_t)d : -1;
+	return (d < e) ? d : -1;
 }

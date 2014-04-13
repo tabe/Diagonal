@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	}
 
 	assert(n > 0);
-	struct diag_vector *pv = diag_vector_create(n);
+	struct diag_vector *pv = diag_vector_create((size_t)n);
 	if (!pv) {
 		exit(EXIT_FAILURE);
 	}
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	intptr_t p;
 	for (i = 0; i < n; i++) {
 		p = diag_run_agent(cmd);
-		diag_vector_set(pv, i, p);
+		diag_vector_set(pv, (size_t)i, p);
 	}
 	for (;;) {
 		i = diag_wait_agent(n, pv->elements, NULL);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 			goto done;
 		}
 		p = diag_run_agent(cmd);
-		diag_vector_set(pv, i, p);
+		diag_vector_set(pv, (size_t)i, p);
 	}
 	r = EXIT_SUCCESS;
 

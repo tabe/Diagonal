@@ -27,7 +27,7 @@ static int cmp(const void *x, const void *y)
 	const uint32_t *a, *b;
 	a = x;
 	b = y;
-	return *a - *b;
+	return (int)(*a - *b);
 }
 
 int main(int argc, char *argv[])

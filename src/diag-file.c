@@ -22,11 +22,11 @@
 #include "diagonal/singlelinkage.h"
 #include "diagonal/private/filesystem.h"
 
-static uintptr_t hamming(intptr_t a, intptr_t b)
+static intptr_t hamming(intptr_t a, intptr_t b)
 {
 	const struct diag_datum *x, *y;
 	size_t i, smin, smax;
-	uintptr_t d = 0;
+	intptr_t d = 0;
 
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
@@ -42,10 +42,10 @@ static uintptr_t hamming(intptr_t a, intptr_t b)
 	for (i = 0; i < smin; i++) {
 		if (((char *)xmm->addr)[i] != ((char *)ymm->addr)[i]) d++;
 	}
-	return d + (smax - smin);
+	return d + (intptr_t)(smax - smin);
 }
 
-static uintptr_t levenshtein(intptr_t x, intptr_t y)
+static intptr_t levenshtein(intptr_t x, intptr_t y)
 {
 	size_t d = 0, i, j, lx, ly, *cur, *new, *tmp;
 	const struct diag_datum *dx, *dy;
@@ -58,8 +58,8 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 	const struct diag_mmap *ymm = (const struct diag_mmap *)dy->value;
 	lx = xmm->size;
 	ly = xmm->size;
-	if (lx == 0) return ly;
-	if (ly == 0) return lx;
+	if (lx == 0) return (intptr_t)ly;
+	if (ly == 0) return (intptr_t)lx;
 	if (lx < ly) {
 		const struct diag_datum *dz = dx;
 		size_t lz = lx;
@@ -90,15 +90,15 @@ static uintptr_t levenshtein(intptr_t x, intptr_t y)
 		new = tmp;
 	}
 	diag_free(cur < new ? cur : new);
-	return d;
+	return (intptr_t)d;
 }
 
-static uintptr_t hash32(intptr_t a, intptr_t b)
+static intptr_t hash32(intptr_t a, intptr_t b)
 {
 	const struct diag_datum *x, *y;
 	size_t lx, ly;
 	uint32_t *p, *pe, *q, *qe;
-	uintptr_t d = 0;
+	intptr_t d = 0;
 
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
@@ -122,12 +122,12 @@ static uintptr_t hash32(intptr_t a, intptr_t b)
 	return d;
 }
 
-static uintptr_t hash32_rev(intptr_t a, intptr_t b)
+static intptr_t hash32_rev(intptr_t a, intptr_t b)
 {
 	const struct diag_datum *x, *y;
 	size_t lx, ly;
 	uint32_t *p, *pe, *q, *qe;
-	uintptr_t d = 0;
+	intptr_t d = 0;
 
 	x = (const struct diag_datum *)a;
 	y = (const struct diag_datum *)b;
@@ -300,21 +300,21 @@ int main(int argc, char *argv[])
 		struct diag_couple *p = (struct diag_couple *)elem->attr;
 		for (i = 0; i < clusters->size; i++) {
 			cluster = (struct diag_set *)clusters->arr[i];
-			if (diag_set_contains(cluster, p->j)) {
+			if (diag_set_contains(cluster, (intptr_t)p->j)) {
 				found = 1;
-				diag_set_insert(cluster, p->i);
+				diag_set_insert(cluster, (intptr_t)p->i);
 				break;
 			}
-			if (diag_set_contains(cluster, p->i)) {
+			if (diag_set_contains(cluster, (intptr_t)p->i)) {
 				found = 1;
-				diag_set_insert(cluster, p->j);
+				diag_set_insert(cluster, (intptr_t)p->j);
 				break;
 			}
 		}
 		if (!found) {
 			cluster = diag_set_create(NULL);
-			diag_set_insert(cluster, p->i);
-			diag_set_insert(cluster, p->j);
+			diag_set_insert(cluster, (intptr_t)p->i);
+			diag_set_insert(cluster, (intptr_t)p->j);
 			diag_set_insert(clusters, (intptr_t)cluster);
 		}
 		diag_free(p);

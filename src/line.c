@@ -86,22 +86,22 @@ diag_line_read(struct diag_line_context *context, size_t *sizep, char **linep)
 		h = context->head;
 		while (h < context->sentinel) {
 			if (context->buf[h] == '\n') {
-				s = h - context->head;
-				line = diag_realloc(line, size+s+1);
-				memcpy(line+size, context->buf+context->head, s);
-				line[size+s] = '\0';
+				size_t ss = h - context->head;
+				line = diag_realloc(line, size+ss+1);
+				memcpy(line+size, context->buf+context->head, ss);
+				line[size+ss] = '\0';
 				*linep = line;
-				if (sizep) *sizep = size+s;
+				if (sizep) *sizep = size+ss;
 				context->head = h+1;
 				return DIAG_LINE_ERROR_OK;
 			}
 			h++;
 		}
 
-		s = context->sentinel-context->head;
-		line = diag_realloc(line, size+s+1);
-		memcpy(line+size, context->buf+context->head, s);
-		size += s;
+		size_t ss = context->sentinel-context->head;
+		line = diag_realloc(line, size+ss+1);
+		memcpy(line+size, context->buf+context->head, ss);
+		size += ss;
 		context->head = context->sentinel = 0;
 	}
 }

@@ -14,7 +14,7 @@
 #include "diagonal.h"
 #include "diagonal/port.h"
 
-static const int BUFFER_LENGTH = 4096;
+static const size_t BUFFER_LENGTH = 4096;
 
 static int
 read_byte_fd(struct diag_port *port, uint8_t *i)
@@ -23,7 +23,7 @@ read_byte_fd(struct diag_port *port, uint8_t *i)
 
 	assert(port && i);
 	r = (int)read(port->stream.fd, (void *)i, 1);
-	if (r > 0) port->i_pos += r;
+	if (r > 0) port->i_pos += (size_t)r;
 	if (r == -1) diag_error("read error: %s", strerror(errno));
 	return r;
 }
@@ -55,7 +55,7 @@ write_byte_fd(struct diag_port *port, uint8_t i)
 	assert(port);
  retry:
 	r = (int)write(port->stream.fd, (const void *)&i, 1);
-	if (r > 0) port->o_pos += r;
+	if (r > 0) port->o_pos += (size_t)r;
 	if (r == -1) {
 		if (errno == EINTR) goto retry;
 		diag_error("write error: %s", strerror(errno));
@@ -365,21 +365,22 @@ ssize_t diag_port_copy(struct diag_port *iport, struct diag_port *oport)
 			pos = s;
 			goto done;
 		}
-		pos += BUFFER_LENGTH;
+		pos += (ssize_t)BUFFER_LENGTH;
 		r = iport->read_bytes(iport, BUFFER_LENGTH, buf);
 	}
 	if (r < 0) {
 		pos = r;
 		goto done;
 	}
-	size_t len = iport->i_pos - pos;
+	assert(pos >= 0);
+	size_t len = iport->i_pos - (size_t)pos;
 	if (len > 0) {
 		int s = oport->write_bytes(oport, len, buf);
 		if (s < 0) {
 			pos = s;
 			goto done;
 		}
-		pos += len;
+		pos += (ssize_t)len;
 	}
  done:
 	diag_free(buf);

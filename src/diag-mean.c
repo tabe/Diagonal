@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	size_t size;
 	char *line;
 	size_t n = 0;
-	double *sum = diag_calloc(num_of_columns, sizeof(double));
+	double *sum = diag_calloc((size_t)num_of_columns, sizeof(double));
 	while ( (e = diag_line_read(context, &size, &line)) == DIAG_LINE_ERROR_OK) {
 		n++;
 		char *nptr = line;
@@ -106,9 +106,9 @@ int main(int argc, char *argv[])
 		goto done;
 	}
 	/* print result */
-	printf("%g", sum[0]/n);
+	printf("%g", sum[0]/(double)n);
 	for (i = 1; i < num_of_columns; i++) {
-		printf(" %g", sum[i]/n);
+		printf(" %g", sum[i]/(double)n);
 	}
 	putchar('\n');
 	r = EXIT_SUCCESS;

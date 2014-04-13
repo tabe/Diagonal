@@ -105,7 +105,7 @@ static int scan_directory(struct diag_rbtree *tree, int i, char *path)
 #elif defined(_WIN32) && defined(__MINGW32__)
 		/* TODO */
 #endif
-		node = diag_rbtree_node_new((uintptr_t)i, (uintptr_t)name);
+		node = diag_rbtree_node_new((intptr_t)i, (intptr_t)name);
 		diag_rbtree_insert(tree, node);
 	}
 	closedir(dir);
@@ -130,7 +130,7 @@ static struct diag_rbtree *map_paths(char **paths)
 			continue;
 		}
 		if ( (name = diag_strdup(path)) == NULL) goto fail;
-		node = diag_rbtree_node_new((uintptr_t)0, (uintptr_t)name);
+		node = diag_rbtree_node_new((intptr_t)0, (intptr_t)name);
 		diag_rbtree_insert(tree, node);
 	}
 	return tree;
@@ -211,7 +211,7 @@ struct diag_mmap *diag_mmap_file(const char *path, enum diag_mmap_mode mode)
 	}
 	void *addr = NULL;
 	size_t size;
-	if ( (size = st.st_size) == 0) {
+	if ( (size = (size_t)st.st_size) == 0) {
 		goto done;
 	}
 	int prot = PROT_READ;

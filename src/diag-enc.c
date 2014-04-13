@@ -126,11 +126,11 @@ process_equivalence_relations(const struct diag_rbtree *comb, size_t num_entries
 		unsigned int k = (unsigned int)node->key;
 
 		if ((int)k < t) {
-			unsigned int x, y;
+			uintptr_t x, y;
 
 			i++;
-			x = ((unsigned int *)node->attr)[0];
-			y = ((unsigned int *)node->attr)[1];
+			x = ((uintptr_t *)node->attr)[0];
+			y = ((uintptr_t *)node->attr)[1];
 			if (occur) (*occur)[x] = (*occur)[y] = 1;
 			while (p[x] > 0) x = p[x];
 			while (p[y] > 0) y = p[y];
@@ -168,7 +168,7 @@ display_clusters(struct diag_analysis *analysis, int one)
 }
 #endif
 
-static uintptr_t metric_log(intptr_t x, intptr_t y)
+static intptr_t metric_log(intptr_t x, intptr_t y)
 {
 	const struct diag_datum *d1, *d2;
 	d1 = (const struct diag_datum *)x;
@@ -193,7 +193,7 @@ process_cluster_data(struct diag_datum **data, size_t num_data, const size_t *pa
 
 	for (j = 1; j <= num_data; j++) {
 		if (j != i && parent[j] == i) {
-			diag_deque_push(d, (uintptr_t)data[j-1]);
+			diag_deque_push(d, (intptr_t)data[j-1]);
 			process_cluster_data(data, num_data, parent, j, d);
 		}
 	}
@@ -222,9 +222,9 @@ analyze(char **entries, size_t num_entries, const size_t *parent)
 			struct diag_deque *d;
 
 			d = diag_deque_new();
-			diag_deque_push(d, (uintptr_t)data[i-1]);
+			diag_deque_push(d, (intptr_t)data[i-1]);
 			process_cluster_data(data, num_entries, parent, i, d);
-			diag_deque_push(deque, (uintptr_t)d);
+			diag_deque_push(deque, (intptr_t)d);
 		}
 	}
 	analysis->num_clusters = deque->length;

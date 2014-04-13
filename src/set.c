@@ -76,7 +76,7 @@ int diag_set_erase(struct diag_set *set, intptr_t x)
 	r = bsearch(&x, set->arr, set->size, sizeof(x), cmp);
 	if (!r) return 0;
 	set->size--;
-	s = set->arr + set->size - r;
+	s = (size_t)((set->arr + set->size) - r);
 	if (s > 0) memmove(r, r + 1, s * sizeof(x));
 	return 1;
 }

@@ -72,9 +72,9 @@ int diag_singlelinkage_analyze(struct diag_singlelinkage *sl)
 			x = sl->f((intptr_t)di, (intptr_t)dj);
 			p = diag_malloc(sizeof(*p));
 			p->i = i;
-			p->car = di->id;
+			p->car = (intptr_t)di->id;
 			p->j = j;
-			p->cdr = dj->id;
+			p->cdr = (intptr_t)dj->id;
 			tmp_node = diag_rbtree_node_new(x, (intptr_t)p);
 			diag_rbtree_insert(sl->m, tmp_node);
 			diag_datum_destroy(dj);
