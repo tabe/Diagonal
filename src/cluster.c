@@ -107,7 +107,7 @@ diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char
 		if (*x == '\0') {
 			if (*y != '\0') {
 				d = diag_delta_new(DIAG_DELTA_APPEND);
-				d->value = (void *)y;
+				d->value = y;
 				diag_deque_push(deque, (intptr_t)d);
 			}
 			break;
@@ -121,7 +121,7 @@ diag_delta_hamming_chars(struct diag_cluster *cluster, const char *x, const char
 		if (*x != *y) {
 			d = diag_delta_new(DIAG_DELTA_REPLACE);
 			d->index = i;
-			d->value = (void *)y;
+			d->value = y;
 			diag_deque_push(deque, (intptr_t)d);
 		}
 	}

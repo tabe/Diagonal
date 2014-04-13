@@ -271,10 +271,10 @@ display_codes(struct diag_analysis *analysis)
 			d = code->deltas[j];
 			switch (d->type) {
 			case DIAG_DELTA_REPLACE:
-				printf("\t[REPLACE:%ld:%c]\n", (long int)d->index, *((char *)d->value));
+				printf("\t[REPLACE:%ld:%c]\n", (long int)d->index, *((const char *)d->value));
 				break;
 			case DIAG_DELTA_APPEND:
-				printf("\t[APPEND:%s]\n", (char *)d->value);
+				printf("\t[APPEND:%s]\n", (const char *)d->value);
 				break;
 			case DIAG_DELTA_TRIM:
 				printf("\t[TRIM:%ld]\n", (long int)d->index);

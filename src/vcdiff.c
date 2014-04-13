@@ -191,7 +191,7 @@ addr_encode(struct diag_vcdiff_cache *cache, uint32_t addr, uint32_t here, uint3
 }
 #endif
 
-static const struct diag_vcdiff_code default_code_table_entries[256] = {
+static struct diag_vcdiff_code default_code_table_entries[256] = {
 	/* line 1: index 0 */
 	{DIAG_VCD_RUN,  0, 0, DIAG_VCD_NOOP, 0, 0},
 	/* line 2: index [1,18] */

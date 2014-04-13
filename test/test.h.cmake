@@ -34,7 +34,7 @@
 #define ASSERT_FALSE(expr) ASSERT_TRUE(!(expr))
 
 #define ASSERT_NOT_NULL(expr) do {										\
-		if ((void *)(expr) != NULL) break;										\
+		if ((const void *)(expr) != NULL) break;										\
 		printf("%s:%d: expected " #expr " != NULL, but NULL\n", __FILE__, __LINE__); \
 		exit(EXIT_FAILURE);												\
 	} while (0)

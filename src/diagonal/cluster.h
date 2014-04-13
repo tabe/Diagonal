@@ -18,7 +18,7 @@ enum diag_delta_type {
 struct diag_delta {
 	enum diag_delta_type type;
 	size_t index;
-	void *value;
+	const void *value;
 };
 
 struct diag_code {
