@@ -8,7 +8,7 @@
 #define DIAG_HAMMING_CHARS(x, y) \
 	diag_hamming_chars((intptr_t)x, (intptr_t)y)
 
-int main()
+int main(void)
 {
 	assert(0 == DIAG_HAMMING_CHARS("", ""));
 	assert(0 == DIAG_HAMMING_CHARS("The metric", "The metric"));

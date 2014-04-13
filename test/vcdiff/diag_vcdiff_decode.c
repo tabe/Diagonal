@@ -88,8 +88,7 @@ fail_to_decode(const char *input)
 #define FAIL_TO_DECODE(input) \
 	fail_to_decode(TEST_VCDIFF(input))
 
-int
-main()
+int main(void)
 {
 	DECODE2(empty.vcdiff, empty);
 	DECODE2(hello.vcdiff, hello);

@@ -8,7 +8,7 @@
 #define DIAG_LEVENSHTEIN_CHARS(x, y) \
 	diag_levenshtein_chars((intptr_t)x, (intptr_t)y)
 
-int main()
+int main(void)
 {
 	assert(0 == DIAG_LEVENSHTEIN_CHARS("", ""));
 	assert(0 == DIAG_LEVENSHTEIN_CHARS("The metric", "The metric"));

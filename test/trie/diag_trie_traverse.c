@@ -24,8 +24,7 @@ dump(struct diag_trie *trie)
 	}
 }
 
-int
-main()
+int main(void)
 {
 	struct diag_trie *trie, *next;
 	int r;

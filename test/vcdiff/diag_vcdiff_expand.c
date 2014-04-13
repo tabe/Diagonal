@@ -7,8 +7,7 @@
 #include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_vcdiff_pcode *pcodes;
 	struct diag_vcdiff_script *script;

@@ -8,8 +8,7 @@
 #include "diagonal.h"
 #include "diagonal/hash.h"
 
-int
-main()
+int main(void)
 {
 	uint8_t arr[83] = "This is a sentence of length 83 for testing function `diag_rollinghash32_collect'.";
 	uint32_t *result;

@@ -4,8 +4,7 @@
 #include "diagonal.h"
 #include "diagonal/trie.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_trie *trie;
 

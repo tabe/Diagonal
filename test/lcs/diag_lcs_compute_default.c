@@ -9,7 +9,7 @@
 
 #define DIAG_VECTOR_SET(v, i, e) diag_vector_set(v, i, (intptr_t)e)
 
-int main()
+int main(void)
 {
 	struct diag_vector *vx, *vy, *ses;
 	struct diag_lcs *lcs;

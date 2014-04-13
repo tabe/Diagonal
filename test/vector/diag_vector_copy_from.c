@@ -4,7 +4,7 @@
 #include "diagonal.h"
 #include "diagonal/vector.h"
 
-int main()
+int main(void)
 {
 	struct diag_vector *v, *w;
 

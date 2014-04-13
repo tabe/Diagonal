@@ -9,7 +9,7 @@ static void finalize(struct diag_datum *datum)
 	diag_free((void *)datum->value);
 }
 
-int main()
+int main(void)
 {
 	struct diag_datum *datum;
 	char *value;

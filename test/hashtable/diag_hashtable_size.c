@@ -12,8 +12,7 @@
 #include "diagonal/trie.h"
 #include "diagonal/hashtable.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_hashtable *ht;
 

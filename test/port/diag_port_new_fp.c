@@ -4,8 +4,7 @@
 #include "diagonal.h"
 #include "diagonal/port.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_port *port;
 	FILE *fp;

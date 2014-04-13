@@ -8,7 +8,7 @@
 #define DIAG_ELEVENSHTEIN_CHARS(x, y, e) \
 	diag_elevenshtein_chars((intptr_t)x, (intptr_t)y, e)
 
-int main()
+int main(void)
 {
 	assert(-1 == DIAG_ELEVENSHTEIN_CHARS("", "", 0));
 	assert(0 == DIAG_ELEVENSHTEIN_CHARS("", "", 1));

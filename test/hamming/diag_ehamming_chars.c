@@ -8,7 +8,7 @@
 #define DIAG_EHAMMING_CHARS(x, y, e) \
 	diag_ehamming_chars((intptr_t)x, (intptr_t)y, e)
 
-int main()
+int main(void)
 {
 	assert(-1 == DIAG_EHAMMING_CHARS("", "", 0));
 	assert(0 == DIAG_EHAMMING_CHARS("", "", 1));

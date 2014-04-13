@@ -8,7 +8,7 @@
 
 #define CONS(x, y) diag_pair_create((intptr_t)x, (intptr_t)y)
 
-int main()
+int main(void)
 {
 	struct diag_pair *list = NULL;
 	struct diag_vector *v;

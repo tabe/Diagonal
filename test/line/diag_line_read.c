@@ -14,8 +14,7 @@
 		exit(EXIT_FAILURE);					\
 	}
 
-int
-main()
+int main(void)
 {
 	int fd;
 	struct diag_port *port;

@@ -7,8 +7,7 @@
 #include "diagonal/hash.h"
 #include "diagonal/vcdiff.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_vcdiff *vcdiff;
 	struct diag_vcdiff_context *context;

@@ -4,8 +4,7 @@
 #include "diagonal.h"
 #include "diagonal/deque.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_deque *head, *tail;
 	struct diag_deque_elem *elem;

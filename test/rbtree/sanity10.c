@@ -5,8 +5,7 @@
 #include "diagonal/cmp.h"
 #include "diagonal/rbtree.h"
 
-int
-main()
+int main(void)
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;

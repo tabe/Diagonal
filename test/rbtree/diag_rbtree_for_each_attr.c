@@ -16,8 +16,7 @@ count(intptr_t attr, void *data)
 	i++;
 }
 
-int
-main()
+int main(void)
 {
 	struct diag_rbtree *tree;
 	struct diag_rbtree_node *node;

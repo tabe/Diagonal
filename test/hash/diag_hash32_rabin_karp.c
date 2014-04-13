@@ -8,8 +8,7 @@
 #include "diagonal.h"
 #include "diagonal/hash.h"
 
-int
-main()
+int main(void)
 {
 	uint8_t arr[128];
 
