@@ -18,7 +18,7 @@
 
 #define TURN_RED(n) ((n)->color = 'r')
 #define TURN_BLACK(n) do {if (n) ((n)->color = 'b');} while (0)
-#define COPY_COLOR(src, dst) ((src)->color = (dst) ? (dst)->color : 'b')
+#define COPY_COLOR(src, dst) do {if (dst) {(dst)->color = (src)->color;}} while (0)
 
 #define LEFTP(n) (n == n->parent->left)
 #define RIGHTP(n) (n == n->parent->right)
