@@ -62,7 +62,7 @@ static const char *commands[] = {
 
 struct diag_command_variation {
 	unsigned int i;
-	char *name;
+	const char *name;
 } command_variations[] = {
 	{DIAG_COMMAND_CYCLE, "cycle"},
 	{DIAG_COMMAND_DEC, "dec"},
