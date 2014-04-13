@@ -209,7 +209,7 @@ write_bytes_bm(struct diag_port *port, size_t size, const uint8_t *buf)
 {
 	assert(port && buf);
 	if (port->o_pos + size <= port->stream.bm.size) {
-		(void)memmove((void *)port->stream.bm.head + port->o_pos, (const void *)buf, size);
+		(void)memmove(port->stream.bm.head + port->o_pos, (const void *)buf, size);
 		port->o_pos += size;
 		return 1;
 	}
