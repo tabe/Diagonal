@@ -20,7 +20,7 @@
 #include "diagonal/rbtree.h"
 #include "diagonal/singlelinkage.h"
 
-void free_couple(intptr_t attr, void *data)
+static void free_couple(intptr_t attr, void *data)
 {
 	(void)data;
 	struct diag_couple *p = (struct diag_couple *)attr;

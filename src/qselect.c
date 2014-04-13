@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "diagonal.h"
+#include "diagonal/qselect.h"
 
 /* Public API */
 
