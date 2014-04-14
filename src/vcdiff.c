@@ -822,10 +822,10 @@ diag_vcdiff_decode(struct diag_vcdiff_vm *vm, struct diag_vcdiff *vcdiff)
 		while (vm->inst < vm->inst_s) {
 			struct diag_vcdiff_code code;
 			uint32_t size1, size2;
-			uint8_t index;
+			uint8_t idx;
 
-			index = *(vm->inst)++;
-			code = vm->code_table->entries[index];
+			idx = *(vm->inst)++;
+			code = vm->code_table->entries[idx];
 			if (code.inst1 != DIAG_VCD_NOOP && code.size1 == 0) {
 				size1 = vm_inst_read_size(vm);
 			} else {
