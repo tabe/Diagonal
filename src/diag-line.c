@@ -113,7 +113,7 @@ static unsigned int *single_link(char **entries,
 			y = py = j + 1;
 			while (p[py] > 0) py = p[py];
 			if (px == py) continue; /* already connected */
-			k = metric((intptr_t)entries[i], (intptr_t)entries[j], (uintptr_t)t);
+			k = metric((intptr_t)entries[i], (intptr_t)entries[j], (intptr_t)t);
 			if (k < 0) continue; /* disconnected */
 			if (occur) (*occur)[x] = (*occur)[y] = 1;
 			p[px] = py;

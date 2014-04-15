@@ -49,7 +49,7 @@ static int find_or_insert(size_t n, uint32_t h,
 			    struct diag_deque **qp)
 {
 	struct diag_rbtree_node *node = NULL;
-	int found = diag_rbtree_search(tree, h, &node);
+	int found = diag_rbtree_search(tree, (intptr_t)h, &node);
 	if (found) {
 		assert(node);
 		assert(node->attr);
