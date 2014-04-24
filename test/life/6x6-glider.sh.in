@@ -1,0 +1,3 @@
+#!/bin/sh
+
+@DIAG_FIX@ ./life 6 6 < @DIAGONAL_TEST_DIR@/life/6x6-glider.txt | diff -u @DIAGONAL_TEST_DIR@/life/6x6-glider.fix.txt -

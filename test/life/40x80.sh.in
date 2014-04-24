@@ -1,0 +1,4 @@
+#!/bin/sh
+
+MU_LAMBDA=`@DIAG_CYCLE@ ./life 40 80 < @DIAGONAL_TEST_DIR@/life/40x80.txt`
+test "$MU_LAMBDA" = "7 0"
