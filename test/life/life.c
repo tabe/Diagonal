@@ -13,7 +13,7 @@ static int read_input(size_t height, size_t width, char *bbox)
 	for (i=0;i<height;i++) {
 		/* read a row */
 		if (fread(bbox+i*width, width, 1, stdin) != 1) {
-			fprintf(stderr, "failed to read row %lu\n", i);
+			fprintf(stderr, "failed to read row %zu\n", i);
 			return 0;
 		}
 
@@ -35,7 +35,7 @@ static int read_input(size_t height, size_t width, char *bbox)
 				if (i == height-1) {
 					return 1;
 				}
-				fprintf(stderr, "failed to read row %lu\n", i);
+				fprintf(stderr, "failed to read row %zu\n", i);
 				return 0;
 			}
 		} while (c != '\r' && c != '\n');
@@ -45,12 +45,12 @@ static int read_input(size_t height, size_t width, char *bbox)
 				if (i == height-1) {
 					return 1;
 				}
-				fprintf(stderr, "failed to read row %lu\n", i);
+				fprintf(stderr, "failed to read row %zu\n", i);
 				return 0;
 			}
 		} while (c == '\r' || c == '\n');
 		if (ungetc(c, stdin) == EOF) {
-			fprintf(stderr, "failed to ungetc at row %lu\n", i);
+			fprintf(stderr, "failed to ungetc at row %zu\n", i);
 			return 0;
 		}
 	}
