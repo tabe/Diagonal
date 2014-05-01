@@ -1,4 +1,5 @@
 set(tests
+    1x1
     6x6-glider
     40x80
 )

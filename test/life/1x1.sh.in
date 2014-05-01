@@ -1,0 +1,4 @@
+#!/bin/sh
+
+MU_LAMBDA=`echo X | @DIAG_CYCLE@ ./life 1 1`
+test "$MU_LAMBDA" = "1 1"
