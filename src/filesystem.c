@@ -260,9 +260,9 @@ struct diag_mmap *diag_mmap_file(const char *path, enum diag_mmap_mode mode)
 		(void)CloseHandle(fh);
 		return NULL;
 	}
-	DWORD access = (mode == DIAG_MMAP_RO) ? FILE_MAP_READ : FILE_MAP_COPY;
+	DWORD desired_access = (mode == DIAG_MMAP_RO) ? FILE_MAP_READ : FILE_MAP_COPY;
 	void *vof = MapViewOfFile(fmo,
-				  access,
+				  desired_access,
 				  0,
 				  0,
 				  0);
