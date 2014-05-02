@@ -177,7 +177,7 @@ static void run_command(char *e, char **argv) {
 			   (unsigned int)GetLastError());
 	}
 	CloseHandle(pi.hProcess);
-	exit(code);
+	exit((int)code);
 }
 
 #elif defined(HAVE_UNISTD_H)

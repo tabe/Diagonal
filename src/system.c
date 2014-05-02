@@ -280,7 +280,7 @@ void diag_process_wait(struct diag_process *process)
 		diag_error("failed to get exit code: %x",
 			   (unsigned int)GetLastError());
 	}
-	process->status = code;
+	process->status = (int)code;
 	CloseHandle(h);
 }
 
