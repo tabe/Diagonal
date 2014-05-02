@@ -35,7 +35,11 @@ read_bytes_fd(struct diag_port *port, size_t size, uint8_t *buf)
 
 	assert(port && buf);
 	if (size == 0) return 1; /* nothing to do */
+#if defined(_WIN32) && defined(__MINGW32__)
+	if ( (size_t)(s = read(port->stream.fd, (void *)buf, (unsigned int)size)) == size) {
+#else
 	if ( (size_t)(s = read(port->stream.fd, (void *)buf, size)) == size) {
+#endif
 		port->i_pos += size;
 		return 1;
 	} else if (s >= 0) {
@@ -71,7 +75,11 @@ write_bytes_fd(struct diag_port *port, size_t size, const uint8_t *buf)
 	assert(port && buf);
 	if (size == 0) return 1; /* nothing to do */
  retry:
+#if defined(_WIN32) && defined(__MINGW32__)
+	if ( (size_t)(s = write(port->stream.fd, (const void *)buf, (unsigned int)size)) == size) {
+#else
 	if ( (size_t)(s = write(port->stream.fd, (const void *)buf, size)) == size) {
+#endif
 		port->o_pos += size;
 		return 1;
 	} else if (s >= 0) {

@@ -28,7 +28,7 @@
 #include "diagonal/private/temporary-file.h"
 
 #if defined(_WIN32) && defined(__MINGW32__)
-static const size_t PATH_LENGTH = MAX_PATH;
+static const DWORD PATH_LENGTH = MAX_PATH;
 #else
 static const size_t PATH_LENGTH = 1024;
 #endif
