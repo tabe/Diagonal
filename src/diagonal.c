@@ -25,11 +25,11 @@ void diag_init(void)
 
 	r = _setmode(_fileno(stdin), _O_BINARY);
 	if (r == -1) {
-		perror("failed to set mode");
+		perror("failed to set mode for stdin");
 	}
 	r = _setmode(_fileno(stdout), _O_BINARY);
 	if (r == -1) {
-		perror("failed to set mode");
+		perror("failed to set mode for stdout");
 	}
 #endif
 }
