@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	size_t i = 0;
+	int i = 0;
 	char *file = in ? in : tfin;
 	struct diag_command *cmd;
  run:
