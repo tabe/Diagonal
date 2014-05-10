@@ -1,3 +1,7 @@
+# Mac OS X's RPATH support, started with CMake 2.8.12
+# See http://www.kitware.com/blog/home/post/510
+set(CMAKE_MACOSX_RPATH 1)
+
 add_library(diagonal SHARED
             bytevector.c
             cluster.c
