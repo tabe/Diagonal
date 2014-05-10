@@ -17,5 +17,6 @@ available commands are:
   pool
   repeat  (rep)
   root
+  times
   uniq
 EOF

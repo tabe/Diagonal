@@ -24,6 +24,7 @@ set(subdirectories
     diag-mode
     diag-rep
     diag-root
+    diag-times
     diag
     life
 )

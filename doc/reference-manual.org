@@ -132,6 +132,12 @@
    You have to give 2 or more guess via the -g option.
    If =num_of_iteration= is specified, then it will fail immediately after the total number of iteration (i.e. evalutation of the function) exceeds the number.
    The exit status will be 0 in case of success, otherwise non-0.
+** diag times
+   =diag times [-i input] [-n num] command [operand ...]=
+
+   Apply given =command= with optional =operand ...= to an input =num= times, and then print resulting output to stdout.
+   The input is either =input= if specified, or stdin otherwise.
+   The exit status will be 0 in case of success, otherwise non-0.
 ** diag uniq
    =diag uniq [-c count] [-o output] file=
 
