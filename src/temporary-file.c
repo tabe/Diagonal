@@ -48,13 +48,11 @@ static int get_temporary_directory(char *dir)
 
 	char *v = getenv("TMPDIR");
 	if (v) {
-		int len = (int)strlen(v);
-		if (strlen(v) <= PATH_LENGTH && diag_is_directory(v)) {
+		size_t len = strlen(v);
+		if (len <= PATH_LENGTH && diag_is_directory(v)) {
 			strcpy(dir, v);
-			while ( (len = (int)strlen(dir)) > 0 ) {
-				if (dir[len - 1] == '/') {
-					dir[--len] = '\0';
-				}
+			while ( len > 0 && dir[len - 1] == '/' ) {
+				dir[--len] = '\0';
 			}
 			return len;
 		}
