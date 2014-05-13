@@ -54,7 +54,7 @@ static int get_temporary_directory(char *dir)
 			while ( len > 0 && dir[len - 1] == '/' ) {
 				dir[--len] = '\0';
 			}
-			return len;
+			return (int)len;
 		}
 	}
 	if (diag_is_directory(DEFAULT_DIR)) {
