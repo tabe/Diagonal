@@ -1,0 +1,6 @@
+#!/bin/sh
+
+INPUT=@DIAGONAL_SOURCE_DIR@/test/diag-times/diag-times-sed-input.txt
+OUTPUT=@DIAGONAL_SOURCE_DIR@/test/diag-times/diag-times-sed-output.txt
+
+@DIAG_TIMES@ -n 2 -i $INPUT sed -e 's/a/@/' | diff -u $OUTPUT -

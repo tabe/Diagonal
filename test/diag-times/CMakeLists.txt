@@ -1,5 +1,6 @@
 set(tests
     diag-times-cat
+    diag-times-sed
 )
 get_target_property(diag-times-path diag-times LOCATION)
 set(DIAG_TIMES ${diag-times-path})

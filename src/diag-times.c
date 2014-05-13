@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 		tfin = NULL;
 	}
 
-	if (++i <= n) {
+	if (++i < n) {
 		file = diag_strdup(cmd->out);
 		diag_command_destroy(cmd);
 		goto run;
