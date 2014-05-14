@@ -111,6 +111,7 @@ struct diag_temporary_file *diag_temporary_file_new(void)
 	path = diag_realloc(path, len1);
 	path[dirlen] = '/';
 	strcpy(path + dirlen + 1, TEMPLATE);
+	/* create a file with a proper permission in a thread-unsafe way */
 	mode_t old_mode = umask(S_IXUSR|S_IRWXG|S_IRWXO);
 	int fd = mkstemp(path);
 	(void)umask(old_mode);
