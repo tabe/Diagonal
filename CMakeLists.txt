@@ -71,9 +71,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
 add_definitions("-Wall -Wextra -Werror -Wundef -Wconversion -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wcast-align -Wcast-qual -Wwrite-strings")
 # http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html
 add_definitions("-fno-common -g -O2")
-if(BUILD_TESTING)
-  add_definitions("-pg")
-endif(BUILD_TESTING)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 add_subdirectory(src)
