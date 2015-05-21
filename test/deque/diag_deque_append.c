@@ -31,6 +31,7 @@ int main(void)
 	i = 0;
 	while ( (elem = diag_deque_shift(head)) ) {
 		ASSERT_EQ_UINTPTR(i++, elem->attr);
+		diag_free(elem);
 	}
 	ASSERT_EQ_UINTPTR(29, i);
 
@@ -45,6 +46,7 @@ int main(void)
 	i = 0;
 	while ( (elem = diag_deque_shift(head)) ) {
 		ASSERT_EQ_UINTPTR(i++, elem->attr);
+		diag_free(elem);
 	}
 	ASSERT_EQ_UINTPTR(31, i);
 
@@ -63,6 +65,7 @@ int main(void)
 	i = 0;
 	while ( (elem = diag_deque_shift(head)) ) {
 		ASSERT_EQ_UINTPTR(i++, elem->attr);
+		diag_free(elem);
 	}
 	ASSERT_EQ_UINTPTR(300, i);
 
