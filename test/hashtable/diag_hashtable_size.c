@@ -18,5 +18,6 @@ int main(void)
 
 	ht = diag_hashtable_new_eq(0);
 	assert(diag_hashtable_size(ht) == 0);
+	diag_hashtable_destroy(ht);
 	return EXIT_SUCCESS;
 }
