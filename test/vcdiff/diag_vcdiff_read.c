@@ -50,7 +50,7 @@ int main(void)
 	vm = diag_vcdiff_vm_new_path(HELLO_VCDIFF);
 	target = diag_vcdiff_decode(vm, vcdiff);
 	assert(target && vm->s_target == 14);
-	assert(strcmp("hello, world.\n", (const char *)target) == 0);
+	assert(strncmp("hello, world.\n", (const char *)target, 14) == 0);
 	diag_vcdiff_vm_destroy(vm);
 	diag_vcdiff_context_destroy(context);
 	return EXIT_SUCCESS;
