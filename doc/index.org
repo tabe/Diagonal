@@ -15,7 +15,7 @@
 * Getting started
   1. Get the source code via git:
      #+BEGIN_SRC sh
-     $ git clone git://git.code.sf.net/p/diagonal/code diagonal
+     $ git clone https://github.com/tabe/Diagonal.git
      #+END_SRC
   2. Build and install it:
      #+BEGIN_SRC sh
